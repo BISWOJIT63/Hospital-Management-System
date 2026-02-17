@@ -143,7 +143,9 @@ export default function Specialists() {
         >
           {doctors.map((doc) => (
             <SwiperSlide key={doc.id} className="h-auto">
-              <SpecialistCard doctor={doc} className="mx-auto" />
+              <div className="p-10">
+                <SpecialistCard doctor={doc} className="mx-auto" />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
