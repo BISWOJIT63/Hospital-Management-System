@@ -19,7 +19,7 @@
   }
 
   html.dark body {
-    background-color: #0f172a;
+    background-color: #020617;
     color: #f1f5f9;
   }
 }
@@ -57,6 +57,22 @@
     to {
       opacity: 1;
       scale: 1;
+    }
+  }
+
+  .scroll-driven-x {
+    animation: scroll-x linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 100%;
+  }
+
+  @keyframes scroll-x {
+    from {
+      transform: translateX(100%);
+    }
+
+    to {
+      transform: translateX(-100%);
     }
   }
 
@@ -291,4 +307,38 @@
   100% {
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
+}
+
+@media (max-width: 768px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.doctor-swiper .swiper-pagination-bullet {
+  background: #10b981;
+}
+.doctor-swiper .swiper-button-next,
+.doctor-swiper .swiper-button-prev {
+  color: #10b981 !important;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+}
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  width: max-content;
+}
+.animate-scroll:hover {
+  animation-play-state: paused;
 }

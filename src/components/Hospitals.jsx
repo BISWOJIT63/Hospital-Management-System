@@ -16,8 +16,8 @@ export default function Hospitals() {
                         FACILITY NETWORK
                     </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                    <div className="group relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] glass-card shadow-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+                    <div className="group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] glass-card shadow-lg">
                         <div className="aspect-[4/5] overflow-hidden">
                             <img
                                 alt="Hospital"
@@ -26,18 +26,18 @@ export default function Hospitals() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-medical-dark/80 via-transparent to-transparent"></div>
                         </div>
-                        <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
+                        <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
                             <div className="flex items-center gap-3 mb-4">
-                                <span className="px-4 py-1.5 rounded-full bg-primary/20 text-white text-[10px] font-black tracking-widest uppercase border border-primary/20 backdrop-blur-md">STOCKHOLM</span>
+                                <span className="px-4 py-1.5 rounded-full bg-primary/20 text-white text-[9px] md:text-[10px] font-black tracking-widest uppercase border border-primary/20 backdrop-blur-md">STOCKHOLM</span>
                             </div>
-                            <h4 className="text-2xl md:text-3xl font-black text-white mb-6">NORDIC MEDICAL</h4>
+                            <h4 className="text-xl md:text-3xl font-black text-white mb-4 md:mb-6">NORDIC MEDICAL</h4>
                             <button className="w-full h-12 md:h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm group-hover:bg-primary group-hover:border-primary transition-all flex items-center justify-center gap-2">
                                 <span className="material-symbols-outlined text-xl">explore</span>
                                 VIEW FACILITY
                             </button>
                         </div>
                     </div>
-                    <div className="group relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] glass-card shadow-lg">
+                    <div className="group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] glass-card shadow-lg">
                         <div className="aspect-[4/5] overflow-hidden">
                             <img
                                 alt="Hospital"
@@ -46,18 +46,18 @@ export default function Hospitals() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-medical-dark/80 via-transparent to-transparent"></div>
                         </div>
-                        <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
+                        <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
                             <div className="flex items-center gap-3 mb-4">
-                                <span className="px-4 py-1.5 rounded-full bg-secondary/20 text-white text-[10px] font-black tracking-widest uppercase border border-secondary/20 backdrop-blur-md">COPENHAGEN</span>
+                                <span className="px-4 py-1.5 rounded-full bg-secondary/20 text-white text-[9px] md:text-[10px] font-black tracking-widest uppercase border border-secondary/20 backdrop-blur-md">COPENHAGEN</span>
                             </div>
-                            <h4 className="text-2xl md:text-3xl font-black text-white mb-6">THE ATRIUM</h4>
+                            <h4 className="text-xl md:text-3xl font-black text-white mb-4 md:mb-6">THE ATRIUM</h4>
                             <button className="w-full h-12 md:h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm group-hover:bg-primary group-hover:border-primary transition-all flex items-center justify-center gap-2">
                                 <span className="material-symbols-outlined text-xl">explore</span>
                                 VIEW FACILITY
                             </button>
                         </div>
                     </div>
-                    <div className="group relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] glass-card shadow-lg">
+                    <div className="group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] glass-card shadow-lg">
                         <div className="aspect-[4/5] overflow-hidden">
                             <img
                                 alt="Hospital"
@@ -66,11 +66,11 @@ export default function Hospitals() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-medical-dark/80 via-transparent to-transparent"></div>
                         </div>
-                        <div className="absolute inset-0 p-8 md:p-10 flex flex-col justify-end">
+                        <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
                             <div className="flex items-center gap-3 mb-4">
-                                <span className="px-4 py-1.5 rounded-full bg-primary/20 text-white text-[10px] font-black tracking-widest uppercase border border-primary/20 backdrop-blur-md">OSLO</span>
+                                <span className="px-4 py-1.5 rounded-full bg-primary/20 text-white text-[9px] md:text-[10px] font-black tracking-widest uppercase border border-primary/20 backdrop-blur-md">OSLO</span>
                             </div>
-                            <h4 className="text-2xl md:text-3xl font-black text-white mb-6">LUMIERE CENTER</h4>
+                            <h4 className="text-xl md:text-3xl font-black text-white mb-4 md:mb-6">LUMIERE CENTER</h4>
                             <button className="w-full h-12 md:h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm group-hover:bg-primary group-hover:border-primary transition-all flex items-center justify-center gap-2">
                                 <span className="material-symbols-outlined text-xl">explore</span>
                                 VIEW FACILITY

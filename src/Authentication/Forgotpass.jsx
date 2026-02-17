@@ -20,7 +20,7 @@ const Forgotpass = ({ setIsForgotPassword }) => {
       </button>
 
       <div className="mb-8">
-        <h2 className="text-3xl font-black text-slate-800 mb-2">
+        <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2">
           Reset Password
         </h2>
         <p className="text-slate-400 font-medium">

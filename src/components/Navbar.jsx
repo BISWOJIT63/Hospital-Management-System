@@ -1,36 +1,36 @@
 import { useState, useEffect } from "react";
 
-export default function Navbar({ setIsModalOpen }) {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      setIsDark(true);
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    setIsDark(!isDark);
-  };
+export default function Navbar({ setIsModalOpen, isDark, toggleTheme, inHero, setIsSearchOpen }) {
   const modalOpen = () => {
     console.log("Login btn clicked");
     setIsModalOpen(true);
   };
 
   return (
-    <header className="fixed top-0 z-[100] w-full border-b border-primary/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl px-6 lg:px-20 py-4">
+    <header
+      className={`fixed top-0 z-[100] w-full border-b transition-all duration-300 ${inHero
+        ? "bg-transparent border-transparent"
+        : "border-primary/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl"
+        } px-4 md:px-6 lg:px-20 py-4 md:py-6`}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="logo-icon">
-            <div className="logo-cross">
-              <div className="heartbeat-line w-4 h-5"></div>
+          <div className="logo-icon max-sm:w-4 max-sm:h-6">
+            <div className="logo-cross max-sm:w-3 max-sm:h-3">
+              <div className="heartbeat-line max-sm:w-2 max-sm:h-3 w-4 h-5"></div>
             </div>
           </div>
-          <h1 className="text-xl md:text-2xl font-black tracking-tight text-medical-dark dark:text-white uppercase">
+          <h1 className={`text-xl md:text-2xl max-sm:text-sm font-black tracking-tight uppercase ${inHero ? "text-white" : "text-medical-dark dark:text-white"}`}>
             Aether<span className="text-primary">Care</span>
           </h1>
         </div>
+
+        <button
+          className={`md:hidden mr-2 ${inHero ? "text-white" : "text-medical-dark dark:text-white"}`}
+          onClick={() => setIsSearchOpen(true)}
+        >
+          <span className="material-symbols-outlined max-sm:text-xl text-2xl">search</span>
+        </button>
 
         <input
           className="hidden peer"
@@ -38,51 +38,63 @@ export default function Navbar({ setIsModalOpen }) {
           type="checkbox"
         />
         <label
-          className="flex md:hidden text-medical-dark dark:text-white cursor-pointer"
+          className={`flex md:hidden cursor-pointer ${inHero ? "text-white" : "text-medical-dark dark:text-white"}`}
           htmlFor="mobile-menu-toggle"
         >
-          <span className="material-symbols-outlined text-3xl">menu</span>
+          <span className="material-symbols-outlined text-2xl">menu</span>
         </label>
 
-        <nav className="hidden md:flex items-center gap-10 peer-checked:flex peer-checked:flex-col peer-checked:absolute peer-checked:top-full peer-checked:left-0 peer-checked:w-full peer-checked:bg-white/95 peer-checked:dark:bg-slate-950/95 peer-checked:p-8 peer-checked:border-b peer-checked:border-primary/10 md:peer-checked:flex-row md:peer-checked:static md:peer-checked:w-auto md:peer-checked:p-0 md:peer-checked:border-none md:peer-checked:bg-transparent">
+        <nav className="hidden md:flex items-center gap-10 peer-checked:flex peer-checked:flex-col peer-checked:absolute peer-checked:top-full peer-checked:left-0 peer-checked:w-full peer-checked:bg-white/95 peer-checked:dark:bg-slate-950/95 peer-checked:p-8 peer-checked:border-b peer-checked:border-primary/10 peer-checked:shadow-xl md:peer-checked:flex-row md:peer-checked:static md:peer-checked:w-auto md:peer-checked:p-0 md:peer-checked:border-none md:peer-checked:bg-transparent md:peer-checked:shadow-none transition-all duration-300 ease-in-out origin-top">
           <a
-            className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors"
+            className={`text-sm md:text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors py-2 md:py-0 ${inHero ? "md:text-white text-slate-800 dark:text-slate-200" : "text-medical-dark dark:text-white"}`}
             href="#hero"
           >
             Home
           </a>
           <a
-            className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors"
+            className={`text-sm md:text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors py-2 md:py-0 ${inHero ? "md:text-white text-slate-800 dark:text-slate-200" : "text-medical-dark dark:text-white"}`}
             href="#hospitals"
           >
             Hospitals
           </a>
           <a
-            className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors"
+            className={`text-sm md:text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors py-2 md:py-0 ${inHero ? "md:text-white text-slate-800 dark:text-slate-200" : "text-medical-dark dark:text-white"}`}
             href="#doctors"
           >
             Specialists
           </a>
           <a
-            className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors"
+            className={`text-sm md:text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors py-2 md:py-0 ${inHero ? "md:text-white text-slate-800 dark:text-slate-200" : "text-medical-dark dark:text-white"}`}
             href="#how-it-works"
           >
             About
           </a>
 
-          <div className="md:hidden flex items-center gap-4 mt-4 md:mt-0">
-            <button className="theme-toggle-btn" onClick={toggleTheme}>
-              {isDark ? (
-                <span className="material-symbols-outlined text-xl">
-                  light_mode
-                </span>
-              ) : (
-                <span className="material-symbols-outlined text-xl">
-                  dark_mode
-                </span>
-              )}
-            </button>
-            <button className="px-5 py-3 rounded-xl bg-primary text-xs font-bold tracking-widest text-white">
+          <div className="md:hidden flex flex-col items-start gap-4 mt-6">
+            <div className="flex items-center gap-4 w-full justify-between">
+              <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Theme</span>
+              <button
+                className={`theme-toggle-btn p-2 rounded-full border border-slate-200 dark:border-slate-800 ${isDark ? "text-white bg-slate-800" : "text-slate-800 bg-slate-100"}`}
+                onClick={toggleTheme}
+              >
+                {isDark ? (
+                  <span className="material-symbols-outlined text-xl">
+                    light_mode
+                  </span>
+                ) : (
+                  <span className="material-symbols-outlined text-xl">
+                    dark_mode
+                  </span>
+                )}
+              </button>
+            </div>
+
+            <button
+              className="w-full py-4 rounded-xl bg-primary text-sm font-bold tracking-widest text-white shadow-lg shadow-primary/30 mt-4"
+              onClick={() => {
+                modalOpen();
+              }}
+            >
               LOGIN
             </button>
           </div>
@@ -90,7 +102,7 @@ export default function Navbar({ setIsModalOpen }) {
 
         <div className="hidden md:flex items-center gap-4">
           <button
-            className="theme-toggle-btn"
+            className={`theme-toggle-btn ${inHero ? "text-white" : "text-slate-600 dark:text-slate-300"}`}
             onClick={toggleTheme}
             title="Toggle Light/Dark Mode"
           >

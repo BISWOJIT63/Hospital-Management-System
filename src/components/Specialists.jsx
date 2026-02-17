@@ -1,4 +1,12 @@
 import SpecialistCard from "./SpecialistCard";
+import React from "react";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export default function Specialists() {
   const doctors = [
@@ -111,10 +119,34 @@ export default function Specialists() {
           </div>
         </div>
       </div>
-      <div className="w-full flex flex-col justify-center items-center gap-5">
-        {doctors.map((doc) => (
-          <SpecialistCard key={doc.id} doctor={doc} className="flex-row justify-center items-center card"  />
-        ))}
+      <div className="w-full relative py-16 md:py-10">
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          navigation
+          pagination={{
+            dynamicBullets: true,
+            clickable: true,
+          }}
+          spaceBetween={-30}
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+            768: {
+              slidesPerView: 2,
+            },
+            1024: {
+              slidesPerView: 3,
+            },
+          }}
+          className="pb-10 mb-12 doctor-swiper"
+        >
+          {doctors.map((doc) => (
+            <SwiperSlide key={doc.id} className="h-auto">
+              <SpecialistCard doctor={doc} className="mx-auto" />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </section>
   );

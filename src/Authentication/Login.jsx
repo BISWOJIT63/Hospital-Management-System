@@ -39,13 +39,13 @@ const Login = ({ onNavigate}) => {
   }, [isForgotPassword, setIsForgotPassword]);
 
   return (
-    <div className="w-full md:w-6/12 p-8 md:p-10 flex flex-col justify-center bg-white relative">
+    <div className="w-full md:w-6/12 p-8 md:p-10 flex flex-col justify-center bg-white dark:bg-slate-950 relative">
       {isForgotPassword ? (
         <Forgotpass setIsForgotPassword={setIsForgotPassword} />
       ) : (
         <div className="animate-in fade-in slide-in-from-left-4 duration-300">
           <div className="mb-8">
-            <h2 className="text-3xl font-black text-slate-800 mb-2">
+            <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-2">
               Portal Login
             </h2>
             <p className="text-slate-400 font-medium">

@@ -22,11 +22,11 @@ const ReviewCard = ({ className, rev }) => {
 
   return (
     <div
-      className={`max-w-md font-sans w-full bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-emerald-900/10 overflow-hidden border border-emerald-100 transition-all duration-300 hover:shadow-4xl hover:-translate-y-4 ${className}`}
+      className={`w-full max-w-[300px] shrink-0 font-sans bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-emerald-900/10 overflow-hidden border border-emerald-100 transition-all duration-300 hover:shadow-4xl hover:-translate-y-4 ${className}`}
     >
       <div className="relative w-full p-8 pb-0">
-        <div className="absolute top-6 right-8 text-emerald-100">
-          <Quote size={48} fill="currentColor" />
+        <div className="absolute top-6 right-2 text-emerald-100">
+          <Quote size={30} fill="currentColor" />
         </div>
 
         <div className="flex items-center gap-4 relative z-10">
@@ -66,17 +66,16 @@ const ReviewCard = ({ className, rev }) => {
         <p className="text-gray-600 leading-relaxed text-sm">{rev.fb}</p>
       </div>
 
-      <div className="px-8 py-5 bg-emerald-50/50 dark:bg-slate-800 flex items-center justify-between border-t border-emerald-100">
-        <div className="flex items-center gap-4">
+      <div className="px-4 py-5 bg-emerald-50/50 dark:bg-slate-800 flex items-center justify-between border-t border-emerald-100">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
-              liked
+            className={`flex items-center gap-0.5 text-xs font-bold transition-colors ${liked
                 ? "text-emerald-600"
                 : "text-gray-500 hover:text-emerald-600"
-            }`}
+              }`}
           >
-            <ThumbsUp size={16} className={liked ? "fill-emerald-600" : ""} />
+            <ThumbsUp size={14} className={liked ? "fill-emerald-600" : ""} />
             <span>Helpful ({likeCount})</span>
           </button>
           <button className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-emerald-600 transition-colors">

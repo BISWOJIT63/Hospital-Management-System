@@ -44,9 +44,9 @@ const Signup = ({ onNavigate }) => {
   };
 
   return (
-    <div className="w-full h-98 md:w-6/12 p-6 md:p-6 flex flex-col justify-center bg-white">
+    <div className="w-full h-98 md:w-6/12 p-6 md:p-6 flex flex-col justify-center bg-white dark:bg-slate-950">
       <div className="mb-6">
-        <h2 className="text-2xl font-extrabold text-slate-800 mb-2">
+        <h2 className="text-2xl font-extrabold text-slate-800 dark:text-white mb-2">
           Create Your Account
         </h2>
         <p className="text-slate-400">
