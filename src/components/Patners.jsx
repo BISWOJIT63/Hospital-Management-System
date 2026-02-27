@@ -84,16 +84,16 @@ const Partners = () => {
   ];
 
   return (
-    <section className="w-full bg-black py-12 overflow-hidden border-t-4 border-green-600 font-sans">
+    <section className="w-full bg-slate-50 dark:bg-slate-950 py-12 overflow-hidden border-t-4 border-green-600 font-sans transition-colors duration-300">
       <div className="container mx-auto px-4 mb-10 text-center">
-        <h2 className="text-white text-xl md:text-2xl font-bold tracking-wide">
+        <h2 className="text-slate-800 dark:text-white text-xl md:text-2xl font-bold tracking-wide">
           Trusted Partners
         </h2>
       </div>
 
       <div className="relative w-full">
-        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-98 md:w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-98 md:w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
 
         <div className="flex animate-scroll hover:cursor-pointer">
           {[0, 1].map((iteration) => (
@@ -103,7 +103,6 @@ const Partners = () => {
                   key={`${iteration}-${index}`}
                   className="flex items-center gap-3 group"
                 >
-                  {/* Icon Container */}
                   <div
                     className={`
                       w-10 h-10 flex items-center justify-center rounded-lg
@@ -113,7 +112,7 @@ const Partners = () => {
                     {partner.icon}
                   </div>
 
-                  <span className="text-white text-xl font-bold group-hover:text-green-400 transition-colors">
+                  <span className="text-slate-700 dark:text-white text-xl font-bold group-hover:text-green-500 dark:group-hover:text-green-400 transition-colors">
                     {partner.name}
                   </span>
                 </div>
@@ -125,4 +124,4 @@ const Partners = () => {
     </section>
   );
 };
-export default Partners
+export default Partners;

@@ -15,7 +15,7 @@ export default function Specialists() {
       name: "Dr. Sarah Jenkins",
       specialist: "Cardiologist",
       image:
-        "https://images.unsplash.com/photo-1559839734-2b71f1536780?auto=format&fit=crop&q=80&w=300&h=300",
+        "https://plus.unsplash.com/premium_photo-1682089872205-dbbae3e4ba32?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       rating: 4.9,
       location: "New York, NY",
     },
@@ -69,7 +69,7 @@ export default function Specialists() {
       name: "Dr. Sophia Kwok",
       specialist: "Ophthalmologist",
       image:
-        "https://images.unsplash.com/photo-1527613477287-4160001656c1?auto=format&fit=crop&q=80&w=300&h=300",
+        "https://images.unsplash.com/photo-1659353888906-adb3e0041693?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       rating: 4.7,
       location: "Boston, MA",
     },
@@ -119,7 +119,7 @@ export default function Specialists() {
           </div>
         </div>
       </div>
-      <div className="w-full relative py-16 md:py-10">
+      <div className="w-90% relative py-16 md:py-10 ">
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
@@ -127,7 +127,12 @@ export default function Specialists() {
             dynamicBullets: true,
             clickable: true,
           }}
-          spaceBetween={-30}
+          autoplay={{
+            delay: 1800,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          spaceBetween={10}
           breakpoints={{
             640: {
               slidesPerView: 1,
@@ -139,11 +144,11 @@ export default function Specialists() {
               slidesPerView: 3,
             },
           }}
-          className="pb-10 mb-12 doctor-swiper"
+          className=" mb-12 doctor-swiper"
         >
           {doctors.map((doc) => (
             <SwiperSlide key={doc.id} className="h-auto">
-              <div className="p-10">
+              <div className="mb-10">
                 <SpecialistCard doctor={doc} className="mx-auto" />
               </div>
             </SwiperSlide>

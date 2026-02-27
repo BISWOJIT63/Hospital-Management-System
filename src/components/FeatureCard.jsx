@@ -51,8 +51,8 @@ const FeatureCard = ({ feature, index }) => {
     >
       <div className="w-full md:w-1/2 flex justify-center">
         <div className="relative group">
-          <div className="absolute inset-0 bg-teal-200 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-          <div className="relative  p-8 rounded-3xl shadow-xl border border-teal-50 transform group-hover:scale-105 transition-transform duration-300">
+          <div className="absolute inset-0 bg-teal-200 dark:bg-teal-900/30 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+          <div className="relative bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-teal-50 dark:border-teal-900/30 transform group-hover:scale-105 transition-transform duration-300">
             <img className="w-[200px]" src={feature.icon} alt={feature.title} />
           </div>
           <div className="absolute -top-4 -right-4 w-8 h-8 bg-teal-400 rounded-full opacity-20 animate-bounce delay-100"></div>
@@ -61,20 +61,20 @@ const FeatureCard = ({ feature, index }) => {
       </div>
 
       <div className="w-full md:w-1/2 text-center md:text-left space-y-4">
-        <div className="inline-flex items-center px-3 py-1 rounded-full bg-teal-50 text-teal-600 text-sm font-semibold tracking-wide uppercase">
+        <div className="inline-flex items-center px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 text-sm font-semibold tracking-wide uppercase">
           {feature.tag}
         </div>
         <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
           {feature.title}
         </h3>
-        <p className="text-lg text-gray-600 leading-relaxed">
+        <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
           {feature.description}
         </p>
         <ul className="space-y-2 pt-2">
           {feature.benefits.map((benefit, i) => (
             <li
               key={i}
-              className="flex items-center text-gray-600 md:justify-start justify-center"
+              className="flex items-center text-gray-600 dark:text-gray-400 md:justify-start justify-center"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-teal-500 mr-2"></div>
               {benefit}

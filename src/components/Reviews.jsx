@@ -48,13 +48,18 @@ const Reviews = () => {
           </div>
         </div>
       </div>
-      <div className="flex rev-container mb-10 md:mb-20">
+      <div className="flex relative rev-container mb-10 md:mb-20">
+        <div className="absolute left-0 top-0 bottom-0 w-98 md:w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-40 pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-98 md:w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-40 pointer-events-none"></div>
         <div className="review-marquee-group mt-5 mb-10 md:mb-20">
           {reviews.map((rev, i) => (
             <ReviewCard key={i} rev={rev} className="rev-card" />
           ))}
         </div>
-        <div aria-hidden="true" className="review-marquee-group mt-5 mb-10 md:mb-20">
+        <div
+          aria-hidden="true"
+          className="review-marquee-group mt-5 mb-10 md:mb-20"
+        >
           {reviews.map((rev, i) => (
             <ReviewCard key={i} rev={rev} className="rev-card" />
           ))}

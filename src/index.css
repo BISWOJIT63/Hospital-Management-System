@@ -10,7 +10,7 @@
   body {
     background-color: white;
     color: #1f2937;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     transition:
@@ -20,7 +20,15 @@
 
   html.dark body {
     background-color: #020617;
-    color: #f1f5f9;
+    color: #cbd5e1;
+  }
+
+  html.dark input,
+  html.dark textarea,
+  html.dark select {
+    background-color: transparent;
+    color: #f8fafc;
+    border-color: #334155;
   }
 }
 

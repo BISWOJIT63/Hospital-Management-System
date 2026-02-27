@@ -42,7 +42,7 @@ export default function Features() {
         "Expiry Date Alerts",
         "Supplier Management",
       ],
-      icon:  i3 ,
+      icon: i3,
       colorBg: "bg-indigo-100",
     },
     {
@@ -62,10 +62,10 @@ export default function Features() {
 
   return (
     <section
-      className="px-6 py-24 md:py-40 lg:px-20 relative overflow-hidden bg-white dark:bg-slate-950"
+      className="px-6 py-24 md:py-40 lg:px-20 relative overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-300"
       id="how-it-works"
     >
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full -translate-y-1/2"></div>
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full -translate-y-1/2 bg-slate-50/50 dark:bg-slate-900/20 pointer-events-none"></div>
       <div className="mx-auto max-w-7xl relative z-10">
         <div className="text-center mb-16 md:mb-24">
           <h3 className="text-3xl md:text-4xl lg:text-6xl font-black text-medical-dark dark:text-white mb-6 uppercase tracking-tight">
@@ -77,7 +77,7 @@ export default function Features() {
           </p>
         </div>
         <div className="space-y-12">
-          {features.map((feature,index) => (
+          {features.map((feature, index) => (
             <FeatureCard key={index} feature={feature} index={index} />
           ))}
         </div>

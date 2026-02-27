@@ -1,5 +1,6 @@
 import React from "react";
 import FaqCard from "./FaqCard";
+import { div } from "framer-motion/client";
 
 const Faq = () => {
   const faqs = [
@@ -49,9 +50,9 @@ const Faq = () => {
           </div>
         </div>
       </div>
-      <div className="space-y-4 max-w-2xl mx-auto ">
+      <div className="space-y-4 max-w-4xl mx-auto ">
         {faqs.map((faq) => (
-          <FaqCard key={faq.id} question={faq.question} answer={faq.answer} />
+            <FaqCard key={faq.id} question={faq.question} answer={faq.answer} />
         ))}
       </div>
     </section>
