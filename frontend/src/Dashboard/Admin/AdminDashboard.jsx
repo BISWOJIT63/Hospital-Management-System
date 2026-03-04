@@ -1,0 +1,149 @@
+import React, { useState, useEffect } from "react";
+import { Edit2, LayoutDashboard, Menu, ExternalLink } from "lucide-react";
+
+// Shared Comps
+import Sidebar from "./components/Sidebar";
+import MobileDrawer from "./components/MobileDrawer";
+import EditModal from "./components/EditModal";
+import { Avatar } from "./components/AdminUI";
+
+// Panels
+import OverviewPanel from "./panels/OverviewPanel";
+import AnalyticsPanel from "./panels/AnalyticsPanel";
+import BookingsPanel from "./panels/BookingsPanel";
+import PatientsPanel from "./panels/PatientsPanel";
+import DoctorsPanel from "./panels/DoctorsPanel";
+import BillingPanel from "./panels/BillingPanel";
+import ReviewsPanel from "./panels/ReviewsPanel";
+import GalleryPanel from "./panels/GalleryPanel";
+import DeptsPanel from "./panels/DeptsPanel";
+import ContactPanel from "./panels/ContactPanel";
+import HoursPanel from "./panels/HoursPanel";
+import AwardsPanel from "./panels/AwardsPanel";
+
+export default function AdminDashboard({ initialFac }) {
+  const [fac, setFac] = useState(initialFac);
+  const [active, setActive] = useState("overview");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [themeReady, setThemeReady] = useState(false);
+
+  // Smooth entry
+  useEffect(() => {
+    setTimeout(() => setThemeReady(true), 50);
+  }, []);
+
+  const renderPanel = () => {
+    switch (active) {
+      case "overview":
+        return <OverviewPanel fac={fac} />;
+      case "analytics":
+        return <AnalyticsPanel />;
+      case "bookings":
+        return <BookingsPanel />;
+      case "patients":
+        return <PatientsPanel />;
+      case "doctors":
+        return <DoctorsPanel fac={fac} />;
+      case "billing":
+        return <BillingPanel />;
+      case "reviews":
+        return <ReviewsPanel fac={fac} />;
+      case "gallery":
+        return <GalleryPanel fac={fac} />;
+      case "departments":
+        return <DeptsPanel fac={fac} />;
+      case "contact":
+        return <ContactPanel fac={fac} />;
+      case "hours":
+        return <HoursPanel fac={fac} />;
+      case "awards":
+        return <AwardsPanel fac={fac} />;
+      default:
+        return (
+          <div className="p-8 text-center text-slate-500">Panel not found</div>
+        );
+    }
+  };
+
+  return (
+    <div
+      className={`flex h-screen df bg-slate-50 dark:bg-[#080d1a] text-slate-800 dark:text-slate-200 font-sans transition-opacity duration-700 ${themeReady ? "opacity-100" : "opacity-0"}`}
+    >
+      {/* ── SIDEBAR (DESKTOP) ── */}
+      <Sidebar
+        active={active}
+        setActive={setActive}
+        fac={fac}
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+      />
+
+      {/* ── MOBILE DRAWER ── */}
+      <MobileDrawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        active={active}
+        setActive={setActive}
+      />
+
+      {/* ── EDIT MODAL ── */}
+      {editOpen && (
+        <EditModal
+          fac={fac}
+          onSave={setFac}
+          onClose={() => setEditOpen(false)}
+        />
+      )}
+
+      {/* ── MAIN CONTENT ── */}
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+        {/* TOP HEADER */}
+        <header className="h-16 shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-50 dark:bg-green-500/10 rounded-lg flex items-center justify-center border border-green-100 dark:border-green-500/20">
+                <LayoutDashboard
+                  size={14}
+                  className="text-green-600 dark:text-green-400"
+                />
+              </div>
+              <h1 className="text-sm font-black text-slate-800 dark:text-white capitalize tracking-wide">
+                {active}
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setEditOpen(true)}
+              className="hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm text-slate-600 dark:text-slate-300"
+            >
+              <Edit2 size={12} /> Edit Facility
+            </button>
+            <button
+              className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300"
+              title="View Public Profile"
+            >
+              <ExternalLink size={14} />
+            </button>
+          </div>
+        </header>
+
+        {/* SCROLLABLE PANEL AREA */}
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-24">
+          <div className="max-w-7xl mx-auto animation-fade-in">
+            {renderPanel()}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
