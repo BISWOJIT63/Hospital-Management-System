@@ -8,7 +8,7 @@ export const api = {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Include role if required by backend logic (though backend finds user by email)
+
                 body: JSON.stringify({ email, password, role }),
             });
 
@@ -42,7 +42,7 @@ export const api = {
                 },
                 body: JSON.stringify({
                     ...data,
-                    name: data.fullName || data.name, // Handle depending on form input names
+                    name: data.fullName || data.name,
                     role: role
                 }),
             });
@@ -140,7 +140,7 @@ export const api = {
         }
     },
 
-    // --- Dynamic Data Fetching ---
+
     getHospitals: async () => {
         const response = await fetch(`${BASE_URL}/hospitals`);
         if (!response.ok) throw new Error('Failed to fetch hospitals');
@@ -160,6 +160,37 @@ export const api = {
         const response = await fetch(`${BASE_URL}/doctors/${id}`);
         if (!response.ok) throw new Error('Failed to fetch doctor');
         return response.json();
+    },
+    getDoctorProfile: async (token) => {
+        try {
+            const response = await fetch(`${BASE_URL}/doctors/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Failed to fetch doctor profile');
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    submitDoctorRegistration: async (data, token) => {
+        try {
+            const response = await fetch(`${BASE_URL}/doctors/register-details`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+            const responseData = await response.json();
+            if (!response.ok) throw new Error(responseData.message || 'Failed to submit details');
+            return responseData;
+        } catch (error) {
+            throw error;
+        }
     },
     getDepartments: async () => {
         const response = await fetch(`${BASE_URL}/departments`);
@@ -182,7 +213,7 @@ export const api = {
         return response.json();
     },
 
-    // --- Facility Onboarding ---
+
     createFacility: async (data, token) => {
         try {
             const response = await fetch(`${BASE_URL}/facilities`, {
@@ -217,7 +248,7 @@ export const api = {
         }
     },
 
-    // --- Analytics ---
+
     getAdminAnalytics: async (token) => {
         try {
             const response = await fetch(`${BASE_URL}/analytics/my-analytics`, {
@@ -235,7 +266,7 @@ export const api = {
         }
     },
 
-    // --- Reviews ---
+
     getFacilityReviews: async (facilityId) => {
         try {
             const response = await fetch(`${BASE_URL}/reviews/facility/${facilityId}`, {
@@ -291,6 +322,158 @@ export const api = {
             });
             const resData = await response.json();
             if (!response.ok) throw new Error(resData.message || 'Failed to delete review');
+            return resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Appointment Endpoints
+    createAppointment: async (appointmentData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/appointments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` })
+                },
+                body: JSON.stringify(appointmentData)
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to create appointment');
+            return resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getMyAppointments: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/appointments/my-appointments`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` })
+                }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to fetch appointments');
+            return resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getHospitalById: async (id) => {
+        try {
+            const response = await fetch(`${BASE_URL}/hospitals/${id}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to fetch hospital');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getDoctorById: async (id) => {
+        try {
+            const response = await fetch(`${BASE_URL}/doctors/${id}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to fetch doctor');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // Service Endpoints
+    getServices: async (params = {}) => {
+        try {
+            const query = new URLSearchParams(params).toString();
+            const response = await fetch(`${BASE_URL}/services${query ? '?' + query : ''}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to fetch services');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getServiceById: async (id) => {
+        try {
+            const response = await fetch(`${BASE_URL}/services/${id}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to fetch service');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    createService: async (serviceData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/services`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` })
+                },
+                body: JSON.stringify(serviceData)
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to create service');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    updateService: async (id, serviceData) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/services/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` })
+                },
+                body: JSON.stringify(serviceData)
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to update service');
+            return resData.data || resData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    deleteService: async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/services/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` })
+                }
+            });
+            const resData = await response.json();
+            if (!response.ok) throw new Error(resData.message || 'Failed to delete service');
             return resData;
         } catch (error) {
             throw error;

@@ -53,7 +53,7 @@ const Location = ({DOCTOR}) => {
                 </div>
               </div>
 
-              {/* Map Placeholder */}
+              {}
               <div className="lg:w-1/3 h-48 lg:h-auto bg-slate-200 rounded-lg relative overflow-hidden border border-slate-300">
                 <div className="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-multiply"></div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">

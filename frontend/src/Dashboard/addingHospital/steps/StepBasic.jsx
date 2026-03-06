@@ -40,11 +40,19 @@ export default function StepBasic({
             className={inpClass()}
           />
         </Field>
-        <Field label="Location / Address *" error={errors.location} span>
+        <Field label="City *" error={errors.city}>
+          <input
+            value={fd.city}
+            onChange={(e) => update("city", e.target.value)}
+            placeholder="e.g. New York"
+            className={inpClass(errors.city)}
+          />
+        </Field>
+        <Field label="Location / Address *" error={errors.location}>
           <input
             value={fd.location}
             onChange={(e) => update("location", e.target.value)}
-            placeholder="123 Medical Avenue, City, State, PIN"
+            placeholder="123 Medical Avenue, PIN Code"
             className={inpClass(errors.location)}
           />
         </Field>
@@ -80,8 +88,8 @@ export default function StepBasic({
         </Field>
         <Field label="Total Doctors">
           <input
-            value={fd.doctors}
-            onChange={(e) => update("doctors", e.target.value)}
+            value={fd.doctorsCount}
+            onChange={(e) => update("doctorsCount", e.target.value)}
             placeholder="120"
             className={inpClass()}
           />
@@ -156,7 +164,7 @@ export default function StepBasic({
         />
       </Field>
 
-      {/* Image Upload */}
+      { }
       <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center justify-between mb-2">
           <label className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400">

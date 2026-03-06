@@ -1,7 +1,11 @@
-import React from "react";
-import { Users, Award, Clock, Activity } from "lucide-react";
+import React, { useState } from "react";
+import { Users, Award, Clock, Activity, CalendarPlus } from "lucide-react";
+import BookingModal from "../../BookingModal";
 
 export const ServiceSpecialists = ({ specialists }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+
   return (
     <section
       id="specialists"
@@ -11,6 +15,14 @@ export const ServiceSpecialists = ({ specialists }) => {
         <Users className="w-5 h-5 text-green-600 dark:text-green-500" />{" "}
         Dedicated Specialists
       </h2>
+
+      <BookingModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        provider={selectedDoc}
+        providerType="Doctor"
+      />
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {specialists.map((doc, idx) => (
           <div
@@ -33,6 +45,12 @@ export const ServiceSpecialists = ({ specialists }) => {
                 <Award className="w-3 h-3 text-slate-400" /> {doc.experience}{" "}
                 Exp
               </p>
+              <button
+                onClick={(e) => { e.stopPropagation(); setSelectedDoc(doc); setIsModalOpen(true); }}
+                className="mt-3 flex items-center justify-center w-full gap-2 bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition-colors"
+              >
+                <CalendarPlus size={14} /> Book Now
+              </button>
             </div>
           </div>
         ))}
@@ -55,18 +73,16 @@ export const ServiceTimings = ({ businessHours }) => {
         {businessHours.map((bh, idx) => (
           <div
             key={idx}
-            className={`flex justify-between items-center p-3.5 px-5 border-b border-slate-100 dark:border-slate-700/50 last:border-0 ${
-              bh.highlight
+            className={`flex justify-between items-center p-3.5 px-5 border-b border-slate-100 dark:border-slate-700/50 last:border-0 ${bh.highlight
                 ? "bg-lime-50/50 dark:bg-lime-500/10"
                 : "bg-white dark:bg-slate-800"
-            }`}
+              }`}
           >
             <span
-              className={`font-medium ${
-                bh.highlight
+              className={`font-medium ${bh.highlight
                   ? "text-lime-700 dark:text-lime-400"
                   : "text-slate-700 dark:text-slate-300"
-              }`}
+                }`}
             >
               {bh.day}
             </span>
@@ -85,11 +101,10 @@ export const ServiceTimings = ({ businessHours }) => {
                 </span>
               )}
               <span
-                className={`font-medium text-right ${
-                  bh.highlight
+                className={`font-medium text-right ${bh.highlight
                     ? "text-lime-700 dark:text-lime-400"
                     : "text-slate-900 dark:text-white"
-                }`}
+                  }`}
               >
                 {bh.time}
               </span>

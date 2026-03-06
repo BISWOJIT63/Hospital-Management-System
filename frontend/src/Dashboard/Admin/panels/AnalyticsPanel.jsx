@@ -86,13 +86,13 @@ export default function AnalyticsPanel() {
 
   const { revenueData, patientData, bedData, deptPatients } = analytics;
 
-  // We can infer visits vs revenue directly from revenueData array (assume structure: month, revenue, expenses. We can map expenses -> visits if needed or just use revenueData)
-  // To match original charts, we might map patientData to visitData if our backend returns different keys.
-  // revenueData: { month, revenue, expenses } -> used for AreaChart
-  // deptPatients: { dept, value } -> used for BarChart
-  // bedData: { name, value, color } -> used for PieChart
+  
+  
+  
+  
+  
 
-  // Calculate Totals to display on StatCards
+  
   const totalRev = revenueData.reduce(
     (sum, item) => sum + (item.revenue || 0),
     0,
@@ -101,7 +101,7 @@ export default function AnalyticsPanel() {
     (sum, item) => sum + (item.opd || 0) + (item.ipd || 0),
     0,
   );
-  const totalBookings = Math.round(totalVisits * 0.35); // Estimated mock logic
+  const totalBookings = Math.round(totalVisits * 0.35); 
 
   return (
     <div className="flex flex-col gap-5">
@@ -140,7 +140,7 @@ export default function AnalyticsPanel() {
         />
       </div>
 
-      {/* Revenue + Visits Chart */}
+      {}
       <Card>
         <SectionHdr
           icon={TrendingUp}
@@ -202,7 +202,7 @@ export default function AnalyticsPanel() {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Dept Patients */}
+        {}
         <Card>
           <SectionHdr
             icon={Layers}
@@ -251,7 +251,7 @@ export default function AnalyticsPanel() {
           </ResponsiveContainer>
         </Card>
 
-        {/* Booking Status Pie */}
+        {}
         <Card>
           <SectionHdr
             icon={CheckSquare}
@@ -307,7 +307,7 @@ export default function AnalyticsPanel() {
         </Card>
       </div>
 
-      {/* Monthly Bookings Line */}
+      {}
       <Card>
         <SectionHdr
           icon={Calendar}

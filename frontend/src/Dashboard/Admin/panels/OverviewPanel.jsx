@@ -21,7 +21,7 @@ const BadgeCheck = Check;
 export default function OverviewPanel({ fac }) {
   return (
     <div className="flex flex-col gap-5">
-      {/* Hero */}
+      {}
       <div className="relative bg-green-700 to-lime-900 rounded-3xl overflow-hidden p-7 text-white">
         <div className="absolute inset-0 opacity-30" />
         <div className="relative flex flex-col sm:flex-row gap-5">
@@ -75,7 +75,7 @@ export default function OverviewPanel({ fac }) {
         </div>
       </div>
 
-      {/* Stats */}
+      {}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={Eye}
@@ -109,7 +109,7 @@ export default function OverviewPanel({ fac }) {
         />
       </div>
 
-      {/* Quick info */}
+      {}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           [MapPin, "Address", fac.location],
@@ -138,7 +138,7 @@ export default function OverviewPanel({ fac }) {
         ))}
       </div>
 
-      {/* Accreditations */}
+      {}
       <Card>
         <div className="flex items-center gap-2 mb-3">
           <Shield size={15} className="text-green-500 dark:text-green-400" />

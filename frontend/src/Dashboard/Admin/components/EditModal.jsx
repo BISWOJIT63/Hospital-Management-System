@@ -20,9 +20,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-/* ══════════════════════════════════════════════
-   EDIT FACILITY MODAL — full multi-section editor
-══════════════════════════════════════════════ */
+
 const ALL_INSURANCES = [
   "Aetna",
   "BlueCross BlueShield",
@@ -252,7 +250,7 @@ export default function EditModal({ fac, onSave, onClose }) {
         className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl my-4 shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* header */}
+        {}
         <div className="bg-gradient-to-r from-green-600 to-primary px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -276,7 +274,7 @@ export default function EditModal({ fac, onSave, onClose }) {
         </div>
 
         <div className="flex min-h-[520px] flex-col md:flex-row border-b border-slate-100 dark:border-slate-800">
-          {/* tab list */}
+          {}
           <nav className="md:w-44 bg-slate-50 dark:bg-slate-800/50 border-r border-slate-100 dark:border-slate-800 p-3 shrink-0 flex flex-row overflow-x-auto md:flex-col gap-1 md:gap-0.5">
             {tabs.map(({ id, label, icon: Ico }) => (
               <button
@@ -290,9 +288,9 @@ export default function EditModal({ fac, onSave, onClose }) {
             ))}
           </nav>
 
-          {/* content */}
+          {}
           <div className="flex-1 p-6 overflow-y-auto h-[520px]">
-            {/* BASIC INFO */}
+            {}
             {tab === "basic" && (
               <div className="flex flex-col gap-4">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -393,7 +391,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* ABOUT */}
+            {}
             {tab === "about" && (
               <div className="flex flex-col gap-4">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -412,7 +410,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* CONTACT */}
+            {}
             {tab === "contact" && (
               <div className="flex flex-col gap-4">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -452,7 +450,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* HOURS */}
+            {}
             {tab === "hours" && (
               <div className="flex flex-col gap-3">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -512,7 +510,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* DEPARTMENTS */}
+            {}
             {tab === "dept" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -592,7 +590,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* DOCTORS */}
+            {}
             {tab === "doctors" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -670,7 +668,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* SERVICES */}
+            {}
             {tab === "services" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -720,7 +718,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* INSURANCE */}
+            {}
             {tab === "insurance" && (
               <div className="flex flex-col gap-4">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -735,7 +733,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* FACILITIES */}
+            {}
             {tab === "facilities" && (
               <div className="flex flex-col gap-4">
                 <h3 className="font-black text-slate-800 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">
@@ -750,7 +748,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* AWARDS */}
+            {}
             {tab === "awards" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -813,7 +811,7 @@ export default function EditModal({ fac, onSave, onClose }) {
               </div>
             )}
 
-            {/* PHOTOS */}
+            {}
             {tab === "photos" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -910,7 +908,7 @@ export default function EditModal({ fac, onSave, onClose }) {
           </div>
         </div>
 
-        {/* footer */}
+        {}
         <div className="px-6 py-4 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
           <p className="text-xs text-slate-400 dark:text-slate-500">
             All changes are saved locally and reflected immediately.

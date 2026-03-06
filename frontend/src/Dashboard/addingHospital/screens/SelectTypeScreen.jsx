@@ -4,7 +4,7 @@ import { Hospital, Stethoscope, ChevronRight } from "lucide-react";
 export default function SelectTypeScreen({ user, onSelect }) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#080d1a] flex flex-col font-sans">
-      {/* Topbar */}
+      {}
       <div className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-8 flex items-center justify-between shadow-sm sticky top-0 z-50 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center shadow-md">
@@ -27,7 +27,7 @@ export default function SelectTypeScreen({ user, onSelect }) {
         <div className="max-w-4xl w-full animate-in slide-in-from-bottom-6 fade-in duration-500">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 px-4 py-1.5 rounded-full text-xs font-black tracking-widest mb-6 border border-green-100 dark:border-green-500/20 uppercase">
-              👋 Welcome Back, {user?.name}
+               Welcome 
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-4 tracking-tight leading-tight">
               Register Your Facility
@@ -39,7 +39,7 @@ export default function SelectTypeScreen({ user, onSelect }) {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 w-full max-w-3xl mx-auto">
-            {/* Hospital Option */}
+            {}
             <button
               onClick={() => onSelect("hospital")}
               className="group text-left bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-8 transition-all hover:-translate-y-1 hover:border-green-500 dark:hover:border-green-500 hover:shadow-2xl hover:shadow-green-500/10 relative overflow-hidden"
@@ -60,7 +60,7 @@ export default function SelectTypeScreen({ user, onSelect }) {
               </div>
             </button>
 
-            {/* Clinic Option */}
+            {}
             <button
               onClick={() => onSelect("clinic")}
               className="group text-left bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-3xl p-8 transition-all hover:-translate-y-1 hover:border-teal-500 dark:hover:border-teal-500 hover:shadow-2xl hover:shadow-teal-500/10 relative overflow-hidden"

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Edit2, LayoutDashboard, Menu, ExternalLink } from "lucide-react";
 
-// Shared Comps
+
 import Sidebar from "./components/Sidebar";
 import MobileDrawer from "./components/MobileDrawer";
 import EditModal from "./components/EditModal";
 import { Avatar } from "./components/AdminUI";
 
-// Panels
+
 import OverviewPanel from "./panels/OverviewPanel";
 import AnalyticsPanel from "./panels/AnalyticsPanel";
 import BookingsPanel from "./panels/BookingsPanel";
@@ -20,6 +20,7 @@ import DeptsPanel from "./panels/DeptsPanel";
 import ContactPanel from "./panels/ContactPanel";
 import HoursPanel from "./panels/HoursPanel";
 import AwardsPanel from "./panels/AwardsPanel";
+import ServiceManagerPanel from "./panels/ServiceManagerPanel";
 
 export default function AdminDashboard({ initialFac }) {
   const [fac, setFac] = useState(initialFac);
@@ -29,7 +30,7 @@ export default function AdminDashboard({ initialFac }) {
   const [editOpen, setEditOpen] = useState(false);
   const [themeReady, setThemeReady] = useState(false);
 
-  // Smooth entry
+
   useEffect(() => {
     setTimeout(() => setThemeReady(true), 50);
   }, []);
@@ -60,6 +61,8 @@ export default function AdminDashboard({ initialFac }) {
         return <HoursPanel fac={fac} />;
       case "awards":
         return <AwardsPanel fac={fac} />;
+      case "services":
+        return <ServiceManagerPanel />;
       default:
         return (
           <div className="p-8 text-center text-slate-500">Panel not found</div>
@@ -71,7 +74,7 @@ export default function AdminDashboard({ initialFac }) {
     <div
       className={`flex h-screen df bg-slate-50 dark:bg-[#080d1a] text-slate-800 dark:text-slate-200 font-sans transition-opacity duration-700 ${themeReady ? "opacity-100" : "opacity-0"}`}
     >
-      {/* ── SIDEBAR (DESKTOP) ── */}
+      { }
       <Sidebar
         active={active}
         setActive={setActive}
@@ -80,7 +83,7 @@ export default function AdminDashboard({ initialFac }) {
         setCollapsed={setSidebarCollapsed}
       />
 
-      {/* ── MOBILE DRAWER ── */}
+      { }
       <MobileDrawer
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
@@ -88,7 +91,7 @@ export default function AdminDashboard({ initialFac }) {
         setActive={setActive}
       />
 
-      {/* ── EDIT MODAL ── */}
+      { }
       {editOpen && (
         <EditModal
           fac={fac}
@@ -97,9 +100,9 @@ export default function AdminDashboard({ initialFac }) {
         />
       )}
 
-      {/* ── MAIN CONTENT ── */}
+      { }
       <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
-        {/* TOP HEADER */}
+        { }
         <header className="h-16 shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button
@@ -137,7 +140,7 @@ export default function AdminDashboard({ initialFac }) {
           </div>
         </header>
 
-        {/* SCROLLABLE PANEL AREA */}
+        { }
         <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-24">
           <div className="max-w-7xl mx-auto animation-fade-in">
             {renderPanel()}

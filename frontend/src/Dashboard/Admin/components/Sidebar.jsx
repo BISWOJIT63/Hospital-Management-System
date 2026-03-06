@@ -37,7 +37,7 @@ export default function Sidebar({
             >
               <TI size={17} className="text-white" />
             </div>
-            {/* expand button */}
+            {}
             <button
               onClick={() => setCollapsed(false)}
               title="Expand sidebar"
@@ -48,7 +48,7 @@ export default function Sidebar({
                 className="group-hover:scale-110 transition-transform"
               />
             </button>
-            {/* live dot */}
+            {}
             <div
               className="w-9 h-9 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl flex items-center justify-center"
               title="Live & Approved"
@@ -74,7 +74,7 @@ export default function Sidebar({
                   </p>
                 </div>
               </div>
-              {/* collapse button */}
+              {}
               <button
                 onClick={() => setCollapsed(true)}
                 title="Collapse sidebar"
@@ -101,7 +101,7 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* ── nav ── */}
+      {}
       <nav className={`flex-1 overflow-y-auto ${collapsed ? "p-2" : "p-3"}`}>
         {NAV.map(({ id, label, icon: Ico }) => (
           <button
@@ -129,7 +129,7 @@ export default function Sidebar({
         ))}
       </nav>
 
-      {/* ── footer actions ── */}
+      {}
       <div
         className={`border-t border-slate-100 dark:border-slate-800 shrink-0 ${collapsed ? "p-2 flex flex-col items-center gap-1" : "p-3"}`}
       >

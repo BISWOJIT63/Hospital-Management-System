@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { api } from "../../utils/api";
 import {
-
   CheckCircle,
   ChevronRight,
   ChevronLeft,
-
+  Loader2
 } from "lucide-react";
 import StepSpecialty from "./StepSpecialty";
 import StepType from "./StepType";
@@ -14,11 +15,14 @@ import StepPayment from "./StepPayment";
 import StepConfirmation from "./StepConfirmation";
 
 export default function Appointments() {
+  const { user, isAuthenticated } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState("forward");
   const [formData, setFormData] = useState({
     specialty: null,
-    doctor: null, // Store entire doctor object or ID
+    doctor: null,
     type: null,
     date: null,
     time: null,
@@ -53,7 +57,6 @@ export default function Appointments() {
   const updateData = (section, key, value) => {
     if (section === "root") {
       setFormData((prev) => {
-        // Reset doctor if specialty changes
         if (key === "specialty" && prev.specialty !== value) {
           return { ...prev, [key]: value, doctor: null };
         }
@@ -89,9 +92,50 @@ export default function Appointments() {
     }
   };
 
+  const handleConfirm = async () => {
+    if (!isAuthenticated || user?.role !== 'Patient') {
+      setErrorMsg("You must be logged in as a Patient to book. Please login or check your account role.");
+      return;
+    }
+
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      // Map mapping state matching backend Appointment schema 
+      const appointmentPayload = {
+        providerId: formData.doctor.id || formData.doctor._id,
+        providerType: 'Doctor', // Currently the UI defaults to selecting Doctors
+        service: formData.specialty + " Consultation - " + formData.type,
+        date: `${formData.date?.month} ${formData.date?.date}, 2026`,
+        time: formData.time,
+        notes: formData.patientInfo.notes
+      };
+
+      const res = await api.createAppointment(appointmentPayload);
+      if (res.success || res.status === 201) {
+        setDirection("forward");
+        setStep(6);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setErrorMsg(res.message || "Failed to confirm booking.");
+      }
+    } catch (error) {
+      console.error("Booking Error:", error);
+      setErrorMsg(error.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen df bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-gray-300">
       <main className="max-w-4xl mx-auto px-4 py-8">
+        {errorMsg && (
+          <div className="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
+            <p className="font-bold">Booking Error</p>
+            <p>{errorMsg}</p>
+          </div>
+        )}
         <div className="mb-8 mt-0">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 -z-10 rounded-full"></div>
@@ -179,7 +223,7 @@ export default function Appointments() {
             {step === 6 && <StepConfirmation data={formData} />}
           </div>
 
-          {/* Footer Controls */}
+          { }
           {step < 6 && (
             <div className="p-6 bg-slate-50 border-t border-slate-100 dark:border-slate-500 dark:bg-black flex justify-between items-center">
               <button
@@ -198,18 +242,21 @@ export default function Appointments() {
               </button>
 
               <button
-                onClick={nextStep}
-                disabled={!isStepValid()}
+                onClick={step === 5 ? handleConfirm : nextStep}
+                disabled={!isStepValid() || loading}
                 className={`
                   flex items-center gap-2 px-8 py-2.5 rounded-xl font-medium shadow-lg shadow-emerald-500/20 transition-all
-                  ${!isStepValid()
+                  ${(!isStepValid() || loading)
                     ? "bg-slate-200 dark:bg-slate-600 text-slate-400 cursor-not-allowed shadow-none"
                     : "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-emerald-600/30 transform hover:-translate-y-0.5"
                   }
                 `}
               >
-                {step === 5 ? "Confirm Booking" : "Continue"}
-                <ChevronRight className="w-4 h-4" />
+                {step === 5 ? (
+                  loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing</> : "Confirm Booking"
+                ) : (
+                  <>Continue <ChevronRight className="w-4 h-4" /></>
+                )}
               </button>
             </div>
           )}

@@ -3,11 +3,12 @@ import { Check, ChevronRight, ChevronLeft } from "lucide-react";
 import { Toast } from "../components/UI";
 import { STEPS } from "../constants";
 
-// Steps
+
 import StepBasic from "../steps/StepBasic";
 import StepDepts from "../steps/StepDepts";
 import StepSvcDocs from "../steps/StepSvcDocs";
 import StepFacilities from "../steps/StepFacilities";
+import StepServices from "../steps/StepServices";
 import StepReview from "../steps/StepReview";
 
 export default function FormScreen({
@@ -28,6 +29,9 @@ export default function FormScreen({
   validateStep,
   toast,
   onSubmit,
+  servicesList,
+  setServicesList,
+  isSubmitting,
 }) {
   const nextStep = () => {
     if (validateStep()) setStep((s) => Math.min(s + 1, STEPS.length - 1));
@@ -35,8 +39,8 @@ export default function FormScreen({
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#080d1a] font-sans pb-24">
-      {/* Header */}
+    <div className="min-h-screen df bg-slate-50 dark:bg-[#080d1a] font-sans pb-24">
+      { }
       <div className="h-[68px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm transition-colors">
         <div className="flex items-center gap-4">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center font-black shadow-md">
@@ -71,23 +75,22 @@ export default function FormScreen({
           </p>
         </div>
 
-        {/* Stepper */}
+        { }
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 mb-8 border border-slate-200 dark:border-slate-800 shadow-sm flex items-start overflow-x-auto hide-scrollbar">
           {STEPS.map((s, i) => (
             <div
               key={i}
-              className={`flex items-center ${i < STEPS.length - 1 ? "flex-1 min-w-[120px]" : "flex-none"}`}
+              className={`flex items-center ${i < STEPS.length - 1 ? "flex-1 min-w-[120px] " : "flex-none"}`}
             >
               <div className="flex flex-col items-center gap-2 relative z-10">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all
-                  ${
-                    i < step
+                  ${i < step
                       ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/30"
                       : i === step
                         ? "bg-green-600 text-white shadow-lg shadow-green-500/30"
                         : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-2 border-slate-200 dark:border-slate-700"
-                  }`}
+                    }`}
                 >
                   {i < step ? <Check size={18} strokeWidth={3} /> : i + 1}
                 </div>
@@ -100,7 +103,7 @@ export default function FormScreen({
               </div>
               {i < STEPS.length - 1 && (
                 <div
-                  className={`flex-1 h-1 mx-2 -mt-6 sm:-mt-8 rounded-full transition-colors
+                  className={`flex-1 h-1 mx-2  sm:-mt-4 rounded-full transition-colors
                   ${i < step ? "bg-emerald-400 dark:bg-emerald-500" : "bg-slate-100 dark:bg-slate-800"}`}
                 />
               )}
@@ -108,7 +111,7 @@ export default function FormScreen({
           ))}
         </div>
 
-        {/* Form Card */}
+        { }
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 sm:p-10 mb-8 overflow-hidden">
           <div className="min-h-[400px]">
             {step === 0 && (
@@ -147,6 +150,12 @@ export default function FormScreen({
               />
             )}
             {step === 4 && (
+              <StepServices
+                servicesList={servicesList}
+                setServicesList={setServicesList}
+              />
+            )}
+            {step === 5 && (
               <StepReview
                 fd={formData}
                 entityType={entityType}
@@ -156,17 +165,16 @@ export default function FormScreen({
           </div>
         </div>
 
-        {/* Navigation Floating Bar */}
+        { }
         <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 p-4 z-40 transform translate-y-0 transition-transform shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
           <div className="max-w-4xl mx-auto flex justify-between items-center">
             <button
               onClick={prevStep}
               disabled={step === 0}
               className={`px-6 py-3 rounded-xl border-2 text-sm font-bold flex items-center gap-2 transition-all
-                ${
-                  step === 0
-                    ? "border-transparent text-slate-300 dark:text-slate-700 cursor-not-allowed"
-                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                ${step === 0
+                  ? "border-transparent text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                  : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                 }`}
             >
               <ChevronLeft size={18} />{" "}

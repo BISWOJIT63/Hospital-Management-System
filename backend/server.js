@@ -12,6 +12,9 @@ import hospitalRoutes from './routes/hospitalRoutes.js';
 import facilityRoutes from './routes/facilityRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
+import doctorRoutes from './routes/doctorRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import serviceRoutes from './routes/serviceRoutes.js';
 
 dotenv.config();
 
@@ -19,8 +22,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(
     session({
@@ -51,11 +54,15 @@ const connectDB = async () => {
 connectDB();
 
 app.use('/api/auth', authRoutes);
-app.use('/api', apiRoutes);
-app.use('/api', hospitalRoutes);
+app.use('/api/doctors', doctorRoutes);
 app.use('/api/facilities', facilityRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/services', serviceRoutes);
+
+app.use('/api', apiRoutes);
+app.use('/api', hospitalRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hospital Management System Backend API is running');

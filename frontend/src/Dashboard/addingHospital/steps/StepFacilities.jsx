@@ -6,7 +6,7 @@ import { FACILITIES_LIST } from "../constants";
 export default function StepFacilities({ fd, updateArr, toggleArr }) {
   return (
     <div className="animate-in slide-in-from-right-4 fade-in duration-300 space-y-10">
-      {/* Amenities Section */}
+      {}
       <section>
         <ST
           icon={Shield}
@@ -30,7 +30,7 @@ export default function StepFacilities({ fd, updateArr, toggleArr }) {
 
       <hr className="border-slate-100 dark:border-slate-800" />
 
-      {/* Business Hours Section */}
+      {}
       <section>
         <ST
           icon={Clock}

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Stethoscope,
   Video,
@@ -23,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import StepHeader from "./StepHeader";
+import { api } from "../../utils/api";
 
 export default function StepSpecialty({
   specialty,
@@ -60,147 +62,46 @@ export default function StepSpecialty({
       desc: "Teeth & oral health",
     },
   ];
-  const AVAILABLE_DOCTORS = [
-    // General Practice
-    {
-      id: "gp1",
-      specialty: "gp",
-      name: "Dr. Sarah Wilson",
-      role: "Chief Medical Officer",
-      image:
-        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.9",
-      exp: "15+ Years",
-      patients: "2.5k+",
-    },
-    {
-      id: "gp2",
-      specialty: "gp",
-      name: "Dr. Mark Johnson",
-      role: "Senior GP",
-      image:
-        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.7",
-      exp: "8+ Years",
-      patients: "1.2k+",
-    },
+  const [allDoctors, setAllDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    // Cardiology
-    {
-      id: "cardio1",
-      specialty: "cardio",
-      name: "Dr. James Chen",
-      role: "Head of Cardiology",
-      image:
-        "https://images.unsplash.com/photo-1537368910025-bc005ca68d5d?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "5.0",
-      exp: "20+ Years",
-      patients: "3k+",
-    },
-    {
-      id: "cardio2",
-      specialty: "cardio",
-      name: "Dr. Anita Patel",
-      role: "Cardiologist",
-      image:
-        "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.8",
-      exp: "12+ Years",
-      patients: "1.8k+",
-    },
+  useEffect(() => {
+    const fetchDocs = async () => {
+      try {
+        const res = await api.getDoctors();
+        if (res.success) {
+          // Normalize formatting to map with existing UI keys
+          const normalizedDocs = res.data.map(doc => ({
+            id: doc.user?._id || doc._id,
+            _id: doc.user?._id || doc._id,
+            name: doc.user?.name || doc.name,
+            specialty: (doc.specialty || 'gp').toLowerCase().includes('cardio') ? 'cardio' :
+              (doc.specialty || 'gp').toLowerCase().includes('derma') ? 'derma' :
+                (doc.specialty || 'gp').toLowerCase().includes('ortho') ? 'ortho' :
+                  (doc.specialty || 'gp').toLowerCase().includes('neuro') ? 'neuro' :
+                    (doc.specialty || 'gp').toLowerCase().includes('peds') ? 'peds' :
+                      (doc.specialty || 'gp').toLowerCase().includes('opth') ? 'opth' :
+                        (doc.specialty || 'gp').toLowerCase().includes('dent') ? 'dental' : 'gp',
+            role: doc.specialty || "Specialist",
+            image: doc.user?.avatar || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300",
+            rating: doc.ratings?.average ? doc.ratings.average.toFixed(1) : "5.0",
+            exp: `${doc.experience || 5}+ Years`,
+            patients: "1k+",
+            facility: doc.facilityId
+          }));
+          setAllDoctors(normalizedDocs);
+        }
+      } catch (error) {
+        console.error("Failed fetching docs for booking flow:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDocs();
+  }, []);
 
-    // Dermatology
-    {
-      id: "derma1",
-      specialty: "derma",
-      name: "Dr. Emily Parker",
-      role: "Senior Dermatologist",
-      image:
-        "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.9",
-      exp: "12+ Years",
-      patients: "2.1k+",
-    },
-    {
-      id: "derma2",
-      specialty: "derma",
-      name: "Dr. John Davis",
-      role: "Dermatologist",
-      image:
-        "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.6",
-      exp: "6+ Years",
-      patients: "900+",
-    },
-
-    // Orthopedics
-    {
-      id: "ortho1",
-      specialty: "ortho",
-      name: "Dr. Michael Chang",
-      role: "Orthopedic Surgeon",
-      image:
-        "https://images.unsplash.com/photo-1637059824899-a441006a96be?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.9",
-      exp: "18+ Years",
-      patients: "4k+",
-    },
-
-    // Neurology
-    {
-      id: "neuro1",
-      specialty: "neuro",
-      name: "Dr. Robert Solis",
-      role: "Lead Neurologist",
-      image:
-        "https://images.unsplash.com/photo-1588776814546-1b44f94055f1?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.9",
-      exp: "16+ Years",
-      patients: "2.2k+",
-    },
-
-    // Pediatrics
-    {
-      id: "peds1",
-      specialty: "peds",
-      name: "Dr. Lisa Hayes",
-      role: "Head of Pediatrics",
-      image:
-        "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "5.0",
-      exp: "14+ Years",
-      patients: "3.5k+",
-    },
-
-    // Ophthalmology
-    {
-      id: "opth1",
-      specialty: "opth",
-      name: "Dr. David Kim",
-      role: "Ophthalmology Lead",
-      image:
-        "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.8",
-      exp: "10+ Years",
-      patients: "1.5k+",
-    },
-
-    // Dentistry
-    {
-      id: "dental1",
-      specialty: "dental",
-      name: "Dr. Amanda Lee",
-      role: "Senior Dentist",
-      image:
-        "https://images.unsplash.com/photo-1537368910025-bc005ca68d5d?auto=format&fit=crop&q=80&w=300&h=300",
-      rating: "4.9",
-      exp: "11+ Years",
-      patients: "2k+",
-    },
-  ];
-  // Filter doctors based on selected specialty
   const availableDoctors = specialty
-    ? AVAILABLE_DOCTORS.filter((d) => d.specialty === specialty)
+    ? allDoctors.filter((d) => d.specialty === specialty)
     : [];
 
   return (
@@ -260,7 +161,7 @@ export default function StepSpecialty({
             </div>
           </div>
         ) : specialty ? (
-          // 2. Specialty Selected - Show Available Doctors List
+
           <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 animate-in slide-in-from-top-2 duration-300">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -305,7 +206,7 @@ export default function StepSpecialty({
             </div>
           </div>
         ) : (
-          // 3. Nothing Selected Placeholder
+
           <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-slate-50 dark:bg-slate-800/30 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl">
             <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center mb-3 shadow-sm">
               <User className="w-6 h-6 text-slate-300 dark:text-slate-600" />
@@ -317,7 +218,7 @@ export default function StepSpecialty({
         )}
       </div>
 
-      {/* Specialties Grid (Always Visible) */}
+      { }
       <div>
         <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
           <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-500" /> Departments

@@ -2,9 +2,7 @@ import React from "react";
 import { Clock } from "lucide-react";
 import { Card, SectionHdr, Chip } from "../components/AdminUI";
 
-/* ══════════════════════════════════════════════
-   HOURS PANEL
-══════════════════════════════════════════════ */
+
 export default function HoursPanel({ fac }) {
   return (
     <Card className="max-w-xl">

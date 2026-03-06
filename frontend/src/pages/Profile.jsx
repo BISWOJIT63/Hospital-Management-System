@@ -26,12 +26,12 @@ const Profile = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden"
                 >
-                    {/* Header Base */}
+                    {}
                     <div className="h-32 bg-gradient-to-r from-primary to-primary-dark"></div>
 
-                    {/* Profile Info section */}
+                    {}
                     <div className="px-8 pb-8 flex flex-col items-center md:items-start md:flex-row relative">
-                        {/* Avatar */}
+                        {}
                         <div className="-mt-16 mb-4 md:mb-0 md:mr-6 relative group cursor-pointer">
                             {user.avatar ? (
                                 <img
@@ -49,7 +49,7 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        {/* Name and Role */}
+                        {}
                         <div className="text-center md:text-left pt-2 md:pt-4 flex-1">
                             <h1 className="text-3xl font-bold text-slate-800 dark:text-white">
                                 {user.name}
@@ -60,7 +60,7 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    {/* Details section */}
+                    {}
                     <div className="px-8 pb-8 pt-4 border-t border-slate-100 dark:border-slate-700">
                         <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-6">Personal Details</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

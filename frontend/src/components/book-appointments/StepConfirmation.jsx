@@ -108,9 +108,9 @@ export default function StepConfirmation({ data }) {
           <div className="flex items-start gap-3 text-left">
             <MapPin className="w-5 h-5 text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-slate-900 dark:text-white">HealthGreen Clinic</p>
+              <p className="font-semibold text-slate-900 dark:text-white">Online Consultation / Clinic</p>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                123 Medical Plaza, Suite 400
+                Platform Link / Details will be shared via Email.
               </p>
             </div>
           </div>

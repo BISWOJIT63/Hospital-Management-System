@@ -40,8 +40,10 @@ import Timings from "./subpages/Timings";
 import Reviews from "./subpages/Reviews";
 import Insurance from "./subpages/Insurance";
 
-// --- Comprehensive Mock Data for Hospital ---
-const HOSPITAL = {
+import { useParams } from "react-router-dom";
+import { api } from "../../../utils/api";
+
+const STATIC_HOSPITAL = {
   name: "CityCare Super Specialty Hospital",
   type: "Multi-Specialty Healthcare & Research Center",
   accgreenitation: "JCI & NABH Accgreenited",
@@ -57,13 +59,13 @@ const HOSPITAL = {
   about:
     "CityCare Super Specialty Hospital is a premier healthcare institution dedicated to providing world-class medical care. Equipped with state-of-the-art technology and staffed by internationally trained medical professionals, we offer comprehensive healthcare services across over 30 specialties. Our patient-centric approach ensures compassionate care, safety, and the best clinical outcomes.",
 
-  // Gallery of 5 images
+
   images: [
-    "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1000&h=600", // Exterior
-    "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500&h=400", // Lobby
-    "https://images.unsplash.com/photo-1538108149393-cebb47acdd92?auto=format&fit=crop&q=80&w=500&h=400", // Operating Room
-    "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500&h=400", // Lab
-    "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500&h=400", // Patient Room
+    "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1000&h=600",
+    "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=500&h=400",
+    "https://images.unsplash.com/photo-1538108149393-cebb47acdd92?auto=format&fit=crop&q=80&w=500&h=400",
+    "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=500&h=400",
+    "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=500&h=400",
   ],
 
   departments: [
@@ -198,10 +200,45 @@ const HOSPITAL = {
 };
 
 export default function Details() {
+  const { id } = useParams();
+  const [HOSPITAL, setHospital] = useState(STATIC_HOSPITAL);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Overview");
   const [isFavorite, setIsFavorite] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [bookingStatus, setBookingStatus] = useState("idle");
+
+  React.useEffect(() => {
+    const fetchHopitalDetails = async () => {
+      try {
+        if (id) {
+          const res = await api.getHospitalById(id);
+          // Merge the dynamic response inside our STATIC_HOSPITAL schema ensuring mapping lines up
+          if (res) {
+            setHospital({
+              ...STATIC_HOSPITAL,
+              ...res,
+              name: res.name || STATIC_HOSPITAL.name,
+              type: res.type || STATIC_HOSPITAL.type,
+              location: res.address || res.location || STATIC_HOSPITAL.location,
+              about: res.description || STATIC_HOSPITAL.about,
+              rating: res.rating || STATIC_HOSPITAL.rating,
+              images: res.images?.length > 0 ? res.images : STATIC_HOSPITAL.images
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed fetching live hospital data via ID:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHopitalDetails();
+  }, [id]);
+
+  if (loading) {
+    return <div className="p-12 text-center text-slate-500 font-bold">Loading Facility Details...</div>;
+  }
 
   const scrollToSection = (tabId) => {
     setActiveTab(tabId);

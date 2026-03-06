@@ -7,7 +7,7 @@ export default function StepSvcDocs({ fd, updateArr, addItem, removeItem }) {
     return (
         <div className="animate-in slide-in-from-right-4 fade-in duration-300 space-y-10">
 
-            {/* Services Section */}
+            {}
             <section>
                 <ST icon={List} title="Services & Pricing" sub="List key medical services with pricing" />
                 <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 mb-4">
@@ -35,7 +35,7 @@ export default function StepSvcDocs({ fd, updateArr, addItem, removeItem }) {
 
             <hr className="border-slate-100 dark:border-slate-800" />
 
-            {/* Doctors Section */}
+            {}
             <section>
                 <ST icon={User} title="Key Doctors & Specialists" sub="Highlight your top medical professionals" />
                 <div className="space-y-4 mb-4">
@@ -60,7 +60,7 @@ export default function StepSvcDocs({ fd, updateArr, addItem, removeItem }) {
 
             <hr className="border-slate-100 dark:border-slate-800" />
 
-            {/* Awards Section */}
+            {}
             <section>
                 <ST icon={Award} title="Awards & Recognition" sub="Accolades received by your facility" />
                 <div className="space-y-3 mb-4">

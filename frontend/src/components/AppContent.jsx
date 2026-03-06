@@ -27,7 +27,7 @@ function AppContent() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); 
+    handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location.pathname]);
@@ -37,16 +37,23 @@ function AppContent() {
     location.pathname === "/signup" ||
     location.pathname === "/forgot-password";
 
+  const isDashboardPage =
+    location.pathname === "/admin" ||
+    location.pathname === "/doctor";
+
+  const isSuperAdminPage = location.pathname === "/gmara";
+  const hideNavAndFooter = isAuthPage || isSuperAdminPage;
+
   return (
     <div className="relative flex min-h-screen flex-col transition-colors duration-300">
-      {!isAuthPage && (
+      {!hideNavAndFooter && (
         <Navbar inHero={inHero} setIsSearchOpen={setIsSearchOpen} />
       )}
       <main>
         <Routing />
       </main>
 
-      {!isAuthPage && (
+      {!hideNavAndFooter && (
         <>
           <EmergencyFab />
           {location.pathname === "/" && (
@@ -55,7 +62,7 @@ function AppContent() {
               setIsSearchOpen={setIsSearchOpen}
             />
           )}
-          {location.pathname != "/admin" && <Footer />}
+          <Footer />
         </>
       )}
     </div>

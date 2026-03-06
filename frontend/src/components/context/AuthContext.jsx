@@ -12,13 +12,13 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check for OAuth token in URL
+      
       const urlParams = new URLSearchParams(window.location.search);
       const urlToken = urlParams.get("token");
 
       if (urlToken) {
         localStorage.setItem("token", urlToken);
-        // Clean up the URL to remove the token without reloading
+        
         window.history.replaceState({}, document.title, window.location.pathname);
         navigate("/");
       }
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(storedUser));
         setIsAuthenticated(true);
       } else if (token && !storedUser) {
-        // If we have a token from OAuth but no user, fetch user info from the backend.
+        
         try {
           const userData = await api.getProfile(token);
           setUser(userData);

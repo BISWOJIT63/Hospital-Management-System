@@ -24,7 +24,7 @@ const ServiceItem = ({ title, description, align = "left" }) => (
 
 const ScallopedIcon = ({ icon: Icon }) => (
   <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
-    {/* Custom Scalloped Shape using SVG */}
+    {}
     <img
       src="https://doccure.dreamstechnologies.com/html/template/assets/img/bg/choose-step-bg.png"
       alt=""
@@ -60,14 +60,14 @@ const ProcessCard = ({ step, icon, title, description }) => (
 export default function WhyWe() {
   return (
     <div className="min-h-screen  text-salte-950 dark:text-slate-white font-sans selection:bg-green-500/30 overflow-x-hidden pb-20">
-      {/* Intense Background Glow */}
+      {}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[800px] bg-green-900/10 blur-[150px] rounded-full" />
         <div className="absolute top-[40%] left-[-10%] w-[500px] h-[500px] bg-green-600/5 blur-[120px] rounded-full" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 py-30">
-        {/* Why Choose Us Badge */}
+        {}
         <div className="flex justify-center mb-6">
           <div className="bg-[#1a1a1e] border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2">
             <div className="w-2 h-2 bg-lime-600 rounded-full animate-pulse" />
@@ -77,7 +77,7 @@ export default function WhyWe() {
           </div>
         </div>
 
-        {/* Main Header */}
+        {}
         <header className="text-center mb-20">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
             Your{" "}
@@ -88,9 +88,9 @@ export default function WhyWe() {
           </h1>
         </header>
 
-        {/* Feature & Video Grid */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-28">
-          {/* Left Side Features */}
+          {}
           <div className="lg:col-span-3 space-y-4">
             <ServiceItem
               title="Medical & Non-Medical Services"
@@ -102,7 +102,7 @@ export default function WhyWe() {
             />
           </div>
 
-          {/* Central Video Frame */}
+          {}
           <div className="lg:col-span-6">
             <div className="relative p-1.5 rounded-[2.5rem] bg-gradient-to-br from-green-500 to-lime-600 shadow-2xl shadow-green-900/40">
               <div className="relative rounded-[2.2rem] overflow-hidden bg-black aspect-video">
@@ -116,13 +116,13 @@ export default function WhyWe() {
                   <source src={video} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
-                {/* Video Overlay controls simulation */}
+                {}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
               </div>
             </div>
           </div>
 
-          {/* Right Side Features */}
+          {}
           <div className="lg:col-span-3 space-y-4">
             <ServiceItem
               align="right"
@@ -137,7 +137,7 @@ export default function WhyWe() {
           </div>
         </div>
 
-        {/* Horizontal Process Steps */}
+        {}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
           <ProcessCard
             step="1"

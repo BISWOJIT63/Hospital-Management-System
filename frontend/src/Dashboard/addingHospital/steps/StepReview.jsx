@@ -52,7 +52,7 @@ export default function StepReview({ fd, entityType, previews }) {
         sub="Everything looks good? Hit submit to send for approval."
       />
 
-      {/* Visual Previews */}
+      {}
       {previews.length > 0 && (
         <div className="flex flex-wrap gap-3 mb-6">
           {previews.map((src, i) => (
@@ -71,14 +71,14 @@ export default function StepReview({ fd, entityType, previews }) {
         </div>
       )}
 
-      {/* About Box */}
+      {}
       {fd.about && (
         <div className="bg-green-50 dark:bg-green-500/10 border-l-4 border-green-500 rounded-r-xl p-4 mb-6 text-green-900 dark:text-green-200 text-sm leading-relaxed">
           {fd.about}
         </div>
       )}
 
-      {/* Data Table */}
+      {}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden mb-8 shadow-sm">
         {rows.map(([k, v], i) => (
           <div
@@ -95,7 +95,7 @@ export default function StepReview({ fd, entityType, previews }) {
         ))}
       </div>
 
-      {/* Ready Banner */}
+      {}
       <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border-2 border-emerald-200 dark:border-emerald-500/20 rounded-xl flex items-center gap-4">
         <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/30">
           <CheckCircle2 size={20} />

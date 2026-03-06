@@ -55,7 +55,7 @@ const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
               </div>
             </div>
 
-            {/* Right: Actions & Status */}
+            {}
             <div className="flex flex-col justify-between items-start lg:items-end gap-4">
               <div className="flex gap-2 w-full justify-end">
                 <button
@@ -112,7 +112,7 @@ const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
           </div>
         </div>
 
-        {/* Bottom Stats Bar */}
+        {}
         <div className="bg-white dark:bg-slate-800 border-t border-slate-100 p-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
             <div className="flex items-center gap-2">

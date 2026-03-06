@@ -9,6 +9,7 @@ import {
   Clock,
   ChevronLeft,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 
@@ -29,6 +30,7 @@ export default function DoctorList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const itemsPerPage = 2;
 
@@ -174,7 +176,11 @@ export default function DoctorList() {
                       Book Now
                     </button>
                     <button
-                      onClick={() => setSelectedDoctor(doctor)}
+                      onClick={() => {
+                        setSelectedDoctor(doctor);
+                        const id = doctor.user?._id || doctor._id || doctor.id;
+                        navigate(`/doctors-profile/${id}`);
+                      }}
                       className="flex-1 bg-slate-50 text-slate-600 py-3.5 rounded-2xl font-bold text-sm hover:bg-slate-100 transition active:scale-95"
                     >
                       Details
@@ -213,8 +219,8 @@ export default function DoctorList() {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`p-3 rounded-2xl border transition-all ${currentPage === 1
-                    ? "text-slate-300 border-slate-100 cursor-not-allowed"
-                    : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
+                  ? "text-slate-300 border-slate-100 cursor-not-allowed"
+                  : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
                   }`}
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -226,8 +232,8 @@ export default function DoctorList() {
                     key={idx + 1}
                     onClick={() => handlePageChange(idx + 1)}
                     className={`w-10 h-10 rounded-2xl text-sm font-bold transition-all ${currentPage === idx + 1
-                        ? "bg-primary text-white"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      ? "bg-primary text-white"
+                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                       }`}
                   >
                     {idx + 1}
@@ -239,8 +245,8 @@ export default function DoctorList() {
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={`p-3 rounded-2xl border transition-all ${currentPage === totalPages
-                    ? "text-slate-300 border-slate-100 cursor-not-allowed"
-                    : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
+                  ? "text-slate-300 border-slate-100 cursor-not-allowed"
+                  : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
                   }`}
               >
                 <ChevronRight className="w-5 h-5" />

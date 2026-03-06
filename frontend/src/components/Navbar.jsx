@@ -38,7 +38,7 @@ export default function Navbar({ inHero, setIsSearchOpen }) {
           </div>
         </Link>
 
-        {/* Desktop & Mobile Navigation Links (in Navbar) */}
+        {}
         <nav className="flex items-center gap-4 md:gap-10 transition-all z-[100]">
           <NavLink
             to="/"
@@ -86,7 +86,7 @@ export default function Navbar({ inHero, setIsSearchOpen }) {
         <div className="flex items-center gap-2 md:gap-4">
           {location.pathname === "/" && (
             <button
-              className={`p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${inHero ? "text-white" : "text-medical-dark dark:text-white"}`}
+              className={`p-2 rounded-full lg:hidden block hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${inHero ? "text-white" : "text-medical-dark dark:text-white"}`}
               onClick={() => setIsSearchOpen(true)}
             >
               <Search size={18} className="md:w-[20px] md:h-[20px] w-[18px] h-[18px]" />

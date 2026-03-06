@@ -14,6 +14,7 @@ import {
   Stethoscope,
   Navigation,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/api";
 const HOSPITAL_TYPES = [
   "All",
@@ -28,10 +29,12 @@ const HOSPITAL_TYPES = [
 export default function List() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
+  const [activeCategory, setActiveCategory] = useState("Hospital");
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const itemsPerPage = 3;
 
@@ -39,7 +42,35 @@ export default function List() {
     const fetchHospitals = async () => {
       try {
         const data = await api.getHospitals();
-        setHospitals(data);
+        if (data && data.length > 0) {
+          setHospitals(data);
+        } else {
+
+          setHospitals([
+            {
+              id: "h1",
+              name: "CityCare Super Specialty Hospital",
+              type: "Multi-specialty",
+              rating: 4.8,
+              address: "Downtown Medical District, New York, USA",
+              beds: 500,
+              distance: "2.5 km",
+              availability: "24/7 Open",
+              images: ["https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1000&h=600"]
+            },
+            {
+              id: "c1",
+              name: "Evergreen Medical Center",
+              type: "Clinic Hub",
+              rating: 4.8,
+              address: "123 Healthcare Blvd, Medical District, San Francisco",
+              beds: 15,
+              distance: "1.2 miles",
+              availability: "08:00 AM - 08:00 PM",
+              images: ["https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000"]
+            }
+          ]);
+        }
       } catch (error) {
         console.error("Failed to fetch hospitals:", error);
       } finally {
@@ -56,9 +87,13 @@ export default function List() {
         hosp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         locationMatch.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = selectedType === "All" || hosp.type === selectedType;
-      return matchesSearch && matchesType;
+
+      const isClinic = hosp.type?.toLowerCase().includes("clinic") || hosp.name?.toLowerCase().includes("clinic");
+      const matchesCategory = activeCategory === "Clinic" ? isClinic : !isClinic;
+
+      return matchesSearch && matchesType && matchesCategory;
     });
-  }, [searchTerm, selectedType, hospitals]);
+  }, [searchTerm, selectedType, hospitals, activeCategory]);
 
   const totalPages = Math.ceil(filteredHospitals.length / itemsPerPage);
 
@@ -81,11 +116,11 @@ export default function List() {
   return (
     <div className="min-h-screen df mt-0 bg-slate-50 dark:bg-slate-950 text-gray-800 dark:text-gray-200 custom-font">
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header Section */}
+        { }
         <div className="mb-10 space-y-6">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <h2 className="text-4xl font-extrabold text-gray-800 dark:text-gray-200">
-              Find hospitals near you
+              Find <span className="text-primary">{activeCategory}</span> near you
             </h2>
             <p className="text-primary font-medium">
               Discover top-rated medical facilities and specialized care
@@ -93,7 +128,26 @@ export default function List() {
             </p>
           </div>
 
-          {/* Search & Filter Bar */}
+          { }
+          <div className="flex justify-center max-w-md mx-auto mb-6 bg-slate-100 dark:bg-slate-800 rounded-full p-1 border border-slate-200 dark:border-slate-700">
+            {["Hospital", "Clinic"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setCurrentPage(1);
+                }}
+                className={`flex-1 py-2.5 rounded-full text-sm font-bold transition-all ${activeCategory === cat
+                  ? "bg-white dark:bg-slate-900 text-primary shadow-sm"
+                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50"
+                  }`}
+              >
+                {cat}s
+              </button>
+            ))}
+          </div>
+
+          { }
           <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-200/60 dark:border-slate-800">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -122,7 +176,7 @@ export default function List() {
           </div>
         </div>
 
-        {/* Hospital Grid */}
+        { }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedHospitals.length > 0 ? (
             paginatedHospitals.map((hospital) => (
@@ -130,7 +184,7 @@ export default function List() {
                 key={hospital.id}
                 className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
               >
-                {/* Hospital Image */}
+                { }
                 <div className="h-48 relative overflow-hidden">
                   <img
                     src={hospital.images && hospital.images.length > 0 ? hospital.images[0] : hospital.image}
@@ -152,7 +206,7 @@ export default function List() {
                   </div>
                 </div>
 
-                {/* Content */}
+                { }
                 <div className="p-7 space-y-4">
                   <div>
                     <h3 className="text-xl font-bold group-hover:text-primary transition tracking-tight leading-tight">
@@ -164,7 +218,7 @@ export default function List() {
                     </div>
                   </div>
 
-                  {/* Quick Stats */}
+                  { }
                   <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 dark:border-slate-800">
                     <div className="space-y-1">
                       <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
@@ -184,16 +238,24 @@ export default function List() {
                     </div>
                   </div>
 
-                  {/* Availability Badge */}
+                  { }
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
                     <Clock className="w-4 h-4 text-green-500" />
                     <span>{hospital.availability}</span>
                   </div>
 
-                  {/* Actions */}
+                  { }
                   <div className="flex gap-3 pt-2">
                     <button
-                      onClick={() => setSelectedHospital(hospital)}
+                      onClick={() => {
+                        setSelectedHospital(hospital);
+                        const id = hospital._id || hospital.id;
+                        if (activeCategory === "Clinic" || hospital.type?.toLowerCase().includes("clinic") || hospital.name?.toLowerCase().includes("clinic")) {
+                          navigate(`/clinic-profile/${id}`);
+                        } else {
+                          navigate(`/Hospital-profile/${id}`);
+                        }
+                      }}
                       className="flex-[2] text-white py-3.5 rounded-2xl font-bold text-sm bg-primary transition-all active:scale-95 shadow-lg shadow-green-100 dark:shadow-none hover:opacity-90"
                     >
                       View Details
@@ -229,7 +291,7 @@ export default function List() {
           )}
         </div>
 
-        {/* Pagination Controls */}
+        { }
         {totalPages > 1 && (
           <div className="mt-12 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">

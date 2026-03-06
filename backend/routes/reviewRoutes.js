@@ -10,12 +10,12 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.route('/')
-    .post(addReview); // Public route so anyone can leave a review
+    .post(addReview); 
 
 router.route('/facility/:facilityId')
     .get(getFacilityReviews);
 
-// Admin only routes for managing reviews
+
 router.route('/:id/reply')
     .put(protect, admin, replyToReview);
 

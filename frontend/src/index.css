@@ -30,6 +30,7 @@
     color: #f8fafc;
     border-color: #334155;
   }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -65,6 +66,7 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -193,6 +195,10 @@
     animation: marquee-scroll 20s linear infinite;
   }
 
+  .rev-container:hover .review-marquee-group {
+    animation-play-state: paused;
+  }
+
   @keyframes marquee-scroll {
     from {
       transform: translateX(0);
@@ -223,21 +229,17 @@
   .hero-gradient-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top right,
-      white,
-      rgba(255, 255, 255, 0.4),
-      rgba(16, 185, 129, 0.05)
-    );
+    background: linear-gradient(to top right,
+        white,
+        rgba(255, 255, 255, 0.4),
+        rgba(16, 185, 129, 0.05));
   }
 
   html.dark .hero-gradient-overlay {
-    background: linear-gradient(
-      to top right,
-      #0f172a,
-      rgba(15, 23, 42, 0.4),
-      rgba(16, 185, 129, 0.1)
-    );
+    background: linear-gradient(to top right,
+        #0f172a,
+        rgba(15, 23, 42, 0.4),
+        rgba(16, 185, 129, 0.1));
   }
 
   .mesh-gradient {
@@ -248,11 +250,9 @@
     background-image:
       radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
       radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-      radial-gradient(
-        at 50% 100%,
+      radial-gradient(at 50% 100%,
         rgba(16, 185, 129, 0.05) 0px,
-        transparent 50%
-      );
+        transparent 50%);
   }
 
   .floating-search {
@@ -387,6 +387,7 @@
 }
 
 @media (max-width: 768px) {
+
   .swiper-button-next,
   .swiper-button-prev {
     width: 10px;
@@ -397,26 +398,32 @@
 .doctor-swiper .swiper-pagination-bullet {
   background: #10b981;
 }
+
 .doctor-swiper .swiper-button-next,
 .doctor-swiper .swiper-button-prev {
   color: #10b981 !important;
   padding: 5px;
 }
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
 }
+
 .animate-scroll {
   animation: scroll 30s linear infinite;
   width: max-content;
 }
+
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
 .df {
   margin-top: 63px;
 }

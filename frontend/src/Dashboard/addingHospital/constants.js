@@ -1,4 +1,4 @@
-// ── CONSTANTS & TEMPLATES ──────────────────────────────────────────────────
+
 
 export const DAYS = [
   "Monday",
@@ -61,10 +61,38 @@ export const STEPS = [
   "Departments",
   "Services & Doctors",
   "Facilities & Hours",
+  "Add Services",
   "Review & Submit",
 ];
 
-// Helper functions to generate empty objects
+export const SERVICE_CATEGORIES = [
+  "Diagnostics",
+  "Consultation",
+  "Preventive",
+  "Emergency",
+  "Surgery",
+  "Therapy",
+  "Other",
+];
+
+export const emptyServiceEntry = () => ({
+  name: "",
+  category: "Other",
+  description: "",
+  price: "",
+  duration: "",
+  includes: [""],
+  treatments: [{ name: "", description: "" }],
+  pricing: [{ package: "", price: "", includes: [""] }],
+  businessHours: [
+    { day: "Mon - Fri", time: "09:00 AM – 05:00 PM", isOpen: true },
+    { day: "Saturday", time: "09:00 AM – 01:00 PM", isOpen: true },
+    { day: "Sunday", time: "Closed", isOpen: false },
+  ],
+  image: "",
+});
+
+
 export const emptyDept = () => ({
   name: "",
   head: "",
@@ -87,17 +115,18 @@ export const emptyHours = () =>
     highlight: false,
   }));
 
-// Main base template for form data
+
 export const baseTemplate = () => ({
   name: "",
   type: "",
   accreditation: "",
-  location: "",
-  rating: "",
-  reviewsCount: "",
+  city: "",
+  location: "", // Used as address
+  rating: 0,
+  reviewsCount: 0,
   established: "",
   beds: "",
-  doctors: "",
+  doctorsCount: "", // Renamed from doctors to avoid confusion with the ObjectId array
   surgeries: "",
   priceRange: "",
   acceptingPatients: null,
@@ -111,4 +140,5 @@ export const baseTemplate = () => ({
   accreditationsList: "",
   awards: [emptyAward()],
   businessHours: emptyHours(),
+  doctors: [], // The actual ObjectId array
 });

@@ -64,28 +64,28 @@ const DOCTORS = [
   },
 ];
 export default function Specialists() {
-  // const [doctors, setDoctors] = useState([]);
+  
 
-  // useEffect(() => {
-  //   const fetchDoctors = async () => {
-  //     try {
-  //       const data = await api.getDoctors();
-  //       // Map DB fields to match what SpecialistCard expects if needed
-  //       const formattedDoctors = data.map(doc => ({
-  //         id: doc._id,
-  //         name: doc.name,
-  //         specialist: doc.specialization,
-  //         image: doc.image,
-  //         rating: doc.rating,
-  //         location: doc.contactInfo || "City Hospital",
-  //       }));
-  //       setDoctors(formattedDoctors);
-  //     } catch (error) {
-  //       console.error("Failed to fetch specialists:", error);
-  //     }
-  //   };
-  //   fetchDoctors();
-  // }, []);
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   return (
     <section

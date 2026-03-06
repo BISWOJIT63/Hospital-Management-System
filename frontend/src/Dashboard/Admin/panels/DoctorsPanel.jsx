@@ -17,17 +17,19 @@ import {
   Chip,
 } from "../components/AdminUI";
 
-/* ══════════════════════════════════════════════
-   DOCTORS PANEL
-══════════════════════════════════════════════ */
+
 export default function DoctorsPanel({ fac }) {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(null);
-  const filtered = fac.keyDoctors.filter(
+
+  const doctorsList = fac?.keyDoctors || [];
+  const filtered = doctorsList.filter(
     (d) =>
-      !search ||
-      d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.specialty.toLowerCase().includes(search.toLowerCase()),
+      d && (
+        !search ||
+        (d.name && d.name.toLowerCase().includes(search.toLowerCase())) ||
+        (d.specialty && d.specialty.toLowerCase().includes(search.toLowerCase()))
+      )
   );
 
   return (
@@ -36,21 +38,21 @@ export default function DoctorsPanel({ fac }) {
         <StatCard
           icon={UserCheck}
           label="Total Doctors"
-          value={fac.doctors}
+          value={fac?.doctorsCount || fac?.doctors?.length || 0}
           sub="On staff"
           color="green"
         />
         <StatCard
           icon={Stethoscope}
           label="Specialties"
-          value={fac.departments.length}
+          value={fac?.departments?.length || 0}
           sub="Departments"
           color="teal"
         />
         <StatCard
           icon={Star}
           label="Avg Rating"
-          value="4.9"
+          value={fac?.rating || "0.0"}
           sub="Doctor rating"
           color="green"
         />

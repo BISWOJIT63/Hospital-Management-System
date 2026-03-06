@@ -1,5 +1,6 @@
-import React, { Activity, useState } from "react";
-import {  HeartPulse } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { HeartPulse, Activity } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { ServiceHero } from "./subpages/ServiceHero";
 import {
   ServiceOverview,
@@ -10,8 +11,9 @@ import {
   ServiceSpecialists,
   ServiceTimings,
 } from "./subpages/ServiceTimingsAndSpecialists";
+import { api } from "../../utils/api";
 
-// --- Mock Data for a Specific Service/Department ---
+
 const SERVICE = {
   name: "Advanced Cardiology & Heart Care",
   category: "Specialized Department",
@@ -24,7 +26,7 @@ const SERVICE = {
   about:
     "Our Advanced Cardiology department offers comprehensive diagnostic, medical, and surgical care for all types of heart conditions. Equipped with state-of-the-art Cath Labs and non-invasive diagnostic tools, our team of internationally trained cardiologists provides personalized treatment plans tailored to each patient's unique cardiac needs.",
 
-  // Single Hero Image
+
   image:
     "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?auto=format&fit=crop&q=80&w=1000&h=600",
 
@@ -125,20 +127,55 @@ const SERVICE = {
 
 
 export default function ServiceDeatils() {
+  const { id } = useParams();
+  const [SERVICE, setService] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        if (id) {
+          const data = await api.getServiceById(id);
+          setService(data);
+        }
+      } catch (err) {
+        console.error("Failed to load service:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchService();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen df bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-400 font-bold">Loading service...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!SERVICE) {
+    return (
+      <div className="min-h-screen df bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <p className="text-slate-500 font-bold text-lg">Service not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen df bg-slate-50 dark:bg-slate-900 font-sans pb-24 text-slate-800 dark:text-slate-100 transition-colors">
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pt-6">
         <ServiceHero service={SERVICE} />
-
-
-
         <div className="space-y-6 pb-12">
-          <ServiceOverview about={SERVICE.about} />
-          <ServiceTreatments treatments={SERVICE.treatments} />
-          <ServicePricing pricing={SERVICE.pricing} />
-          <ServiceSpecialists specialists={SERVICE.specialists} />
-          <ServiceTimings businessHours={SERVICE.businessHours} />
+          <ServiceOverview about={SERVICE.description || SERVICE.about} />
+          {SERVICE.treatments?.length > 0 && <ServiceTreatments treatments={SERVICE.treatments} />}
+          {SERVICE.pricing?.length > 0 && <ServicePricing pricing={SERVICE.pricing} />}
+          {SERVICE.specialists?.length > 0 && <ServiceSpecialists specialists={SERVICE.specialists} />}
+          {SERVICE.businessHours?.length > 0 && <ServiceTimings businessHours={SERVICE.businessHours} />}
         </div>
       </main>
     </div>

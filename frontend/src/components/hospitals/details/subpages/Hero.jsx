@@ -37,7 +37,7 @@ export default function Hero({
                                 Open 24/7
                             </div>
                         </div>
-                        {/* Thumbnails */}
+                        {}
                         <div className="grid grid-cols-5 gap-2">
                             {HOSPITAL.images.map((img, idx) => (
                                 <div
@@ -55,7 +55,7 @@ export default function Hero({
                         </div>
                     </div>
 
-                    {/* Right: Hospital Info */}
+                    {}
                     <div className="flex-1 flex flex-col justify-between">
                         <div>
                             <div className="flex justify-between items-start gap-4">
@@ -80,7 +80,7 @@ export default function Hero({
                                         </div>
                                     </div>
                                 </div>
-                                {/* Unified Actions */}
+                                {}
                                 <div className="flex gap-2 shrink-0">
                                     <button
                                         onClick={() => setIsFavorite(!isFavorite)}
@@ -123,7 +123,7 @@ export default function Hero({
                 </div>
             </div>
 
-            {/* Bottom Stats Bar */}
+            {}
             <div className="bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 p-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 divide-x divide-slate-200 dark:divide-slate-700">
                 <div className="flex flex-col items-center justify-center text-center px-2">
                     <div className="flex items-center gap-2 text-primary dark:text-green-400 mb-1">

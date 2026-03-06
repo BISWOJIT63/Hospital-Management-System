@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../utils/validation";
@@ -16,6 +16,26 @@ const LoginForm = ({ switchToForgot }) => {
   const navigate = useNavigate();
 
   const { login } = useAuth();
+  const location = useLocation();
+
+  // Handle OAuth redirect — reads ?token=...&role=...&name=... from URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    const role = params.get('role');
+    const name = params.get('name');
+    if (token) {
+      localStorage.setItem('token', token);
+      // Store basic user info into auth context via a minimal login
+      if (role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'superadmin') {
+        navigate('/admin');
+      } else if (role?.toLowerCase() === 'doctor') {
+        navigate('/doctor');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [location.search]);
 
   const {
     register,
@@ -158,7 +178,7 @@ const LoginForm = ({ switchToForgot }) => {
           </div>
         </div>
 
-        <SocialAuthButtons />
+        <SocialAuthButtons role={selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} />
       </div>
 
       <Link

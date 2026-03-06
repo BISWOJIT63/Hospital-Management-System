@@ -11,6 +11,12 @@ import Appointments from "../book-appointments/Appointments";
 import ServiceDeatils from "../Services/ServiceDeatils";
 import ServiceList from './../Services/ServiceList';
 import Admin from "../../Dashboard/Admin";
+import User from './../../user/User';
+import Clinic from '../clinic/Clinic';
+import DoctorPortal from "../../doctor/Doctor";
+import SuperAdmin from "../../superAdmin/SuperAdmin";
+import About from "../About";
+import AddReview from "../../pages/AddReview"
 
 const Routing = () => {
   return (
@@ -29,14 +35,22 @@ const Routing = () => {
         />
         <Route path="/appointmnet" element={<Appointments />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/doctors-profile" element={<DoctorProfile />} />
-        <Route path="/Hospital-profile" element={<Details />} />
-        <Route path="/service-profile" element={<ServiceDeatils />} />
+        <Route path="/doctors-profile/:id" element={<DoctorProfile />} />
+        <Route path="/Hospital-profile/:id" element={<Details />} />
+        <Route path="/clinic-profile/:id" element={<Clinic />} />
+
+        <Route path="/service-profile/:id" element={<ServiceDeatils />} />
         <Route path="/admin" element={<Admin />} />
-        
+        <Route path="/patient" element={<User />} />
+        <Route path="/doctor" element={<DoctorPortal />} />
+        <Route path="/gmara" element={<SuperAdmin />} />
+        <Route path="/about" element={<About />} />
+
         <Route path="/hospitals" element={<List />} />
         <Route path="/doctors" element={<DoctorList />} />
         <Route path="/services" element={<ServiceList />} />
+        <Route path="/reviews" element={<AddReview />} />
+
 
       </Routes>
     </main>

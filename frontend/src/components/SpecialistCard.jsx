@@ -27,30 +27,30 @@ export default function SpecialistCard({ DOCTORS }) {
     setActiveIndex(index);
   };
 
-  // Dynamic spacing based on screen size to keep it responsive
+  
   const getSpacing = () => {
-    if (windowWidth < 640) return 140; // Mobile
-    if (windowWidth < 1024) return 200; // Tablet
-    return 260; // Desktop
+    if (windowWidth < 640) return 140; 
+    if (windowWidth < 1024) return 200; 
+    return 260; 
   };
 
   return (
     <div className="relative h-screen overflow-hidden flex flex-col items-center justify-center font-sans">
-      {/* Slider Container */}
+      {}
       <div className="relative w-full max-w-7xl h-[450px] flex items-center justify-center z-10 perspective-[1000px]">
         {DOCTORS.map((doctor, index) => {
-          // Calculate positioning logic
+          
           const offset = index - activeIndex;
           const absOffset = Math.abs(offset);
           const isCenter = offset === 0;
 
-          // Determine if card should be hidden (too far away)
+          
           const isVisible = absOffset <= 2;
 
-          // Math for transforms
+          
           const spacing = getSpacing();
           const translateX = offset * spacing;
-          const scale = isCenter ? 1 : 1 - absOffset * 0.15; // Scale down side cards
+          const scale = isCenter ? 1 : 1 - absOffset * 0.15; 
           const zIndex = 50 - absOffset;
           const opacity = isVisible ? (isCenter ? 1 : 0.8) : 0;
 
@@ -67,19 +67,19 @@ export default function SpecialistCard({ DOCTORS }) {
                 pointerEvents: isVisible ? "auto" : "none",
               }}
             >
-              {/* The Card Background (Matching the green style) */}
+              {}
               <div
                 className={`w-full h-full rounded-2xl relative shadow-2xl transition-colors duration-500 border border-white/10
                   ${isCenter ? "bg-green-500" : "bg-green-600"}`}
               >
-                {/* Dark overlay for inactive cards to push them into the background */}
+                {}
                 {!isCenter && (
                   <div className="absolute inset-0 bg-black/40 z-10 transition-opacity duration-500 rounded-2xl" />
                 )}
 
-                {/* Card Content */}
+                {}
                 <div className="px-6 pb-6 pt-24 h-full flex flex-col justify-between text-white relative z-20">
-                  {/* Top overlapping Profile Image */}
+                  {}
                   <div
                     className={`absolute left-1/2 -translate-x-1/2 transition-all duration-500 z-30
                     ${isCenter ? "-top-20 w-40 h-40" : "-top-16 w-32 h-32"}
@@ -92,7 +92,7 @@ export default function SpecialistCard({ DOCTORS }) {
                         className="w-full h-full object-cover rounded-full"
                       />
                     </div>
-                    {/* Rating Badge */}
+                    {}
                     {isCenter && (
                       <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-green-500 text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1">
                         <Star size={12} fill="currentColor" /> {doctor.rating}
@@ -108,7 +108,7 @@ export default function SpecialistCard({ DOCTORS }) {
                       {doctor.specialty}
                     </p>
 
-                    {/* Show description only if it's the center card, or truncate it */}
+                    {}
                     <div
                       className={`transition-all duration-500 overflow-hidden ${isCenter ? "opacity-100 max-h-24" : "opacity-0 max-h-0"}`}
                     >
@@ -118,7 +118,7 @@ export default function SpecialistCard({ DOCTORS }) {
                     </div>
                   </div>
 
-                  {/* Bottom Action Row */}
+                  {}
                   <div className="flex items-center justify-between border-t border-white/20 pt-4 mt-auto">
                     <div>
                       <p className="text-white/70 text-xs">Consultation</p>
@@ -144,7 +144,7 @@ export default function SpecialistCard({ DOCTORS }) {
         })}
       </div>
 
-      {/* Navigation Controls */}
+      {}
       <div className="relative z-30 mt-12 flex items-center gap-6">
         <button
           onClick={handlePrev}
@@ -154,7 +154,7 @@ export default function SpecialistCard({ DOCTORS }) {
           <ChevronLeft size={24} />
         </button>
 
-        {/* Pagination Dots */}
+        {}
         <div className="flex gap-2">
           {DOCTORS.map((_, idx) => (
             <div

@@ -124,22 +124,22 @@ export default function Hospitals() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
 
-  // Transition State for the cinematic wipe
+  
   const [transition, setTransition] = useState({
     active: false,
-    phase: "idle", // 'idle' | 'entering' | 'exiting'
-    dir: "next", // 'next' | 'prev'
+    phase: "idle", 
+    dir: "next", 
   });
 
   const currentSlide = SLIDES[currentIndex];
 
   const changeSlide = (direction) => {
-    if (transition.active) return; // Prevent multiple clicks during animation
+    if (transition.active) return; 
 
     setSelectedCard(null);
     setTransition({ active: true, phase: "entering", dir: direction });
 
-    // Phase 1: Wait for the wiping blocks to cover the screen
+    
     setTimeout(() => {
       setCurrentIndex((prev) =>
         direction === "next"
@@ -148,14 +148,14 @@ export default function Hospitals() {
       );
       setTransition({ active: true, phase: "exiting", dir: direction });
 
-      // Phase 2: Wait for blocks to reveal new content, then reset
+      
       setTimeout(() => {
         setTransition({ active: false, phase: "idle", dir: direction });
       }, 800);
     }, 800);
   };
 
-  // Determine classes for the wiping overlay
+  
   let overlayTransform = "";
   if (transition.phase === "idle") {
     overlayTransform =
@@ -186,7 +186,7 @@ export default function Hospitals() {
       >
         <div className="w-full lg:w-[35%] pr-8 relative h-full flex flex-col justify-center min-h-[300px]">
           {selectedCard ? (
-            // DETAILED CARD VIEW
+            
             <div
               key={`detail-${selectedCard.id}`}
               className="animate-fade-in-up"

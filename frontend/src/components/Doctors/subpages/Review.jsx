@@ -53,7 +53,7 @@ const Review = ({DOCTOR}) => {
                 <Reply className="w-4 h-4" /> Reply
               </button>
 
-              {/* Nested Reply */}
+              {}
               {review.reply && (
                 <div className="mt-6 ml-10 p-4 bg-slate-50 dark:bg-slate-800 dark:border-slate-700 border border-slate-100 rounded-xl flex gap-4">
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0 font-bold text-green-700">

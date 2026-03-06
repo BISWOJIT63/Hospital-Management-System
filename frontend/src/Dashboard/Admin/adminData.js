@@ -39,7 +39,7 @@ export const NAV = [
   { id: "awards", label: "Awards", icon: Award },
 ];
 
-/* ══════════════ SAMPLE DATA ══════════════ */
+
 export const FACILITY = {
   name: "Meridian General Hospital",
   type: "Multi-Specialty",
@@ -237,7 +237,7 @@ export const statusData = [
   { name: "Cancelled", value: 34, color: "#ef4444" },
 ];
 
-/* ══════════════ BOOKINGS DATA ══════════════ */
+
 export const initBookings = [
   {
     id: "BK001",
@@ -351,7 +351,7 @@ export const initBookings = [
   },
 ];
 
-/* ══════════════ BILLING DATA ══════════════ */
+
 export const initBills = [
   {
     id: "INV-2026-001",
@@ -418,7 +418,7 @@ export const initBills = [
   },
 ];
 
-/* ══════════════ REVIEWS DATA ══════════════ */
+
 export const initReviews = [
   {
     id: 1,

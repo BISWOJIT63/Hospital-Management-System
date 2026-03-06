@@ -48,7 +48,7 @@ const SPECIALTIES = [
   },
 ];
 const AVAILABLE_DOCTORS = [
-  // General Practice
+  
   {
     id: "gp1",
     specialty: "gp",
@@ -72,7 +72,7 @@ const AVAILABLE_DOCTORS = [
     patients: "1.2k+",
   },
 
-  // Cardiology
+  
   {
     id: "cardio1",
     specialty: "cardio",
@@ -96,7 +96,7 @@ const AVAILABLE_DOCTORS = [
     patients: "1.8k+",
   },
 
-  // Dermatology
+  
   {
     id: "derma1",
     specialty: "derma",
@@ -120,7 +120,7 @@ const AVAILABLE_DOCTORS = [
     patients: "900+",
   },
 
-  // Orthopedics
+  
   {
     id: "ortho1",
     specialty: "ortho",
@@ -133,7 +133,7 @@ const AVAILABLE_DOCTORS = [
     patients: "4k+",
   },
 
-  // Neurology
+  
   {
     id: "neuro1",
     specialty: "neuro",
@@ -146,7 +146,7 @@ const AVAILABLE_DOCTORS = [
     patients: "2.2k+",
   },
 
-  // Pediatrics
+  
   {
     id: "peds1",
     specialty: "peds",
@@ -159,7 +159,7 @@ const AVAILABLE_DOCTORS = [
     patients: "3.5k+",
   },
 
-  // Ophthalmology
+  
   {
     id: "opth1",
     specialty: "opth",
@@ -172,7 +172,7 @@ const AVAILABLE_DOCTORS = [
     patients: "1.5k+",
   },
 
-  // Dentistry
+  
   {
     id: "dental1",
     specialty: "dental",
@@ -194,7 +194,7 @@ export default function StepPayment({ data, summary, onChange }) {
 
       <div className="flex flex-col-reverse md:flex-row gap-8">
         <div className="flex-1 space-y-6">
-          {/* Payment Method Tabs */}
+          {}
           <div className="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
             <button
               onClick={() => onChange("method", "card")}
@@ -268,7 +268,7 @@ export default function StepPayment({ data, summary, onChange }) {
           )}
         </div>
 
-        {/* Order Summary */}
+        {}
         <div className="w-full md:w-80  p-6 rounded-xl border border-slate-200 dark:border-slate-700 h-fit">
           <h3 className="font-bold text-slate-900 dark:text-white mb-4">Booking Summary</h3>
           <div className="space-y-3 text-sm border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">

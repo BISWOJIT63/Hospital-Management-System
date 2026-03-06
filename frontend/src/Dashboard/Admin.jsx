@@ -6,6 +6,7 @@ import {
   HelpCircle,
   Activity,
   Loader2,
+  Check,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AdminDashboard from "./Admin/AdminDashboard";
@@ -27,7 +28,7 @@ export default function Admin() {
         return;
       }
       const data = await api.getMyFacility(token);
-      setFacility(data.facility); // Might be null if none created
+      setFacility(data.facility);
       if (data.facility?.status === "approved") setApproved(true);
     } catch (err) {
       console.error(err);
@@ -109,7 +110,7 @@ export default function Admin() {
             </div>
           </div>
 
-          {/* Status Steps */}
+          { }
           <div className="p-8 pb-10">
             <div className="max-w-md mx-auto space-y-6">
               {[
@@ -135,13 +136,12 @@ export default function Admin() {
                   <div className="flex items-center gap-4 w-full text-left relative z-10">
                     <div
                       className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border-2 transition-all duration-500
-                      ${
-                        step.status === "done"
+                      ${step.status === "done"
                           ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
                           : step.status === "current"
                             ? "bg-green-50 dark:bg-green-500/10 border-green-500 text-green-600 dark:text-green-400 shadow-lg shadow-green-500/20"
                             : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-400"
-                      }`}
+                        }`}
                     >
                       <step.icon
                         size={20}
@@ -183,7 +183,7 @@ export default function Admin() {
                 <HelpCircle size={16} /> Contact Support
               </button>
 
-              {/* Dev bypass button */}
+              { }
               <button
                 onClick={() => setApproved(true)}
                 className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-sm hover:opacity-90 transition-all shadow-xl shadow-slate-900/10 active:scale-95 flex items-center justify-center gap-2"
@@ -199,20 +199,4 @@ export default function Admin() {
   );
 }
 
-// Ensure Check is available for this file
-const Check = ({ size = 24, className = "", strokeWidth = 2 }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={strokeWidth}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>
-);
+

@@ -57,7 +57,7 @@ export default function ReviewsPanel({ fac }) {
       ? (reviews.reduce((a, b) => a + b.rating, 0) / reviews.length).toFixed(1)
       : "0.0";
 
-  // Delete a review
+  
   const del = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -68,7 +68,7 @@ export default function ReviewsPanel({ fac }) {
     }
   };
 
-  // Reply to a review
+  
   const sendReply = async (id) => {
     if (!replyText.trim()) return;
     try {

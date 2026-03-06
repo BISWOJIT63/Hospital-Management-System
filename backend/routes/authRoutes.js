@@ -13,39 +13,51 @@ router.get('/me', protect, getUserProfile);
 router.post('/forgot-password', forgotPassword);
 router.put('/reset-password/:token', resetPassword);
 
-// --- Google OAuth Routes ---
-// Initiate Google Login
+
+
 router.get(
     '/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-);
-
-// Google Callback
-router.get(
-    '/google/callback',
-    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
-    (req, res) => {
-        // Successful authentication, generate token and redirect to frontend
-        const token = generateToken(req.user._id);
-        res.redirect(`http://localhost:5173/login?token=${token}`);
+    (req, res, next) => {
+        const role = req.query.role || 'Patient';
+        passport.authenticate('google', {
+            scope: ['profile', 'email'],
+            state: role
+        })(req, res, next);
     }
 );
 
-// --- Facebook OAuth Routes ---
-// Initiate Facebook Login
+
 router.get(
-    '/facebook',
-    passport.authenticate('facebook', { scope: ['email'] })
+    '/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+    async (req, res) => {
+        const token = generateToken(req.user._id);
+        const userRole = req.user.role;
+        res.redirect(`http://localhost:5173/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`);
+    }
 );
 
-// Facebook Callback
+
+
+router.get(
+    '/facebook',
+    (req, res, next) => {
+        const role = req.query.role || 'Patient';
+        passport.authenticate('facebook', {
+            scope: ['email'],
+            state: role
+        })(req, res, next);
+    }
+);
+
+
 router.get(
     '/facebook/callback',
     passport.authenticate('facebook', { session: false, failureRedirect: '/login' }),
-    (req, res) => {
-        // Successful authentication, generate token and redirect to frontend
+    async (req, res) => {
         const token = generateToken(req.user._id);
-        res.redirect(`http://localhost:5173/login?token=${token}`);
+        const userRole = req.user.role;
+        res.redirect(`http://localhost:5173/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`);
     }
 );
 

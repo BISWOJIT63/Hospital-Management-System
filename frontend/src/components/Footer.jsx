@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -53,9 +53,7 @@ export default function Footer() {
               <a className="hover:text-primary transition-colors" href="#">
                 Security
               </a>
-               <a className="hover:text-primary transition-colors" href="#">
-                About
-              </a>
+               <NavLink to="/about" className="hover:text-primary transition-colors">About</NavLink>
               <a className="hover:text-primary transition-colors" href="#">
                 Terms
               </a>

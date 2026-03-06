@@ -14,7 +14,7 @@ const ThemeToggle = () => {
     >
       <motion.div
         initial={false}
-        animate={{ rotate: theme === "dark" ? 180 : 0 }}
+        animate={{ rotate: theme === "dark" ? 360 : 0 }}
         transition={{ duration: 0.3 }}
       >
         {theme === "dark" ? <FiMoon size={18} /> : <FiSun size={18} />}
