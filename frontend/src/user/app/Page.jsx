@@ -11,7 +11,7 @@ import ProfileHero from "../components/ProfileHero";
 import PersonalInfo from "../components/PersonalInfo";
 import EmergencyContact from "../components/EmergencyContact";
 
-import Preferences from "/HOSPITAL MANAGEMENT SYSTEM/Hospital Mangement System/frontend/src/user/components/Preferences";
+import Preferences from "../components/Preferences";
 import SecurityCard from "../components/SecurityCard";
 
 
