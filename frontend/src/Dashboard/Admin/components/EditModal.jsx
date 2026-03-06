@@ -155,21 +155,27 @@ function ESelect({ label, value, onChange, options }) {
   );
 }
 function EMultiPill({ label, options, selected, onChange }) {
+  const safeSelected = Array.isArray(selected)
+    ? selected
+    : typeof selected === "string" && selected.trim() !== ""
+      ? selected.split(",").map((s) => s.trim())
+      : [];
+
   return (
     <div>
       <label className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 dark:text-slate-500 block mb-1.5">
         {label}
       </label>
-      {selected.length > 0 && (
+      {safeSelected.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-2">
-          {selected.map((s) => (
+          {safeSelected.map((s) => (
             <span
               key={s}
               className="inline-flex items-center gap-1 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20 rounded-full px-3 py-0.5 text-xs font-semibold"
             >
               {s}
               <button
-                onClick={() => onChange(selected.filter((x) => x !== s))}
+                onClick={() => onChange(safeSelected.filter((x) => x !== s))}
                 className="hover:text-rose-500 dark:hover:text-rose-400"
               >
                 <X size={10} />
@@ -180,17 +186,17 @@ function EMultiPill({ label, options, selected, onChange }) {
       )}
       <div className="flex flex-wrap gap-1.5 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
         {options
-          .filter((o) => !selected.includes(o))
+          .filter((o) => !safeSelected.includes(o))
           .map((o) => (
             <button
               key={o}
-              onClick={() => onChange([...selected, o])}
+              onClick={() => onChange([...safeSelected, o])}
               className="text-xs border border-dashed border-slate-300 dark:border-slate-600 rounded-full px-3 py-1 text-slate-500 dark:text-slate-400 hover:border-green-400 dark:hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-500/10 transition"
             >
               + {o}
             </button>
           ))}
-        {options.every((o) => selected.includes(o)) && (
+        {options.every((o) => safeSelected.includes(o)) && (
           <p className="text-xs text-slate-400 dark:text-slate-500 italic">
             All selected ✓
           </p>
