@@ -14,8 +14,28 @@ import {
   Info,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
+  const navigate = useNavigate();
+
+  const cleanValue = (val, fallback = "Location N/A") => {
+    if (!val) return fallback;
+    const s = String(val).trim();
+    const invalid = ["N/A", "NA", "UNDEFINED", "NULL", "LOCATION N/A", "(GET DIRECTION)"];
+    if (invalid.includes(s.toUpperCase())) return fallback;
+    return val;
+  };
+
+  const doctorImage = DOCTOR.image || DOCTOR.avatar || DOCTOR.profilePic || `https://images.unsplash.com/photo-1559839734-2b71ca197ec2?w=400&q=80`;
+  const doctorLocation = cleanValue(DOCTOR.location) !== "Location N/A" 
+    ? DOCTOR.location 
+    : cleanValue(DOCTOR.city) !== "Location N/A" 
+      ? DOCTOR.city 
+      : cleanValue(DOCTOR.address) !== "Location N/A" 
+        ? DOCTOR.address 
+        : "Address not specified";
+
   return (
     <div>
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-600 overflow-hidden">
@@ -24,9 +44,10 @@ const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
             <div className="flex flex-col sm:flex-row gap-6">
               <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0">
                 <img
-                  src={DOCTOR.image}
+                  src={doctorImage}
                   alt={DOCTOR.name}
                   className="w-full h-full object-cover rounded-xl"
+                  onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${DOCTOR.name}`; }}
                 />
                 <div className="absolute top-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
@@ -40,14 +61,14 @@ const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
                   <ShieldCheck className="w-5 h-5 text-green-500" />
                 </h1>
                 <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">
-                  {DOCTOR.title}
+                  {DOCTOR.title || DOCTOR.specialty || "Medical Specialist"}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Dentist - English, French, German
+                  {DOCTOR.specialization || DOCTOR.category || "Healthcare Provider"}
                 </p>
                 <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400 pt-1">
                   <MapPin className="w-4 h-4 text-slate-400" />
-                  <span>{DOCTOR.location}</span>
+                  <span>{doctorLocation}</span>
                   <a href="#" className="text-green-600 hover:underline ml-1">
                     (Get Direction)
                   </a>
@@ -148,6 +169,7 @@ const Profile = ({DOCTOR,isFavorite,setIsFavorite}) => {
               <span className="text-slate-500"> for a session</span>
             </div>
             <button
+              onClick={() => navigate('/appointment', { state: { doctor: DOCTOR } })}
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg text-sm transition shadow-sm"
             >
               Book Appointment

@@ -14,6 +14,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import {
   TrendingUp,
@@ -44,6 +45,8 @@ export default function AnalyticsPanel() {
       }
     };
     fetchAnalytics();
+    const interval = setInterval(fetchAnalytics, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const CustomTip = ({ active, payload, label }) => {
@@ -60,8 +63,8 @@ export default function AnalyticsPanel() {
             className="font-semibold capitalize"
           >
             {p.name}:{" "}
-            {p.name === "revenue"
-              ? `$${(p.value / 1000).toFixed(0)}k`
+            {p.name === "revenue" || p.name === "expenses"
+              ? `$${(p.value / 1000).toFixed(1)}k`
               : p.value}
           </p>
         ))}
@@ -84,68 +87,51 @@ export default function AnalyticsPanel() {
       </div>
     );
 
-  const { revenueData, patientData, bedData, deptPatients } = analytics;
+  const { revenueData = [], patientData = [], bedData = [], deptPatients = [], summary = {} } = analytics;
+  const { totalBookings = 0, totalPatients = 0, avgRating = 0, totalReviews = 0 } = summary;
 
-  
-  
-  
-  
-  
-
-  
-  const totalRev = revenueData.reduce(
-    (sum, item) => sum + (item.revenue || 0),
-    0,
-  );
-  const totalVisits = patientData.reduce(
-    (sum, item) => sum + (item.opd || 0) + (item.ipd || 0),
-    0,
-  );
-  const totalBookings = Math.round(totalVisits * 0.35); 
+  const totalRev = revenueData.reduce((sum, item) => sum + (item.revenue || 0), 0);
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Summary stat cards - real DB data */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={TrendingUp}
-          label="Total Revenue"
-          value={`$${(totalRev / 1000000).toFixed(2)}M`}
-          sub="This year"
+          label="Est. Revenue"
+          value={totalRev > 0 ? `$${(totalRev / 1000).toFixed(0)}k` : "$0"}
+          sub="Based on bookings"
           color="green"
-          trend="+18%"
         />
         <StatCard
           icon={Calendar}
           label="Total Bookings"
           value={totalBookings.toLocaleString()}
-          sub="This year"
+          sub="All time"
           color="teal"
-          trend="+14%"
         />
         <StatCard
           icon={Users}
-          label="Patient Visits"
-          value={totalVisits.toLocaleString()}
-          sub="This year"
+          label="Unique Patients"
+          value={totalPatients.toLocaleString()}
+          sub="Total served"
           color="green"
-          trend="+9%"
         />
         <StatCard
           icon={Star}
           label="Avg Rating"
-          value="4.8"
-          sub="1,240 reviews"
+          value={avgRating > 0 ? avgRating.toFixed(1) : "N/A"}
+          sub={totalReviews > 0 ? `${totalReviews} reviews` : "No reviews yet"}
           color="rose"
-          trend="+0.2"
         />
       </div>
 
-      {}
+      {/* Monthly Revenue & Expenses Line Chart */}
       <Card>
         <SectionHdr
           icon={TrendingUp}
-          title="Revenue & Visits"
-          sub="Monthly trend for 2026"
+          title="Revenue & Expenses"
+          sub={`Monthly trend for ${new Date().getFullYear()} (estimated from bookings)`}
         />
         <ResponsiveContainer width="100%" height={240}>
           <AreaChart
@@ -157,16 +143,12 @@ export default function AnalyticsPanel() {
                 <stop offset="5%" stopColor="#6366f1" stopOpacity={0.15} />
                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
               </linearGradient>
-              <linearGradient id="vis" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="exp" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#f1f5f9"
-              strokeOpacity={0.2}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" strokeOpacity={0.2} />
             <XAxis
               dataKey="month"
               tick={{ fontSize: 11, fill: "#94a3b8" }}
@@ -177,10 +159,11 @@ export default function AnalyticsPanel() {
               tick={{ fontSize: 11, fill: "#94a3b8" }}
               axisLine={false}
               tickLine={false}
-              width={45}
+              width={50}
               tickFormatter={(v) => `$${v / 1000}k`}
             />
             <Tooltip content={<CustomTip />} />
+            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
             <Area
               type="monotone"
               dataKey="revenue"
@@ -194,7 +177,7 @@ export default function AnalyticsPanel() {
               dataKey="expenses"
               stroke="#10b981"
               strokeWidth={2.5}
-              fill="url(#vis)"
+              fill="url(#exp)"
               name="expenses"
             />
           </AreaChart>
@@ -202,128 +185,130 @@ export default function AnalyticsPanel() {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {}
+        {/* Department / Service Breakdown */}
         <Card>
           <SectionHdr
             icon={Layers}
-            title="Patients by Department"
-            sub="Distribution across departments"
+            title="Bookings by Service"
+            sub="Top services booked at your facility"
           />
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart
-              data={deptPatients}
-              margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#f1f5f9"
-                strokeOpacity={0.2}
-              />
-              <XAxis
-                dataKey="dept"
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
-                axisLine={false}
-                tickLine={false}
-                width={35}
-              />
-              <Tooltip
-                cursor={{ fill: "rgba(148, 163, 184, 0.1)" }}
-                content={({ active, payload, label }) =>
-                  active && payload?.length ? (
-                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-xl text-xs">
-                      <p className="font-black text-slate-700 dark:text-slate-200">
-                        {label}
-                      </p>
-                      <p className="text-green-600 dark:text-green-400 font-semibold">
-                        {payload[0].value} patients
-                      </p>
-                    </div>
-                  ) : null
-                }
-              />
-              <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          {deptPatients.length === 0 ? (
+            <div className="flex items-center justify-center h-[220px] text-slate-400 dark:text-slate-500 text-sm">
+              No booking data yet
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart
+                data={deptPatients}
+                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" strokeOpacity={0.2} />
+                <XAxis
+                  dataKey="dept"
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={35}
+                />
+                <Tooltip
+                  cursor={{ fill: "rgba(148, 163, 184, 0.1)" }}
+                  content={({ active, payload, label }) =>
+                    active && payload?.length ? (
+                      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-xl text-xs">
+                        <p className="font-black text-slate-700 dark:text-slate-200">{label}</p>
+                        <p className="text-green-600 dark:text-green-400 font-semibold">
+                          {payload[0].value} bookings
+                        </p>
+                      </div>
+                    ) : null
+                  }
+                />
+                <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </Card>
 
-        {}
+        {/* Booking Status Donut */}
         <Card>
           <SectionHdr
             icon={CheckSquare}
             title="Booking Status"
-            sub="Current distribution"
+            sub="Live distribution from database"
           />
-          <div className="flex items-center gap-6">
-            <ResponsiveContainer width="55%" height={200}>
-              <PieChart>
-                <Pie
-                  data={bedData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={55}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  dataKey="value"
-                >
-                  {bedData.map((e, i) => (
-                    <Cell key={i} fill={e.color || "#6366f1"} stroke="none" />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(v, n) => [v, n]} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-col gap-3 flex-1">
-              {bedData.map((s) => (
-                <div key={s.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded-full shrink-0"
-                      style={{ background: s.color || "#6366f1" }}
-                    />
-                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-                      {s.name}
+          {bedData.every(d => d.value === 0) ? (
+            <div className="flex items-center justify-center h-[200px] text-slate-400 dark:text-slate-500 text-sm">
+              No booking data yet
+            </div>
+          ) : (
+            <div className="flex items-center gap-6">
+              <ResponsiveContainer width="55%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={bedData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {bedData.map((e, i) => (
+                      <Cell key={i} fill={e.color || "#6366f1"} stroke="none" />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v, n) => [v, n]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-col gap-3 flex-1">
+                {bedData.map((s) => (
+                  <div key={s.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ background: s.color || "#6366f1" }}
+                      />
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                        {s.name}
+                      </span>
+                    </div>
+                    <span className="text-sm font-black text-slate-800 dark:text-slate-200">
+                      {s.value}
                     </span>
                   </div>
+                ))}
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                    Total
+                  </span>
                   <span className="text-sm font-black text-slate-800 dark:text-slate-200">
-                    {s.value}
+                    {bedData.reduce((a, b) => a + (b.value || 0), 0)}
                   </span>
                 </div>
-              ))}
-              <div className="border-t border-slate-100 dark:border-slate-800 pt-2 flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
-                  Total
-                </span>
-                <span className="text-sm font-black text-slate-800 dark:text-slate-200">
-                  {bedData.reduce((a, b) => a + (b.value || 0), 0)}
-                </span>
               </div>
             </div>
-          </div>
+          )}
         </Card>
       </div>
 
-      {}
+      {/* Weekly Booking Pattern */}
       <Card>
         <SectionHdr
           icon={Calendar}
-          title="Monthly Bookings"
-          sub="Booking count trend"
+          title="Weekly Booking Pattern"
+          sub="Appointments by day of week"
         />
         <ResponsiveContainer width="100%" height={200}>
           <LineChart
             data={patientData}
             margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
           >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#f1f5f9"
-              strokeOpacity={0.2}
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" strokeOpacity={0.2} />
             <XAxis
               dataKey="day"
               tick={{ fontSize: 11, fill: "#94a3b8" }}
@@ -340,19 +325,21 @@ export default function AnalyticsPanel() {
               content={({ active, payload, label }) =>
                 active && payload?.length ? (
                   <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-xl text-xs">
-                    <p className="font-black text-slate-700 dark:text-slate-200">
-                      {label}
-                    </p>
-                    <p className="text-green-600 dark:text-green-500 font-semibold">
-                      {payload[0].value} bookings
-                    </p>
+                    <p className="font-black text-slate-700 dark:text-slate-200">{label}</p>
+                    {payload.map(p => (
+                      <p key={p.name} style={{ color: p.color }} className="font-semibold">
+                        {p.name}: {p.value}
+                      </p>
+                    ))}
                   </div>
                 ) : null
               }
             />
+            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
             <Line
               type="monotone"
               dataKey="opd"
+              name="Outpatient"
               stroke="#f59e0b"
               strokeWidth={2.5}
               dot={{ r: 4, fill: "#f59e0b", strokeWidth: 0 }}
@@ -361,6 +348,7 @@ export default function AnalyticsPanel() {
             <Line
               type="monotone"
               dataKey="ipd"
+              name="Inpatient"
               stroke="#10b981"
               strokeWidth={2.5}
               dot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}

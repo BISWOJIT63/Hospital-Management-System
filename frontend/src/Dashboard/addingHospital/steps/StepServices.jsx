@@ -27,11 +27,23 @@ export default function StepServices({ servicesList, setServicesList }) {
     };
 
     const handleImage = (idx, e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => update(idx, "image", ev.target.result);
-        reader.readAsDataURL(file);
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                setServicesList((prev) => {
+                    const next = [...prev];
+                    const currentImages = next[idx].images || [];
+                    if (currentImages.length < 5) {
+                        next[idx] = { ...next[idx], images: [...currentImages, ev.target.result] };
+                    }
+                    return next;
+                });
+            };
+            reader.readAsDataURL(file);
+        });
     };
 
     const updateIncludes = (sIdx, iIdx, value) => {
@@ -128,36 +140,44 @@ export default function StepServices({ servicesList, setServicesList }) {
                             <div className="px-5 pb-6 space-y-5 border-t border-slate-200 dark:border-slate-700 pt-5">
                                 {/* Image upload */}
                                 <div>
-                                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-2">Service Image</label>
-                                    <div
-                                        className="relative h-36 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 overflow-hidden cursor-pointer hover:border-green-400 transition-colors flex items-center justify-center bg-white dark:bg-slate-900"
-                                        onClick={() => fileRefs.current[idx]?.click()}
-                                    >
-                                        {svc.image ? (
-                                            <>
-                                                <img src={svc.image} alt="service" className="w-full h-full object-cover" />
+                                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-2">Service Images (3-5 Recommended)</label>
+                                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                                        {svc.images?.map((img, iIdx) => (
+                                            <div key={iIdx} className="relative h-24 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden group">
+                                                <img src={img} alt="" className="w-full h-full object-cover" />
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => { e.stopPropagation(); update(idx, "image", ""); }}
-                                                    className="absolute top-2 right-2 bg-white/80 dark:bg-slate-800/80 rounded-full p-1"
+                                                    onClick={() => {
+                                                        const next = svc.images.filter((_, i) => i !== iIdx);
+                                                        update(idx, "images", next);
+                                                    }}
+                                                    className="absolute top-1 right-1 bg-white/90 dark:bg-slate-800/90 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
                                                 >
-                                                    <X className="w-4 h-4 text-slate-600" />
+                                                    <X className="w-3 h-3 text-rose-500" />
                                                 </button>
-                                            </>
-                                        ) : (
-                                            <div className="text-center text-slate-400">
-                                                <Upload className="w-6 h-6 mx-auto mb-1" />
-                                                <p className="text-xs font-medium">Upload Service Image</p>
+                                            </div>
+                                        ))}
+                                        {(svc.images?.length || 0) < 5 && (
+                                            <div
+                                                className="h-24 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center cursor-pointer hover:border-green-400 hover:bg-green-50/30 transition-all text-slate-400"
+                                                onClick={() => fileRefs.current[idx]?.click()}
+                                            >
+                                                <Plus className="w-5 h-5 mb-1" />
+                                                <span className="text-[10px] font-bold">Add</span>
                                             </div>
                                         )}
-                                        <input
-                                            ref={(el) => (fileRefs.current[idx] = el)}
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={(e) => handleImage(idx, e)}
-                                        />
                                     </div>
+                                    <input
+                                        ref={(el) => (fileRefs.current[idx] = el)}
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => handleImage(idx, e)}
+                                    />
+                                    {svc.images?.length < 3 && svc.images?.length > 0 && (
+                                        <p className="text-[10px] text-amber-500 font-bold mt-2">Please add at least 3 images for a better profile.</p>
+                                    )}
                                 </div>
 
                                 {/* Core fields */}
@@ -181,14 +201,62 @@ export default function StepServices({ servicesList, setServicesList }) {
                                             {SERVICE_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
                                         </select>
                                     </div>
-                                    <div>
-                                        <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-1">Price</label>
-                                        <input
-                                            value={svc.price}
-                                            onChange={(e) => update(idx, "price", e.target.value)}
-                                            placeholder="e.g. $199 or From $150"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-green-500 outline-none"
-                                        />
+                                    <div className="col-span-2">
+                                        <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-2">Pricing Packages / Appointment Types</label>
+                                        <div className="space-y-3">
+                                            {svc.pricing?.map((p, pIdx) => (
+                                                <div key={pIdx} className="flex gap-3 items-center bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-700">
+                                                    <div className="flex-1">
+                                                        <input
+                                                            value={p.package}
+                                                            onChange={(e) => {
+                                                                const nextPricing = [...svc.pricing];
+                                                                nextPricing[pIdx].package = e.target.value;
+                                                                update(idx, "pricing", nextPricing);
+                                                                // Also update main price for backward compatibility if it's the first one
+                                                                if (pIdx === 0) update(idx, "price", e.target.value);
+                                                            }}
+                                                            placeholder="Package Name (e.g. Standard)"
+                                                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm outline-none"
+                                                        />
+                                                    </div>
+                                                    <div className="w-28">
+                                                        <input
+                                                            value={p.price}
+                                                            onChange={(e) => {
+                                                                const nextPricing = [...svc.pricing];
+                                                                nextPricing[pIdx].price = e.target.value;
+                                                                update(idx, "pricing", nextPricing);
+                                                            }}
+                                                            placeholder="Price"
+                                                            className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm outline-none"
+                                                        />
+                                                    </div>
+                                                    {svc.pricing.length > 1 && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const nextPricing = svc.pricing.filter((_, i) => i !== pIdx);
+                                                                update(idx, "pricing", nextPricing);
+                                                            }}
+                                                            className="p-1.5 text-rose-400 hover:bg-rose-50 rounded-lg"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const nextPricing = [...(svc.pricing || []), { package: "", price: "", includes: [""] }];
+                                                    update(idx, "pricing", nextPricing);
+                                                }}
+                                                className="text-xs font-bold text-green-600 hover:underline flex items-center gap-1"
+                                            >
+                                                <Plus className="w-3 h-3" /> Add pricing package
+                                            </button>
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="text-xs font-black uppercase tracking-widest text-slate-500 block mb-1">Duration</label>

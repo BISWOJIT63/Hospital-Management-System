@@ -8,9 +8,11 @@ import {
   Calendar,
   Phone,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const ServiceHero = ({ service }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -56,7 +58,7 @@ export const ServiceHero = ({ service }) => {
 
               <div className="flex items-center gap-1 text-sm font-medium text-slate-700 dark:text-slate-300 mb-6">
                 <Star className="w-4 h-4 text-green-500 fill-green-500" />
-                {service.rating}{" "}
+                {typeof service.rating === "object" ? (service.rating?.average?.toFixed(1) || "N/A") : (service.rating || "N/A")}{" "}
                 <span className="text-slate-500 dark:text-slate-400 font-normal">
                   ({service.reviewsCount} Patient Reviews)
                 </span>
@@ -84,7 +86,7 @@ export const ServiceHero = ({ service }) => {
 
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={() => {}}
+                onClick={() => navigate('/appointment', { state: { service: service } })}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-lg text-sm transition shadow-sm flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4" /> Request Appointment

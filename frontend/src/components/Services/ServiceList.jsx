@@ -1,17 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
 import {
-  Search, Star, Filter, ChevronRight, Clock, ChevronLeft, Stethoscope, Activity, ArrowRight,
+  Search, Star, Filter, ChevronRight, Clock, ChevronLeft, Stethoscope, Activity, ArrowRight, Building2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/api";
 
-const SERVICE_CATEGORIES = [
-  "All", "Diagnostics", "Consultation", "Preventive", "Emergency", "Surgery", "Therapy", "Other",
-];
-
 export default function ServiceList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [categories, setCategories] = useState(["All"]);
   const [currentPage, setCurrentPage] = useState(1);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +19,12 @@ export default function ServiceList() {
     const fetchServices = async () => {
       try {
         const data = await api.getServices();
-        setServices(Array.isArray(data) ? data : []);
+        const servicesList = Array.isArray(data) ? data : [];
+        setServices(servicesList);
+        
+        // Derive categories from live data
+        const derived = ["All", ...new Set(servicesList.map(s => s.category).filter(Boolean))];
+        setCategories(derived);
       } catch (err) {
         console.error("Failed to load services:", err);
         setServices([]);
@@ -84,7 +86,7 @@ export default function ServiceList() {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
-                {SERVICE_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
               </select>
             </div>
           </div>
@@ -105,8 +107,8 @@ export default function ServiceList() {
                   className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group flex flex-col"
                 >
                   <div className="h-44 relative overflow-hidden bg-slate-100 dark:bg-slate-800">
-                    {service.image ? (
-                      <img src={service.image} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    {service.images && service.images.length > 0 ? (
+                      <img src={service.images[0]} alt={service.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Stethoscope className="w-12 h-12 text-slate-300 dark:text-slate-600" />
@@ -133,6 +135,62 @@ export default function ServiceList() {
                     <p className="text-slate-400 text-sm line-clamp-2 mb-6 font-medium">
                       {service.description || "Expert healthcare service tailored to your needs."}
                     </p>
+                    <div className="flex items-center gap-3 mb-6 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                      {service.doctorId ? (
+                        <>
+                          <img 
+                            src={service.doctorId.profilePic || service.doctorId.avatar || "https://via.placeholder.com/150"} 
+                            alt={service.doctorId.name} 
+                            className="w-10 h-10 rounded-xl object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Provided by</p>
+                            <p 
+                              onClick={(e) => { e.stopPropagation(); navigate(`/doctors-profile/${service.doctorId._id}`); }}
+                              className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate hover:text-primary cursor-pointer transition-colors"
+                            >
+                              Dr. {service.doctorId.name}
+                            </p>
+                          </div>
+                        </>
+                      ) : service.facilityId ? (
+                        <>
+                          <img 
+                            src={(service.facilityId.images && service.facilityId.images[0]) || "https://via.placeholder.com/150"} 
+                            alt={service.facilityId.name} 
+                            className="w-10 h-10 rounded-xl object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Provided by</p>
+                            <p 
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                const id = service.facilityId._id;
+                                if (service.facilityId.type === "Clinic") {
+                                  navigate(`/clinic-profile/${id}`);
+                                } else {
+                                  navigate(`/hospital-profile/${id}`);
+                                }
+                              }}
+                              className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate hover:text-primary cursor-pointer transition-colors"
+                            >
+                              {service.facilityId.name}
+                            </p>
+                          </div>
+                        </>
+                      ) : (
+                         <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                              <Building2 className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Provider</p>
+                              <p className="text-sm font-bold text-slate-700 dark:text-slate-200">General Service</p>
+                            </div>
+                         </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 dark:border-slate-800 mb-6">
                       <div className="space-y-1">
                         <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Starts from</p>

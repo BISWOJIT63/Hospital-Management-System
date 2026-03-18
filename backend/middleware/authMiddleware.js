@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import Admin from '../models/Admin.js';
+import Doctor from '../models/Doctor.js';
+import Patient from '../models/Patient.js';
 
 export const protect = async (req, res, next) => {
     let token;
@@ -12,7 +14,14 @@ export const protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
 
-            const user = await User.findById(decoded.id).select('-password');
+            let user;
+            if (decoded.role === 'Admin' || decoded.role === 'SuperAdmin') {
+                user = await Admin.findById(decoded.id).select('-password');
+            } else if (decoded.role === 'Doctor') {
+                user = await Doctor.findById(decoded.id).select('-password');
+            } else if (decoded.role === 'Patient') {
+                user = await Patient.findById(decoded.id).select('-password');
+            }
 
             if (!user) {
                 return res.status(401).json({ message: 'User not found' });

@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import ReviewCard from "./ReviewCard";
 
 const Reviews = () => {
@@ -45,6 +46,12 @@ const Reviews = () => {
               Your Health Our Responsibility And Our Job Your feedback.
             </p>
           </div>
+          <NavLink
+            to="/reviews"
+            className="w-full md:w-auto px-8 md:px-10 py-4 rounded-2xl border-2 border-primary/30 hover:bg-primary hover:text-white text-primary font-black uppercase tracking-widest transition-all text-sm"
+          >
+            VIEW ALL
+          </NavLink>
         </div>
       </div>
       <div className="flex relative rev-container mb-10 md:mb-20">

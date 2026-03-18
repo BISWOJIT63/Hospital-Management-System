@@ -14,9 +14,9 @@ const Home = () => {
     return (
         <>
             <Hero isDark={isDark} />
-            <Hospitals />
-            <Services/>
-            <Specialists />
+            <Hospitals useMock={true} />
+            <Services useMock={true} />
+            <Specialists useMock={true} />
             <WhyWe/>
             <Reviews />
             <Faq />

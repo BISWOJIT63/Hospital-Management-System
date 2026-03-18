@@ -3,13 +3,21 @@ import Service from '../models/Service.js';
 // @desc  Get all active services (public)
 export const getServices = async (req, res) => {
     try {
-        const { category, facilityId } = req.query;
-        const filter = { status: 'active' };
+        const { category, facilityId, doctorId, all } = req.query;
+        let filter = { status: 'active' };
+        
+        // If facilityId or doctorId is provided, we might want all statuses (for admin view)
+        if (facilityId || doctorId || all === 'true') {
+            filter = {};
+        }
+
         if (category && category !== 'All') filter.category = category;
         if (facilityId) filter.facilityId = facilityId;
+        if (doctorId) filter.doctorId = doctorId;
 
         const services = await Service.find(filter)
-            .select('-treatments -pricing -businessHours')
+            .populate('facilityId', 'name images type address city')
+            .populate('doctorId', 'name profilePic avatar specialty')
             .sort({ createdAt: -1 });
         res.json({ success: true, data: services });
     } catch (err) {
@@ -20,7 +28,9 @@ export const getServices = async (req, res) => {
 // @desc  Get single service by ID (public)
 export const getServiceById = async (req, res) => {
     try {
-        const service = await Service.findById(req.params.id).populate('facilityId', 'name location');
+        const service = await Service.findById(req.params.id)
+            .populate('facilityId', 'name location')
+            .populate('doctorId', 'name email');
         if (!service) return res.status(404).json({ message: 'Service not found' });
         res.json({ success: true, data: service });
     } catch (err) {

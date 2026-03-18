@@ -7,53 +7,9 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-const SERVICES = [
-  {
-    id: 1,
-    title: "Skilled Nursing Care",
-    description:
-      "Professional medical assistance provided by licensed registered nurses for specialized recovery.",
-    image:
-      "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800",
-    icon: Stethoscope,
-  },
-  {
-    id: 2,
-    title: "Personal Care Assistance",
-    description:
-      "Daily living support including hygiene and mobility to maintain dignity at home.",
-    image:
-      "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=800",
-    icon: UserRound,
-  },
-  {
-    id: 3,
-    title: "Health Monitoring",
-    description:
-      "Real-time vital tracking and health status evaluation for complete peace of mind.",
-    image:
-      "https://images.unsplash.com/photo-1584432830680-aa204f6e355c?auto=format&fit=crop&q=80&w=800",
-    icon: Activity,
-  },
-  {
-    id: 4,
-    title: "Elderly Medical Care",
-    description:
-      "Personalized diet plans and meal preparation to promote a balanced and healthy life.",
-    image:
-      "https://images.unsplash.com/photo-1581578731522-aa7c04e28e83?auto=format&fit=crop&q=80&w=800",
-    icon: HeartPulse,
-  },
-  {
-    id: 5,
-    title: "Nutrition & Meal Planning",
-    description:
-      "Scientific dietary management tailored to individual medical requirements.",
-    image:
-      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80&w=800",
-    icon: Apple,
-  },
-];
+import { useState, useEffect } from "react";
+import { api } from "../utils/api";
+import { MOCK_SERVICES } from "../utils/MockData";
 
 const ServiceCard = ({ service }) => {
   const Icon = service.icon;
@@ -79,11 +35,18 @@ const ServiceCard = ({ service }) => {
           <div className="w-10 h-10 md:w-14 md:h-14 bg-green-500 rounded-full flex items-center justify-center shadow-xl ring-4 ring-green-500/20 shrink-0">
             <Icon className="w-5 h-5 md:w-7 md:h-7 text-white" />
           </div>
-          <h3 className="text-xl md:text-3xl font-extrabold text-white leading-tight truncate md:whitespace-normal">
-            {service.title}
-          </h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl md:text-3xl font-extrabold text-white leading-tight truncate">
+              {service.title}
+            </h3>
+            {service.providerName && (
+              <p className="text-green-400 text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1">
+                By {service.providerName}
+              </p>
+            )}
+          </div>
         </div>
-        <p className="text-gray-300 text-sm md:text-lg max-w-lg leading-relaxed line-clamp-2 md:line-clamp-none">
+        <p className="text-gray-300 text-sm md:text-base max-w-lg leading-relaxed line-clamp-2">
           {service.description}
         </p>
       </div>
@@ -91,7 +54,51 @@ const ServiceCard = ({ service }) => {
   );
 };
 
-export default function Services() {
+export default function Services({ useMock = false }) {
+  const [servicesData, setServicesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        let data = [];
+        if (useMock) {
+          data = MOCK_SERVICES;
+        } else {
+          const res = await api.getServices();
+          data = Array.isArray(res) ? res : res.data || [];
+        }
+
+        const fallbackIcons = [Stethoscope, UserRound, Activity, HeartPulse, Apple];
+        const fallbackImages = [
+          "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1584432830680-aa204f6e355c?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1581578731522-aa7c04e28e83?auto=format&fit=crop&q=80&w=800",
+          "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80&w=800",
+        ];
+
+        let mappedServices = data.map((s, idx) => ({
+          id: s._id || idx,
+          title: s.title || s.name || "Service",
+          description: s.description || "Professional medical service.",
+          image: (s.images && s.images[0]) || s.image || fallbackImages[idx % fallbackImages.length],
+          icon: fallbackIcons[idx % fallbackIcons.length],
+          providerName: s.doctorId?.name ? `Dr. ${s.doctorId.name}` : s.facilityId?.name || null,
+        }));
+
+        // Limit to 5 for UI consistency, or handle dynamically
+        setServicesData(mappedServices.slice(0, 5));
+      } catch (err) {
+        console.error("Failed to fetch services:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
   return (
     <section
       className="px-6 py-24 md:py-32 lg:px-20 bg-white dark:bg-[#020617]"
@@ -113,9 +120,14 @@ export default function Services() {
           </NavLink>
         </div>
         <div className="w-full max-w-7xl h-[600px] md:h-[400px] flex flex-col md:flex-row gap-3 md:gap-4 px-0 md:px-6 z-10">
-          {SERVICES.map((service) => (
+          {!loading && servicesData.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
+          {loading && (
+            <div className="w-full h-full flex items-center justify-center">
+               <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
       </div>
     </section>

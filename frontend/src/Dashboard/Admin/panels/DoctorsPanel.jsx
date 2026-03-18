@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import {
   UserCheck,
   Stethoscope,
-  Star,
   ChevronDown,
   Users,
-  Calendar,
+  Star,
   Activity,
 } from "lucide-react";
 import {
@@ -95,22 +94,17 @@ export default function DoctorsPanel({ fac }) {
                 <Chip label={doc.experience} color="slate" />
                 <Chip label={doc.availability} color="green" />
               </div>
-              {open === i && (
+                {open === i && (
                 <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-2">
                   {[
-                    [Users, "Patients", doc.patients],
-                    [Calendar, "Bookings", "View"],
-                    [Star, "Rating", "4.9"],
-                    [Activity, "Status", "Active"],
+                    [Users, "Patients", doc.patients || "—"],
+                    [Activity, "Availability", doc.availability || "—"],
                   ].map(([Ico, l, v]) => (
                     <div
                       key={l}
                       className="flex items-center gap-2 bg-white dark:bg-slate-900 rounded-xl p-2 border border-slate-100 dark:border-slate-800"
                     >
-                      <Ico
-                        size={12}
-                        className="text-green-400 dark:text-green-500"
-                      />
+                      <Ico size={12} className="text-green-400 dark:text-green-500" />
                       <div>
                         <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wide">
                           {l}

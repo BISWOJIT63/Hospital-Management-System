@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Users, Award, Clock, Activity, CalendarPlus } from "lucide-react";
 import BookingModal from "../../BookingModal";
+import { useNavigate } from "react-router-dom";
 
 export const ServiceSpecialists = ({ specialists }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const navigate = useNavigate();
 
   return (
     <section
@@ -46,7 +48,7 @@ export const ServiceSpecialists = ({ specialists }) => {
                 Exp
               </p>
               <button
-                onClick={(e) => { e.stopPropagation(); setSelectedDoc(doc); setIsModalOpen(true); }}
+                onClick={(e) => { e.stopPropagation(); navigate('/appointment', { state: { doctor: doc } }); }}
                 className="mt-3 flex items-center justify-center w-full gap-2 bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-semibold py-1.5 px-3 rounded-lg transition-colors"
               >
                 <CalendarPlus size={14} /> Book Now

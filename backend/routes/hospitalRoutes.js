@@ -10,11 +10,11 @@ import {
 
 const router = express.Router();
 
-router.route('/hospitals').get(getHospitals);
-router.route('/hospitals/:id').get(getHospitalById);
-router.route('/departments').get(getDepartments);
-router.route('/facilities').get(getFacilities);
-router.route('/reviews').get(getReviews);
-router.route('/awards').get(getAwards);
+router.route('/').get(getHospitals);
+router.route('/:id').get(getHospitalById);
+router.route('/all/departments').get(getDepartments);
+router.route('/all/facilities').get(getFacilities);
+router.route('/all/reviews').get(getReviews);
+router.route('/all/awards').get(getAwards);
 
 export default router;

@@ -57,12 +57,6 @@ export default function PendingScreen({ doctorData, onApproved }) {
                     <p className="text-xs text-slate-400 dark:text-slate-500 mb-6">
                         Confirmation sent to <strong className="dark:text-slate-300">{doctorData?.email || "your email"}</strong>
                     </p>
-                    <button
-                        onClick={onApproved}
-                        className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-all text-sm"
-                    >
-                        Simulate Admin Approval → Enter Dashboard
-                    </button>
                 </div>
             </div>
         </div>

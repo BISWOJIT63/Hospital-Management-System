@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Check,
   MapPin,
   Phone,
   Star,
-  Eye,
   Calendar,
   Users,
   BedDouble,
@@ -13,24 +12,51 @@ import {
   Scissors,
   DollarSign,
   Shield,
+  Activity,
+  Loader2,
 } from "lucide-react";
 import { Card, StatCard } from "../components/AdminUI";
+import { api } from "../../../utils/api";
 
 const BadgeCheck = Check;
 
 export default function OverviewPanel({ fac }) {
+  const [summary, setSummary] = useState({ totalBookings: 0, totalPatients: 0, avgRating: 0, totalReviews: 0 });
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const data = await api.getAdminAnalytics(token);
+        if (data?.summary) setSummary(data.summary);
+      } catch (err) {
+        console.error("Failed to load overview stats:", err);
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+    fetchStats();
+  }, [fac]);
+
   return (
     <div className="flex flex-col gap-5">
-      {}
+      {/* Facility Header Card */}
       <div className="relative bg-green-700 to-lime-900 rounded-3xl overflow-hidden p-7 text-white">
         <div className="absolute inset-0 opacity-30" />
         <div className="relative flex flex-col sm:flex-row gap-5">
           <div className="relative shrink-0">
-            <img
-              src={fac.images[0]}
-              alt=""
-              className="w-20 h-20 rounded-2xl object-cover border-2 border-white/30 shadow-xl"
-            />
+            {fac.images?.[0] ? (
+              <img
+                src={fac.images[0]}
+                alt=""
+                className="w-20 h-20 rounded-2xl object-cover border-2 border-white/30 shadow-xl"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-2xl bg-white/10 border-2 border-white/30 flex items-center justify-center">
+                <Activity size={32} className="text-white/60" />
+              </div>
+            )}
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center">
               <Check size={11} strokeWidth={3} className="text-white" />
             </div>
@@ -43,81 +69,104 @@ export default function OverviewPanel({ fac }) {
             <div className="flex flex-wrap gap-2 text-green-200 text-sm mb-3">
               <span className="flex items-center gap-1">
                 <MapPin size={13} />
-                {(fac.location || "").split(",").slice(-2).join(",").trim()}
+                {fac.city || fac.address || "Location not set"}
               </span>
-              <span className="text-green-400">·</span>
-              <span className="flex items-center gap-1">
-                <Phone size={13} />
-                {fac.phone}
-              </span>
+              {fac.phone && (
+                <>
+                  <span className="text-green-400">·</span>
+                  <span className="flex items-center gap-1">
+                    <Phone size={13} />
+                    {fac.phone}
+                  </span>
+                </>
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1">
                 <Star size={12} className="text-green-400 fill-green-400" />
-                <span className="text-sm font-black">{fac.rating}</span>
+                <span className="text-sm font-black">
+                  {summary.avgRating > 0 ? summary.avgRating.toFixed(1) : "New"}
+                </span>
                 <span className="text-xs text-green-300">
-                  ({fac.reviewsCount.toLocaleString()})
+                  ({summary.totalReviews} reviews)
                 </span>
               </div>
               <span
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${fac.acceptingPatients ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-rose-500/20 text-rose-300"}`}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+                  fac.acceptingPatients
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    : "bg-rose-500/20 text-rose-300"
+                }`}
               >
                 <div
-                  className={`w-1.5 h-1.5 rounded-full ${fac.acceptingPatients ? "bg-emerald-400 animate-pulse" : "bg-rose-400"}`}
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    fac.acceptingPatients ? "bg-emerald-400 animate-pulse" : "bg-rose-400"
+                  }`}
                 />
                 {fac.acceptingPatients ? "Accepting Patients" : "Not Accepting"}
               </span>
-              <span className="bg-white/10 rounded-full px-3 py-1 text-xs font-bold">
-                {fac.priceRange}
+              {fac.priceRange && (
+                <span className="bg-white/10 rounded-full px-3 py-1 text-xs font-bold">
+                  {fac.priceRange}
+                </span>
+              )}
+              <span className="bg-white/10 rounded-full px-3 py-1 text-xs font-bold uppercase">
+                {fac.type}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {}
+      {/* Live Stats from DB */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          icon={Eye}
-          label="Profile Views"
-          value="4,821"
-          sub="All time"
-          color="green"
-          trend="+12%"
-        />
-        <StatCard
-          icon={Calendar}
-          label="Bookings"
-          value="244"
-          sub="This month"
-          color="teal"
-          trend="+8%"
-        />
-        <StatCard
-          icon={Users}
-          label="Patients"
-          value="1,840"
-          sub="Total registered"
-          color="green"
-        />
-        <StatCard
-          icon={BedDouble}
-          label="Beds"
-          value={fac.beds}
-          sub={`${fac.doctors} doctors`}
-          color="teal"
-        />
+        {loadingStats ? (
+          <div className="col-span-4 flex justify-center py-8">
+            <Loader2 size={24} className="animate-spin text-green-500" />
+          </div>
+        ) : (
+          <>
+            <StatCard
+              icon={Calendar}
+              label="Total Bookings"
+              value={summary.totalBookings.toLocaleString()}
+              sub="All time"
+              color="green"
+            />
+            <StatCard
+              icon={Users}
+              label="Unique Patients"
+              value={summary.totalPatients.toLocaleString()}
+              sub="Total served"
+              color="teal"
+            />
+            <StatCard
+              icon={Star}
+              label="Avg Rating"
+              value={summary.avgRating > 0 ? summary.avgRating.toFixed(1) : "N/A"}
+              sub={`${summary.totalReviews} reviews`}
+              color="green"
+            />
+            <StatCard
+              icon={BedDouble}
+              label="Beds"
+              value={fac.beds || "N/A"}
+              sub={fac.doctorsCount ? `${fac.doctorsCount} doctors` : "From profile"}
+              color="teal"
+            />
+          </>
+        )}
       </div>
 
-      {}
+      {/* Info Grid from DB facility record */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
-          [MapPin, "Address", fac.location],
-          [CalendarDays, "Established", fac.established],
-          [BedDouble, "Total Beds", fac.beds],
-          [UserCheck, "Doctors", fac.doctors],
-          [Scissors, "Surgeries", fac.surgeries],
-          [DollarSign, "Price Range", fac.priceRange],
+          [MapPin, "Address", fac.address || fac.city || "—"],
+          [CalendarDays, "Established", fac.established || "—"],
+          [BedDouble, "Total Beds", fac.beds || "—"],
+          [UserCheck, "Doctors", fac.doctorsCount || "—"],
+          [Scissors, "Surgeries/yr", fac.surgeries || "—"],
+          [DollarSign, "Price Range", fac.priceRange || "—"],
         ].map(([I, l, v]) => (
           <div
             key={l}
@@ -138,7 +187,7 @@ export default function OverviewPanel({ fac }) {
         ))}
       </div>
 
-      {}
+      {/* Accreditations */}
       <Card>
         <div className="flex items-center gap-2 mb-3">
           <Shield size={15} className="text-green-500 dark:text-green-400" />
@@ -150,13 +199,12 @@ export default function OverviewPanel({ fac }) {
           {(() => {
             const list = Array.isArray(fac.accreditationsList)
               ? fac.accreditationsList
-              : typeof fac.accreditationsList === "string" &&
-                  fac.accreditationsList
-                ? fac.accreditationsList
-                    .split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-                : [];
+              : typeof fac.accreditationsList === "string" && fac.accreditationsList
+              ? fac.accreditationsList
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+              : [];
 
             if (list.length === 0)
               return (

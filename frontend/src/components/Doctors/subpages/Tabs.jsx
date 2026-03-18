@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Tabs = () => {
+const Tabs = ({ hasReviews = true }) => {
   const TABS = [
     "Doctor Bio",
     "Experience",
@@ -12,7 +12,7 @@ const Tabs = () => {
     "Memberships",
     "Awards",
     "Business Hours",
-    "Reviews",
+    ...(hasReviews ? ["Reviews"] : []),
   ];
   const [activeTab, setActiveTab] = useState("Doctor Bio");
   const scrollToSection = (tabId) => {
@@ -21,7 +21,7 @@ const Tabs = () => {
       tabId.replace(/\s+/g, "-").toLowerCase(),
     );
     if (element) {
-      const yOffset = -140; 
+      const yOffset = -140;
       const y =
         element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });

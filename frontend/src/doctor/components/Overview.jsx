@@ -18,14 +18,7 @@ import {
     LineChart,
     Line,
 } from "recharts";
-import {
-    PATIENT_TREND,
-    CONDITION_DATA,
-    WEEKLY_APT,
-    RADIAL_DATA,
-    REVENUE_DATA,
-    RATING_TREND,
-} from "../mockData";
+// Removed mockData imports
 
 export default function Overview({
     patients,
@@ -34,6 +27,12 @@ export default function Overview({
     totalRevenue,
     reviews,
     setActiveTab,
+    patientTrend,
+    conditionData,
+    weeklyApt,
+    radialData,
+    revenueData,
+    ratingTrend,
 }) {
     const StatusBadge = ({ status }) => (
         <span
@@ -143,7 +142,7 @@ export default function Overview({
                     </div>
                     <ResponsiveContainer width="100%" height={190}>
                         <AreaChart
-                            data={PATIENT_TREND}
+                            data={patientTrend}
                             margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
                         >
                             <defs>
@@ -210,7 +209,7 @@ export default function Overview({
                     <ResponsiveContainer width="100%" height={130}>
                         <PieChart>
                             <Pie
-                                data={CONDITION_DATA}
+                                data={conditionData}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={38}
@@ -218,7 +217,7 @@ export default function Overview({
                                 paddingAngle={3}
                                 dataKey="value"
                             >
-                                {CONDITION_DATA.map((e, i) => (
+                                {conditionData?.map((e, i) => (
                                     <Cell key={i} fill={e.color} />
                                 ))}
                             </Pie>
@@ -235,7 +234,7 @@ export default function Overview({
                         </PieChart>
                     </ResponsiveContainer>
                     <div className="space-y-1 mt-2">
-                        {CONDITION_DATA.map((c, i) => (
+                        {conditionData?.map((c, i) => (
                             <div key={i} className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
                                     <span
@@ -265,7 +264,7 @@ export default function Overview({
                     </p>
                     <ResponsiveContainer width="100%" height={170}>
                         <BarChart
-                            data={WEEKLY_APT}
+                            data={weeklyApt}
                             barGap={4}
                             margin={{ top: 0, right: 0, left: -28, bottom: 0 }}
                         >
@@ -322,7 +321,7 @@ export default function Overview({
                             cy="50%"
                             innerRadius={28}
                             outerRadius={70}
-                            data={RADIAL_DATA}
+                            data={radialData}
                             startAngle={90}
                             endAngle={-270}
                         >
@@ -345,7 +344,7 @@ export default function Overview({
                         </RadialBarChart>
                     </ResponsiveContainer>
                     <div className="space-y-1 mt-1">
-                        {RADIAL_DATA.map((d, i) => (
+                        {radialData?.map((d, i) => (
                             <div key={i} className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
                                     <span
@@ -418,7 +417,7 @@ export default function Overview({
                     </div>
                     <ResponsiveContainer width="100%" height={110}>
                         <BarChart
-                            data={REVENUE_DATA}
+                            data={revenueData}
                             margin={{ top: 0, right: 0, left: -28, bottom: 0 }}
                         >
                             <CartesianGrid
@@ -467,7 +466,7 @@ export default function Overview({
                     </div>
                     <ResponsiveContainer width="100%" height={110}>
                         <LineChart
-                            data={RATING_TREND}
+                            data={ratingTrend}
                             margin={{ top: 5, right: 10, left: -28, bottom: 0 }}
                         >
                             <CartesianGrid

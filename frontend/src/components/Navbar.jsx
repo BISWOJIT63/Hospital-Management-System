@@ -51,14 +51,14 @@ export default function Navbar({ inHero, setIsSearchOpen }) {
             <span className="hidden lg:inline">Home</span>
           </NavLink>
           <NavLink
-            to="/hospitals"
+            to="/center"
             style={({ isActive }) => ({
               color: isActive ? "green" : "",
             })}
             className={`flex items-center gap-1 text-sm md:text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors py-2 md:py-0 ${inHero ? "md:text-white text-slate-800 dark:text-slate-200" : "text-medical-dark dark:text-white"}`}
           >
             <Building2 className="lg:hidden" size={20} />
-            <span className="hidden lg:inline">Care</span>
+            <span className="hidden lg:inline">CENTER</span>
           </NavLink>
           <NavLink
             to="/Doctors"
@@ -98,7 +98,13 @@ export default function Navbar({ inHero, setIsSearchOpen }) {
           {isAuthenticated && user ? (
             <div className="flex items-center gap-2 md:gap-3">
               <Link
-                to={user.role === 'admin' ? '/admin' : user.role === 'doctor' ? '/doctor' : '/patient'}
+                to={
+                  user?.role?.toLowerCase() === 'admin'
+                    ? `/admin/dashboard/${user.id || user._id}`
+                    : user?.role?.toLowerCase() === 'doctor'
+                    ? `/doctor/dashboard/${user.id || user._id}`
+                    : `/patient/${user.id || user._id}`
+                }
                 className="flex items-center gap-3 group"
                 title="View Profile"
               >

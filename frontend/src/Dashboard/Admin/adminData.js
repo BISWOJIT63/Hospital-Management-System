@@ -37,6 +37,7 @@ export const NAV = [
   { id: "contact", label: "Contact", icon: Phone },
   { id: "hours", label: "Hours", icon: Clock },
   { id: "awards", label: "Awards", icon: Award },
+  { id: "services", label: "Manage Services", icon: Layers },
 ];
 
 

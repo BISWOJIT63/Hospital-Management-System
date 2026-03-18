@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MapPin,
   ChevronLeft,
@@ -8,154 +8,108 @@ import {
   Instagram,
   ArrowLeft,
 } from "lucide-react";
+import { api } from "../utils/api";
 import { NavLink } from "react-router-dom";
-const SLIDES = [
-  {
-    id: 1,
-    titleLine1: "Top Rated",
-    titleLine2: "Hospitals",
-    description:
-      "Discover world-class medical facilities offering comprehensive care, advanced technology, and compassionate healing environments.",
-    cards: [
-      {
-        id: 101,
-        name: "Mayo Clinic",
-        location: "MINNESOTA",
-        image:
-          "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=800",
-        description:
-          "Consistently ranked as a top hospital globally, Mayo Clinic is renowned for solving the most complex medical challenges with a collaborative team of expert specialists.",
-      },
-      {
-        id: 102,
-        name: "Johns Hopkins",
-        location: "MARYLAND",
-        image:
-          "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800",
-        description:
-          "A global leader in medical research and patient care, Johns Hopkins is particularly celebrated for its groundbreaking work in neurology, neurosurgery, and pediatrics.",
-      },
-      {
-        id: 103,
-        name: "Cleveland Clinic",
-        location: "OHIO",
-        image:
-          "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=800",
-        description:
-          "World-renowned for cardiovascular care, the Cleveland Clinic offers innovative treatments and comprehensive heart and vascular programs.",
-      },
-    ],
-  },
-  {
-    id: 2,
-    titleLine1: "Specialized",
-    titleLine2: "Care Centers",
-    description:
-      "Find expert specialists and dedicated centers focusing on cardiology, neurology, oncology, and advanced surgical procedures.",
-    cards: [
-      {
-        id: 201,
-        name: "MD Anderson",
-        location: "TEXAS",
-        image:
-          "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800",
-        description:
-          "One of the world's most respected centers devoted exclusively to cancer patient care, research, education, and prevention.",
-      },
-      {
-        id: 202,
-        name: "Mount Sinai",
-        location: "NEW YORK",
-        image:
-          "https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?auto=format&fit=crop&q=80&w=800",
-        description:
-          "Internationally acclaimed for excellence in clinical care and research, particularly in geriatrics, cardiology, and gastroenterology.",
-      },
-      {
-        id: 203,
-        name: "Mass General",
-        location: "MASSACHUSETTS",
-        image:
-          "https://images.unsplash.com/photo-1504439468489-c8920d786a2b?auto=format&fit=crop&q=80&w=800",
-        description:
-          "The original and largest teaching hospital of Harvard Medical School, leading in biomedical research and advanced, personalized treatments.",
-      },
-    ],
-  },
-  {
-    id: 3,
-    titleLine1: "Advanced",
-    titleLine2: "Research",
-    description:
-      "Leading medical institutions pioneering breakthrough treatments, clinical trials, and innovative healthcare solutions.",
-    cards: [
-      {
-        id: 301,
-        name: "Cedars-Sinai",
-        location: "CALIFORNIA",
-        image:
-          "https://images.unsplash.com/photo-1512678080530-7760d81faba6?auto=format&fit=crop&q=80&w=800",
-        description:
-          "A premier healthcare organization known for its advanced research in cardiology, genetics, and minimally invasive surgical techniques.",
-      },
-      {
-        id: 302,
-        name: "Stanford Med",
-        location: "CALIFORNIA",
-        image:
-          "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
-        description:
-          "Translating medical breakthroughs into advanced patient care, recognized globally for innovation in transplant and cardiovascular medicine.",
-      },
-      {
-        id: 303,
-        name: "UCLA Medical",
-        location: "CALIFORNIA",
-        image:
-          "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&q=80&w=800",
-        description:
-          "Providing state-of-the-art healthcare and pioneering research, consistently ranked among the top hospitals on the West Coast.",
-      },
-    ],
-  },
-];
+import { MOCK_HOSPITALS, MOCK_CLINICS } from "../utils/MockData";
 
-export default function Hospitals() {
+export default function Hospitals({ useMock = false }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  
   const [transition, setTransition] = useState({
     active: false,
-    phase: "idle", 
-    dir: "next", 
+    phase: "idle",
+    dir: "next",
   });
 
-  const currentSlide = SLIDES[currentIndex];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let facilitiesData = [];
+        if (useMock) {
+          facilitiesData = [...MOCK_HOSPITALS, ...MOCK_CLINICS];
+        } else {
+          const res = await api.getFacilities();
+          facilitiesData = res.data || (Array.isArray(res) ? res : []);
+        }
+        
+        const hospitals = facilitiesData.filter(f => f.type === 'Hospital');
+        const clinics = facilitiesData.filter(f => f.type === 'Clinic');
+
+        const mapToCard = (f) => ({
+          id: f._id || f.id,
+          name: f.name,
+          location: f.city || "Various Locations",
+          image: f.images?.[0] || "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=800",
+          description: f.description || f.about || "Experience world-class medical excellence with advanced technology and compassionate care."
+        });
+
+        const newSlides = [
+          {
+            id: 1,
+            titleLine1: "Top Rated",
+            titleLine2: "Hospitals",
+            description: "Discover world-class medical facilities offering comprehensive care and compassionate healing environments.",
+            cards: hospitals.slice(0, 3).map(mapToCard)
+          },
+          {
+            id: 2,
+            titleLine1: "Specialized",
+            titleLine2: "Care Centers",
+            description: "Find expert clinics and dedicated centers focusing on personalized treatments and wellness.",
+            cards: clinics.slice(0, 3).map(mapToCard)
+          },
+          {
+            id: 3,
+            titleLine1: "Advanced",
+            titleLine2: "Medical Network",
+            description: "A comprehensive network of healthcare facilities providing innovative treatments and innovative healthcare solutions.",
+            cards: facilitiesData.slice(3, 6).map(mapToCard)
+          }
+        ].filter(s => s.cards.length > 0);
+
+        // Fallback slides if no data in DB
+        if (newSlides.length === 0) {
+           // (Keep minimal fallback or just show empty state)
+        }
+
+        setSlides(newSlides);
+      } catch (err) {
+        console.error("Failed to fetch hospitals slides:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-primary font-bold uppercase tracking-widest">Initialising Network...</div>;
+  if (slides.length === 0) return null;
+
+  const currentSlide = slides[currentIndex];
 
   const changeSlide = (direction) => {
-    if (transition.active) return; 
+    if (transition.active) return;
 
     setSelectedCard(null);
     setTransition({ active: true, phase: "entering", dir: direction });
 
-    
     setTimeout(() => {
       setCurrentIndex((prev) =>
         direction === "next"
-          ? (prev + 1) % SLIDES.length
-          : (prev - 1 + SLIDES.length) % SLIDES.length,
+          ? (prev + 1) % slides.length
+          : (prev - 1 + slides.length) % slides.length,
       );
       setTransition({ active: true, phase: "exiting", dir: direction });
 
-      
       setTimeout(() => {
         setTransition({ active: false, phase: "idle", dir: direction });
       }, 800);
     }, 800);
   };
 
-  
   let overlayTransform = "";
   if (transition.phase === "idle") {
     overlayTransform =
@@ -186,7 +140,6 @@ export default function Hospitals() {
       >
         <div className="w-full lg:w-[35%] pr-8 relative h-full flex flex-col justify-center min-h-[300px]">
           {selectedCard ? (
-            
             <div
               key={`detail-${selectedCard.id}`}
               className="animate-fade-in-up"
@@ -205,9 +158,9 @@ export default function Hospitals() {
                 {selectedCard.description}
               </p>
 
-              <button className="bg-slate-800 dark:bg-white text-white dark:text-slate-800 px-10 py-3.5 rounded-full font-semibold shadow-lg hover:bg-gray-800 hover:scale-105 transition-all duration-300">
-                Book Appointment
-              </button>
+              <NavLink to={`/hospital-profile/${selectedCard.id}`} className="bg-slate-800 dark:bg-white text-white dark:text-slate-800 px-10 py-3.5 rounded-full font-semibold shadow-lg hover:bg-gray-800 hover:scale-105 transition-all duration-300 inline-block text-center">
+                View Details
+              </NavLink>
             </div>
           ) : (
             <div
@@ -285,7 +238,7 @@ export default function Hospitals() {
           <div className="text-xs font-bold tracking-widest text-[#1a1a24] dark:text-slate-200">
             0{currentIndex + 1}{" "}
             <span className="text-gray-400 dark:text-slate-400 mx-1">/</span> 0
-            {SLIDES.length}
+            {slides.length}
           </div>
           <div className="flex gap-4">
             <button

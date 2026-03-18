@@ -98,7 +98,7 @@ export default function Hero({
 
                             <div className="flex items-center gap-1.5 text-sm text-slate-600 dark:text-slate-400 mb-6 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
                                 <MapPin className="w-4 h-4 text-primary shrink-0" />
-                                <span className="font-medium">{HOSPITAL.location}</span>
+                                <span className="font-medium">{HOSPITAL.address ? `${HOSPITAL.address}, ` : ''}{HOSPITAL.city}</span>
                                 <a
                                     href="#"
                                     className="text-primary hover:underline ml-auto text-xs font-semibold whitespace-nowrap"

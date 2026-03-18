@@ -1,15 +1,32 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { AuthContext } from '../../components/context/AuthContext';
 
 const PersonalInfoContext = createContext();
 
 export function PersonalInfoProvider({ children }) {
+  const { user } = useContext(AuthContext);
   const [personalInfo, setPersonalInfo] = useState({
-    email: 'alex.wright@email.com',
-    phone: '+1 (555) 0123-4567',
-    dob: 'December 05, 1985',
-    gender: 'Male',
-    address: '422 Oakwood Avenue, Suite 105, Los Angeles, CA 90210',
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    dob: user?.dob || '',
+    gender: user?.gender || '',
+    address: user?.address || '',
   });
+
+  // Sync with auth user when it loads
+  useEffect(() => {
+    if (user) {
+      setPersonalInfo({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        dob: user.dob || '',
+        gender: user.gender || '',
+        address: user.address || '',
+      });
+    }
+  }, [user]);
 
   const updatePersonalInfo = (newInfo) => {
     setPersonalInfo(prev => ({

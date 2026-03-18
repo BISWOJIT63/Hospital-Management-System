@@ -1,21 +1,16 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema({
+const patientSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: {
         type: String,
         required: function () {
-            // Password is only required if there's no OAuth ID
             return !this.googleId && !this.facebookId;
         }
     },
-    role: {
-        type: String,
-        enum: ['SuperAdmin', 'Admin', 'Doctor', 'Patient'],
-        required: true
-    },
+    role: { type: String, default: 'Patient' },
     avatar: { type: String },
     phone: { type: String },
     status: {
@@ -27,14 +22,16 @@ const userSchema = new mongoose.Schema({
     dob: { type: String },
     bloodGroup: { type: String },
     address: { type: String },
+    emergencyContact: { type: String },
+    medicalHistory: { type: String },
     googleId: { type: String },
     facebookId: { type: String },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 }, { timestamps: true });
 
-// Password hashing middleware - skip if no password (OAuth users)
-userSchema.pre('save', async function (next) {
+// Password hashing middleware
+patientSchema.pre('save', async function (next) {
     if (!this.password || !this.isModified('password')) {
         return next();
     }
@@ -43,11 +40,11 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-// Match user entered password to hashed password in database
-userSchema.methods.matchPassword = async function (enteredPassword) {
+// Match password method
+patientSchema.methods.matchPassword = async function (enteredPassword) {
     if (!this.password) return false;
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-export default User;
+const Patient = mongoose.model('Patient', patientSchema);
+export default Patient;

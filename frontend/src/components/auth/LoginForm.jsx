@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../utils/validation";
 import { useAuth } from "../hooks/useAuth";
+import { AuthContext } from "../context/AuthContext";
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { motion } from "framer-motion";
 import RoleSelector from "./RoleSelector";
 import SocialAuthButtons from "./SocialAuthButtons";
 
 const LoginForm = ({ switchToForgot }) => {
+  const { user: ctxUser } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [selectedRole, setSelectedRole] = useState("patient");
   const [error, setError] = useState("");
@@ -17,25 +19,6 @@ const LoginForm = ({ switchToForgot }) => {
 
   const { login } = useAuth();
   const location = useLocation();
-
-  // Handle OAuth redirect — reads ?token=...&role=...&name=... from URL
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const token = params.get('token');
-    const role = params.get('role');
-    const name = params.get('name');
-    if (token) {
-      localStorage.setItem('token', token);
-      // Store basic user info into auth context via a minimal login
-      if (role?.toLowerCase() === 'admin' || role?.toLowerCase() === 'superadmin') {
-        navigate('/admin');
-      } else if (role?.toLowerCase() === 'doctor') {
-        navigate('/doctor');
-      } else {
-        navigate('/');
-      }
-    }
-  }, [location.search]);
 
   const {
     register,
@@ -55,10 +38,16 @@ const LoginForm = ({ switchToForgot }) => {
     if (!result.success) {
       setError(result.error);
     } else {
-      if (selectedRole === "admin") {
-        navigate("/admin");
+      // Use the actual role from the server for redirection
+      const userRole = result.user?.role?.toLowerCase();
+      const uid = result.user?.id || result.user?._id || ctxUser?.id || ctxUser?._id;
+
+      if (userRole === "admin" || userRole === "superadmin") {
+        navigate(uid ? `/admin/dashboard/${uid}` : "/admin");
+      } else if (userRole === "doctor") {
+        navigate(uid ? `/doctor/dashboard/${uid}` : "/doctor");
       } else {
-        navigate("/");
+        navigate(uid ? `/patient/${uid}` : "/patient");
       }
     }
   };

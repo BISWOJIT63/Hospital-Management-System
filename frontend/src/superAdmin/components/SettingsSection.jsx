@@ -3,11 +3,53 @@ import { Hexagon, Activity, Check, User, Lock, Bell, Settings, Palette } from 'l
 import { T, Sub } from './Helpers';
 
 export const SettingsSection = () => {
-    const [profile, setProfile] = useState({ name: "Super Admin", email: "admin@hms.io", phone: "+91 98765 43210", role: "Super Administrator", org: "HMS Nexus Central", timezone: "IST (UTC+5:30)" });
+    const [profile, setProfile] = useState({ name: "", email: "", phone: "", role: "SuperAdmin", org: "HMS Nexus", timezone: "IST" });
     const [saved, setSaved] = useState(false);
     const [tab, setTab] = useState("profile");
+    const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
 
-    const save = { save: () => { setSaved(true); setTimeout(() => setSaved(false), 2000); } }.save;
+    React.useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await api.getProfile(token);
+                setProfile(p => ({ ...p, ...res }));
+            } catch (err) {
+                console.error("Failed to fetch profile:", err);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleSave = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await api.updateProfile(token, {
+                name: profile.name,
+                email: profile.email,
+                phone: profile.phone
+            });
+            setSaved(true);
+            setTimeout(() => setSaved(false), 2000);
+        } catch (err) {
+            alert(err.message || "Failed to update profile");
+        }
+    };
+
+    const handlePasswordUpdate = async () => {
+        if (passwords.new !== passwords.confirm) {
+            alert("New passwords do not match!");
+            return;
+        }
+        try {
+            const token = localStorage.getItem("token");
+            await api.updateProfile(token, { password: passwords.new });
+            alert("Password updated successfully!");
+            setPasswords({ current: "", new: "", confirm: "" });
+        } catch (err) {
+            alert(err.message || "Failed to update password");
+        }
+    };
     const tabs = [
         { id: "profile", label: "Profile", icon: User },
         { id: "security", label: "Security", icon: Lock },
@@ -47,7 +89,7 @@ export const SettingsSection = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button className="btn-primary" onClick={save} style={{ padding: "9px 22px", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 140 }}>{saved ? <><Check size={14} /> SAVED</> : "SAVE CHANGES"}</button>
+                            <button className="btn-primary" onClick={handleSave} style={{ padding: "9px 22px", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, minWidth: 140 }}>{saved ? <><Check size={14} /> SAVED</> : "SAVE CHANGES"}</button>
                         </div>
                     )}
                     {tab === "security" && (
@@ -57,7 +99,18 @@ export const SettingsSection = () => {
                                 {[["CURRENT PASSWORD", "current password"], ["NEW PASSWORD", "new password"], ["CONFIRM PASSWORD", "confirm new password"]].map(([l, p]) => (
                                     <div key={l}>
                                         <label className="mono" style={{ fontSize: 9, color: "#5a8a84", display: "block", marginBottom: 5, letterSpacing: 2 }}>{l}</label>
-                                        <input className="input-field" type="password" placeholder={`Enter ${p}`} />
+                                        <input 
+                                            className="input-field" 
+                                            type="password" 
+                                            placeholder={`Enter ${p}`} 
+                                            value={l.includes("CURRENT") ? passwords.current : l.includes("CONFIRM") ? passwords.confirm : passwords.new}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if(l.includes("CURRENT")) setPasswords(prev => ({...prev, current: val}));
+                                                else if(l.includes("CONFIRM")) setPasswords(prev => ({...prev, confirm: val}));
+                                                else setPasswords(prev => ({...prev, new: val}));
+                                            }}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -70,7 +123,7 @@ export const SettingsSection = () => {
                                     <div style={{ width: 16, height: 16, background: "#000", borderRadius: "50%", position: "absolute", right: 2, top: 2 }} />
                                 </div>
                             </div>
-                            <button className="btn-primary" style={{ padding: "9px 20px" }}>UPDATE PASSWORD</button>
+                            <button className="btn-primary" onClick={handlePasswordUpdate} style={{ padding: "9px 20px" }}>UPDATE PASSWORD</button>
                         </div>
                     )}
                     {tab === "notifications" && (

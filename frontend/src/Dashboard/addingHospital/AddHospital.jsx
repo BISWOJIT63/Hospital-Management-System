@@ -10,10 +10,20 @@ import FormScreen from "./screens/FormScreen";
 
 
 
-export default function AddHospital({ user, onSuccess }) {
-  const [screen, setScreen] = useState("select");
-  const [entityType, setEntity] = useState(null);
-  const [formData, setFormData] = useState(baseTemplate());
+export default function AddHospital({ user, onSuccess, initialData = null }) {
+  const [screen, setScreen] = useState(initialData ? "form" : "select");
+  const [entityType, setEntity] = useState(initialData ? initialData.type?.toLowerCase() : null);
+  const [formData, setFormData] = useState(() => {
+    if (initialData) {
+      return {
+        ...baseTemplate(),
+        ...initialData,
+        location: initialData.address || initialData.location || "",
+        about: initialData.description || initialData.about || "",
+      };
+    }
+    return baseTemplate();
+  });
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
   const [previews, setPreviews] = useState([]);
@@ -94,6 +104,8 @@ export default function AddHospital({ user, onSuccess }) {
       if (!formData.name.trim()) e.name = "Facility name is required";
       if (!formData.city?.trim()) e.city = "City is required";
       if (!formData.location.trim()) e.location = "Location is required";
+      if (!formData.email?.trim()) e.email = "Email is required";
+      if (!formData.phone?.trim()) e.phone = "Phone is required";
       if (!formData.about.trim()) e.about = "Please describe your facility";
       if (formData.images.length < 1) e.images = "Upload at least 1 image";
     }
@@ -119,7 +131,7 @@ export default function AddHospital({ user, onSuccess }) {
       };
 
       const facility = await api.createFacility(submissionData, token);
-      const facilityId = facility?._id || facility?.data?._id;
+      const facilityId = facility?._id || facility?.data?._id || facility?.facility?._id;
 
       if (servicesList.length > 0 && facilityId) {
         await Promise.all(

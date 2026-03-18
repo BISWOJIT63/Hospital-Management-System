@@ -19,17 +19,19 @@ const businessHourSchema = new mongoose.Schema({
 });
 
 const serviceSchema = new mongoose.Schema({
-    facilityId: { type: mongoose.Schema.Types.ObjectId, ref: 'Facility', default: null },
+    facilityId: { type: mongoose.Schema.Types.ObjectId, refPath: 'facilityType', default: null },
+    facilityType: { type: String, enum: ['Hospital', 'Clinic'], default: 'Hospital' },
+    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', default: null },
     name: { type: String, required: true, trim: true },
     category: {
         type: String,
         enum: ['Diagnostics', 'Consultation', 'Preventive', 'Emergency', 'Surgery', 'Therapy', 'Other'],
         default: 'Other',
     },
-    description: { type: String, default: '' },
-    image: { type: String, default: '' },        // base64 or URL
-    price: { type: String, default: 'Contact for pricing' },
-    duration: { type: String, default: 'Varies' },
+    description: { type: String, required: true },
+    images: { type: [{ type: String }], required: true },        // array of base64 or URLs
+    price: { type: String, required: true },
+    duration: { type: String, required: true },
     includes: [{ type: String }],                 // short bullet benefits
     treatments: [treatmentSchema],
     pricing: [pricingSchema],
@@ -43,7 +45,8 @@ const serviceSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'active',
     },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, refPath: 'creatorRole' },
+    creatorRole: { type: String, enum: ['Admin', 'SuperAdmin', 'Doctor'], default: 'Admin' },
 }, { timestamps: true });
 
 const Service = mongoose.model('Service', serviceSchema);

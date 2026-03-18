@@ -1,15 +1,24 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Star } from "lucide-react";
 
 const Reviews = ({ clinicData }) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  if (!clinicData?.reviews?.length) return null;
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
           Patient Experiences
         </h2>
-        <button className="text-green-600 dark:text-green-400 text-sm font-semibold hover:underline transition-colors duration-300">
-          Write a Review
+        <button
+          onClick={() => navigate(`/reviews/clinic/${id}`)}
+          className="text-green-600 dark:text-green-400 text-sm font-semibold hover:underline transition-colors duration-300"
+        >
+          View All Reviews
         </button>
       </div>
       {clinicData.reviews.map((review) => (

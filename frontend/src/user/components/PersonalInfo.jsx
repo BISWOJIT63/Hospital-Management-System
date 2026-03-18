@@ -26,6 +26,7 @@ export default function PersonalInfo({ theme }) {
   };
 
   const fields = [
+    { label: "Full Name", name: "name", value: personalInfo.name },
     { label: "Email Address", name: "email", value: personalInfo.email },
     { label: "Phone Number", name: "phone", value: personalInfo.phone },
     { label: "Date of Birth", name: "dob", value: personalInfo.dob },
@@ -103,7 +104,25 @@ export default function PersonalInfo({ theme }) {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label
+                  className={`block text-sm font-bold mb-2 ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+                >
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none transition-colors ${
+                    theme === "dark"
+                      ? "bg-slate-700 border-slate-600 text-white"
+                      : "bg-white border-slate-300 text-slate-900"
+                  }`}
+                />
+              </div>
               <div>
                 <label
                   className={`block text-sm font-bold mb-2 ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}

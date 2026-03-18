@@ -3,17 +3,22 @@ import mongoose from 'mongoose';
 const appointmentSchema = new mongoose.Schema({
     patientId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Patient',
         required: true
     },
     providerId: {
         type: mongoose.Schema.Types.ObjectId,
-        // Ref can be User (Doctor) or Facility
-        required: true
+        refPath: 'providerType',
+        required: false,
+        default: null
+    },
+    providerName: {
+        type: String,
+        default: null
     },
     providerType: {
         type: String,
-        enum: ['Doctor', 'Facility'],
+        enum: ['Doctor', 'Hospital', 'Clinic', 'Facility'],
         required: true
     },
     service: {
@@ -36,6 +41,23 @@ const appointmentSchema = new mongoose.Schema({
     notes: {
         type: String,
         maxlength: 500
+    },
+    amount: {
+        type: Number,
+        default: 500
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'paid', 'overdue'],
+        default: 'pending'
+    },
+    package: {
+        type: String,
+        default: 'Basic'
+    },
+    appointmentType: {
+        type: String,
+        default: 'General'
     }
 }, {
     timestamps: true

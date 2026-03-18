@@ -107,14 +107,37 @@ export default function Topbar({
             </div>
           )}
         </div>
-        <button className="relative w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-          <Icon path={ic.bell} size={15} />
-          {pendingCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
-              {pendingCount}
-            </span>
-          )}
-        </button>
+        <div className="flex items-center gap-3 pl-3 border-l border-slate-100 dark:border-slate-800">
+          <button className="relative w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            <Icon path={ic.bell} size={15} />
+            {pendingCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                {pendingCount}
+              </span>
+            )}
+          </button>
+          
+          <div className="flex items-center gap-2 pr-1">
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-green-100 dark:bg-green-900/30 border border-slate-100 dark:border-slate-800 flex items-center justify-center shrink-0">
+              {doctorData?.profilePic ? (
+                <img
+                  src={doctorData.profilePic}
+                  className="w-full h-full object-cover"
+                  alt=""
+                />
+              ) : (
+                <div className="text-green-700 dark:text-green-500 font-bold text-xs uppercase">
+                  {doctorData?.name?.[0] || "D"}
+                </div>
+              )}
+            </div>
+            <div className="hidden sm:block min-w-0">
+              <p className="text-xs font-bold text-slate-800 dark:text-white truncate uppercase tracking-tighter">
+                {doctorData?.name?.split(' ')?.[0] || "Doctor"}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

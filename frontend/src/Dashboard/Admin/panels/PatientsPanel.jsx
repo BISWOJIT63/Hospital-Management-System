@@ -8,28 +8,46 @@ import {
   Avatar,
   StatusBadge,
 } from "../components/AdminUI";
-import { initBookings } from "../adminData";
-
+import { api } from "../../../utils/api";
 export default function PatientsPanel() {
-  const patients = useMemo(
-    () => [
-      ...new Map(
-        initBookings.map((b) => [
-          b.patient,
-          {
-            name: b.patient,
-            dept: b.dept,
-            doctor: b.doctor,
-            lastVisit: b.date,
-            status: b.status,
-            bookings: initBookings.filter((x) => x.patient === b.patient)
-              .length,
-          },
-        ]),
-      ).values(),
-    ],
-    [],
-  );
+  const [patients, setPatients] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const loadPatients = async () => {
+      try {
+        const res = await api.getMyAppointments();
+        if (res.success || res.data) {
+          const raw = res.data || res;
+          
+          // Group by unique patient
+          const patientMap = new Map();
+          raw.forEach(b => {
+             const pName = b.patientId?.name || "Unknown Patient";
+             if (!patientMap.has(pName)) {
+               patientMap.set(pName, {
+                 name: pName,
+                 dept: b.providerType,
+                 doctor: b.providerType === 'Doctor' ? 'Doctor View' : 'Facility View',
+                 lastVisit: b.date,
+                 status: b.status === "confirmed" ? "accepted" : b.status,
+                 bookings: 1
+               });
+             } else {
+               const existing = patientMap.get(pName);
+               existing.bookings += 1;
+             }
+          });
+          setPatients(Array.from(patientMap.values()));
+        }
+      } catch (e) {
+        console.error("Failed to load patients for admin panel", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadPatients();
+  }, []);
   const [search, setSearch] = useState("");
   const filtered = patients.filter(
     (p) =>
@@ -55,13 +73,13 @@ export default function PatientsPanel() {
           sub="With accepted booking"
           color="teal"
         />
-        <StatCard
-          icon={Calendar}
-          label="New This Month"
-          value="42"
-          sub="March 2026"
-          color="green"
-        />
+          <StatCard
+            icon={Calendar}
+            label="Loading..."
+            value={loading ? "-" : patients.filter(p => p.status === 'accepted').length}
+            sub="Patients seen"
+            color="green"
+          />
       </div>
       <Card>
         <SectionHdr

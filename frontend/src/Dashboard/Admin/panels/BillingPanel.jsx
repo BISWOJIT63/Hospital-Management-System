@@ -17,20 +17,64 @@ import {
   Avatar,
   StatusBadge,
 } from "../components/AdminUI";
-import { initBills } from "../adminData";
+import { api } from "../../../utils/api";
 
 export default function BillingPanel() {
-  const [bills, setBills] = useState(initBills);
+  const [bills, setBills] = useState([]);
   const [search, setSearch] = useState("");
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchBills = async () => {
+      try {
+        const res = await api.getMyAppointments();
+        if (res.success || res.data) {
+          const raw = res.data || res;
+          const formatted = raw.map(b => ({
+            id: `INV-${(b._id || '').slice(-6).toUpperCase()}`,
+            rawId: b._id,
+            patient: b.patientId?.name || "Unknown Patient",
+            doctor: b.providerType === 'Doctor' ? 'Doctor View' : 'Facility View',
+            date: b.date,
+            amount: "$150.00", 
+            status: b.status === "confirmed" ? "paid" : "pending",
+            prescription: b.notes || "No additional notes provided.",
+            items: [
+              { desc: b.service, qty: 1, rate: 150 }
+            ]
+          }));
+          setBills(formatted);
+        }
+      } catch (e) {
+        console.error("Failed to load bills", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBills();
+  }, []);
+
   const filtered = bills.filter(
     (b) =>
       !search ||
       b.patient.toLowerCase().includes(search.toLowerCase()) ||
       b.id.toLowerCase().includes(search.toLowerCase()),
   );
-  const setStatus = (id, s) =>
-    setBills((bb) => bb.map((b) => (b.id === id ? { ...b, status: s } : b)));
+
+  const setStatus = async (id, s) => {
+    const targetBill = bills.find(b => b.id === id);
+    if (!targetBill) return;
+    try {
+      const realStatus = s === "paid" ? "confirmed" : s;
+      const res = await api.updateAppointmentStatus(targetBill.rawId, realStatus);
+      if (res.success || res.status) {
+        setBills((bb) => bb.map((b) => (b.id === id ? { ...b, status: s } : b)));
+      }
+    } catch (e) {
+      console.error("Failed to update status", e);
+    }
+  };
 
   const total = bills.reduce(
     (a, b) => a + parseFloat(b.amount.replace(/[$,]/g, "")),

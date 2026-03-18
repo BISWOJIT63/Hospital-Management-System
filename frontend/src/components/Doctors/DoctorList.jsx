@@ -21,7 +21,18 @@ const SPECIALIZATIONS = [
   "Neurologist",
   "Obstetrician",
   "Orthopedic Surgeon",
+  "General Medicine",
+  "Dentist",
+  "Psychiatrist",
 ];
+
+const cleanValue = (val, fallback = "Location N/A") => {
+  if (!val) return fallback;
+  const s = String(val).trim();
+  const invalid = ["N/A", "NA", "UNDEFINED", "NULL", "LOCATION N/A"];
+  if (invalid.includes(s.toUpperCase())) return fallback;
+  return val;
+};
 
 export default function DoctorList() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,11 +45,29 @@ export default function DoctorList() {
 
   const itemsPerPage = 2;
 
+  const formatAvailability = (avail) => {
+    if (!avail) return "Check Availability";
+    const first = Array.isArray(avail) ? avail[0] : avail;
+    if (!first) return "Check Availability";
+    if (typeof first === "string") return first;
+    if (typeof first === "object" && first !== null) {
+      if (first.day && first.time) return `${first.day} ${first.time}`;
+      if (first.time) return first.time;
+      const values = Object.values(first).filter(Boolean).join(" ");
+      return values || "Check Availability";
+    }
+    return String(first) || "Check Availability";
+  };
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const data = await api.getDoctors();
-        setDoctors(data);
+        const res = await api.getDoctors();
+        if (res.success && res.data) {
+          setDoctors(res.data);
+        } else if (Array.isArray(res)) {
+          setDoctors(res);
+        }
       } catch (error) {
         console.error("Failed to fetch doctors:", error);
       } finally {
@@ -52,9 +81,10 @@ export default function DoctorList() {
     return doctors.filter((doc) => {
       const matchesSearch =
         doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (doc.specialization && doc.specialization.toLowerCase().includes(searchTerm.toLowerCase()));
+        (doc.specialty &&
+          doc.specialty.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesSpec =
-        selectedSpec === "All" || doc.specialization === selectedSpec;
+        selectedSpec === "All" || doc.specialty === selectedSpec;
       return matchesSearch && matchesSpec;
     });
   }, [searchTerm, selectedSpec, doctors]);
@@ -114,28 +144,41 @@ export default function DoctorList() {
           {paginatedDoctors.length > 0 ? (
             paginatedDoctors.map((doctor) => (
               <div
-                key={doctor.id}
+                key={
+                  doctor._id ||
+                  doctor.id ||
+                  (doctor.user && doctor.user._id) ||
+                  doctor.name
+                }
                 className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-600  overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
               >
                 <div className="p-7 space-y-5">
                   <div className="flex gap-4">
                     <div className="relative shrink-0">
                       <img
-                        src={doctor.image}
+                        src={doctor.image || doctor.avatar || doctor.profilePic || `https://images.unsplash.com/photo-1559839734-2b71ca197ec2?w=400&q=80`}
                         alt={doctor.name}
                         className="w-20 h-20 rounded-3xl object-cover ring-4 ring-slate-50 dark:ring-slate-800 shadow-sm group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${doctor.name}`; }}
                       />
                       <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-slate-100 dark:border-slate-600"></div>
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-extrabold text-primary bg-green-50 px-2 py-1 rounded-lg uppercase tracking-widest">
-                          {doctor.specialization}
-                        </span>
+                      <div className="flex items-center justify-between gap-1 flex-wrap">
+                        <div className="flex gap-1.5 flex-wrap">
+                          <span className="text-[10px] font-extrabold text-primary bg-green-50 px-2 py-1 rounded-lg uppercase tracking-widest">
+                            {cleanValue(doctor.specialty, "General")}
+                          </span>
+                          {doctor.category && cleanValue(doctor.category, "N/A") !== "N/A" && (
+                            <span className="text-[10px] font-extrabold text-teal-600 bg-teal-50 px-2 py-1 rounded-lg uppercase tracking-widest">
+                              {doctor.category}
+                            </span>
+                          )}
+                        </div>
                         <div className="flex items-center text-green-500 gap-1 bg-green-50 px-2 py-0.5 rounded-full">
                           <Star className="w-3 h-3 fill-current" />
                           <span className="text-xs font-bold">
-                            {doctor.rating}
+                            {doctor.rating || '5.0'}
                           </span>
                         </div>
                       </div>
@@ -144,7 +187,15 @@ export default function DoctorList() {
                       </h3>
                       <div className="flex items-center text-slate-400 text-sm mt-1 gap-1 font-medium">
                         <MapPin className="w-3.5 h-3.5" />
-                        <span>{doctor.location || doctor.contactInfo || "N/A"}</span>
+                        <span className="truncate max-w-[150px]">
+                          {cleanValue(doctor.location) !== "Location N/A" 
+                            ? doctor.location 
+                            : cleanValue(doctor.city) !== "Location N/A" 
+                              ? doctor.city 
+                              : cleanValue(doctor.address) !== "Location N/A" 
+                                ? doctor.address 
+                                : "Location N/A"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -155,7 +206,7 @@ export default function DoctorList() {
                         Experience
                       </p>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                        {doctor.experience} Years
+                        {String(doctor.experience).toLowerCase().includes('years') ? doctor.experience : `${doctor.experience || 0} Years`}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -163,14 +214,26 @@ export default function DoctorList() {
                         Available
                       </p>
                       <p className="text-sm font-bold text-primary flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" /> {doctor.availability && doctor.availability.length > 0 ? doctor.availability[0] : "Check Availability"}
+                        <Clock className="w-3.5 h-3.5" />{" "}
+                        {formatAvailability(doctor.availability)}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex gap-3 pt-2">
                     <button
-                      onClick={() => setSelectedDoctor(doctor)}
+                      onClick={() => {
+                        const normalizedDoctor = {
+                          ...doctor,
+                          role: doctor.specialty || "Doctor",
+                          exp: `${doctor.experience || 0}+ Years`,
+                          patients: doctor.patients || "500+", 
+                        };
+                        setSelectedDoctor(normalizedDoctor);
+                        navigate("/appointment", {
+                          state: { doctor: normalizedDoctor },
+                        });
+                      }}
                       className="flex-[2] text-white py-3.5 rounded-2xl font-bold text-sm bg-primary transition-all active:scale-95 shadow-lg shadow-slate-200 dark:shadow-slate-800 hover:shadow-green-200"
                     >
                       Book Now
@@ -218,10 +281,11 @@ export default function DoctorList() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`p-3 rounded-2xl border transition-all ${currentPage === 1
-                  ? "text-slate-300 border-slate-100 cursor-not-allowed"
-                  : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
-                  }`}
+                className={`p-3 rounded-2xl border transition-all ${
+                  currentPage === 1
+                    ? "text-slate-300 border-slate-100 cursor-not-allowed"
+                    : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
+                }`}
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -231,10 +295,11 @@ export default function DoctorList() {
                   <button
                     key={idx + 1}
                     onClick={() => handlePageChange(idx + 1)}
-                    className={`w-10 h-10 rounded-2xl text-sm font-bold transition-all ${currentPage === idx + 1
-                      ? "bg-primary text-white"
-                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
-                      }`}
+                    className={`w-10 h-10 rounded-2xl text-sm font-bold transition-all ${
+                      currentPage === idx + 1
+                        ? "bg-primary text-white"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    }`}
                   >
                     {idx + 1}
                   </button>
@@ -244,10 +309,11 @@ export default function DoctorList() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`p-3 rounded-2xl border transition-all ${currentPage === totalPages
-                  ? "text-slate-300 border-slate-100 cursor-not-allowed"
-                  : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
-                  }`}
+                className={`p-3 rounded-2xl border transition-all ${
+                  currentPage === totalPages
+                    ? "text-slate-300 border-slate-100 cursor-not-allowed"
+                    : "text-slate-600 border-slate-200 dark:border-slate-800 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md active:scale-90"
+                }`}
               >
                 <ChevronRight className="w-5 h-5" />
               </button>

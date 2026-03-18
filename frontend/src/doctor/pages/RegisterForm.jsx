@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Icon, ic } from "../icons";
 import { Ambulance, Bandage } from "lucide-react";
+import { DEPARTMENTS, SPECIALTIES } from "../../utils/constants";
 
 export default function RegisterForm({ onSubmit, initialData }) {
     const [step, setStep] = useState(1);
@@ -141,26 +142,96 @@ export default function RegisterForm({ onSubmit, initialData }) {
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                {[
-                                    ["Full Name", "name", "Dr. John Smith"],
-                                    ["Specialization", "specialty", "Cardiologist"],
-                                    ["License Number", "licenseNo", "MH-123456"],
-                                    ["Experience (years)", "experience", "10"],
-                                    ["Phone", "phone", "+91-9876543210"],
-                                    ["Email", "email", "doctor@email.com"],
-                                ].map(([label, key, ph]) => (
-                                    <div key={key}>
-                                        <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
-                                            {label}
-                                        </label>
-                                        <input
-                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
-                                            placeholder={ph}
-                                            value={form[key]}
-                                            onChange={(e) => set(key, e.target.value)}
-                                        />
-                                    </div>
-                                ))}
+                                <div key="name">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Full Name
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="Dr. John Smith"
+                                        value={form.name}
+                                        onChange={(e) => set("name", e.target.value)}
+                                    />
+                                </div>
+                                <div key="specialty">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Specialization
+                                    </label>
+                                    <select
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        value={form.specialty}
+                                        onChange={(e) => set("specialty", e.target.value)}
+                                    >
+                                        <option value="">Select Specialty</option>
+                                        {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                </div>
+                                <div key="licenseNo">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        License Number
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="MH-123456"
+                                        value={form.licenseNo}
+                                        onChange={(e) => set("licenseNo", e.target.value)}
+                                    />
+                                </div>
+                                <div key="experience">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Experience (years)
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="10"
+                                        value={form.experience}
+                                        onChange={(e) => set("experience", e.target.value)}
+                                    />
+                                </div>
+                                <div key="phone">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Phone
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="+91-9876543210"
+                                        value={form.phone}
+                                        onChange={(e) => set("phone", e.target.value)}
+                                    />
+                                </div>
+                                <div key="email">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Email
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="doctor@email.com"
+                                        value={form.email}
+                                        onChange={(e) => set("email", e.target.value)}
+                                    />
+                                </div>
+                                <div key="city">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        City
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="Mumbai"
+                                        value={form.city}
+                                        onChange={(e) => set("city", e.target.value)}
+                                    />
+                                </div>
+                                <div key="location">
+                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                        Location / Clinic address
+                                    </label>
+                                    <input
+                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        placeholder="Andheri West, Mumbai"
+                                        value={form.location}
+                                        onChange={(e) => set("location", e.target.value)}
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className="gap-3 flex text-xs font-semibold mb-1 text-slate-500 dark:text-slate-400 uppercase tracking-wide">
@@ -184,23 +255,41 @@ export default function RegisterForm({ onSubmit, initialData }) {
                             <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                 <Icon path={ic.briefcase} className="text-green-600" /> Service Details
                             </h2>
-                            {[
-                                ["Category", "category", "General Medicine / Cardiology"],
-                                ["Base Price (₹)", "basePrice", "500"],
-                                ["Availability", "availability", "Mon-Sat, 9AM-6PM"],
-                            ].map(([label, key, ph]) => (
-                                <div key={key}>
-                                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
-                                        {label}
-                                    </label>
-                                    <input
-                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
-                                        placeholder={ph}
-                                        value={form[key]}
-                                        onChange={(e) => set(key, e.target.value)}
-                                    />
-                                </div>
-                            ))}
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                    Category / Department
+                                </label>
+                                <select
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                    value={form.category}
+                                    onChange={(e) => set("category", e.target.value)}
+                                >
+                                    <option value="">Select Department</option>
+                                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                    Base Price (₹)
+                                </label>
+                                <input
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                    placeholder="500"
+                                    value={form.basePrice}
+                                    onChange={(e) => set("basePrice", e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
+                                    Availability
+                                </label>
+                                <input
+                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                    placeholder="Mon-Sat, 9AM-6PM"
+                                    value={form.availability}
+                                    onChange={(e) => set("availability", e.target.value)}
+                                />
+                            </div>
                             <div>
                                 <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
                                     About / Bio
@@ -243,24 +332,48 @@ export default function RegisterForm({ onSubmit, initialData }) {
                                         key={i}
                                         className="grid grid-cols-2 gap-2 mb-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 border border-slate-100 dark:border-slate-800"
                                     >
-                                        {[
-                                            ["Name", "name"],
-                                            ["Specialty", "specialty"],
-                                            ["Experience", "experience"],
-                                            ["Availability", "availability"],
-                                        ].map(([lbl, fld]) => (
-                                            <input
-                                                key={fld}
-                                                className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs bg-white dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-400"
-                                                placeholder={lbl}
-                                                value={sp[fld]}
-                                                onChange={(e) => {
-                                                    const arr = [...form.specialists];
-                                                    arr[i][fld] = e.target.value;
-                                                    set("specialists", arr);
-                                                }}
-                                            />
-                                        ))}
+                                        <input
+                                            className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs bg-white dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-400"
+                                            placeholder="Name"
+                                            value={sp.name}
+                                            onChange={(e) => {
+                                                const arr = [...form.specialists];
+                                                arr[i].name = e.target.value;
+                                                set("specialists", arr);
+                                            }}
+                                        />
+                                        <select
+                                            className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs bg-white dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-400"
+                                            value={sp.specialty}
+                                            onChange={(e) => {
+                                                const arr = [...form.specialists];
+                                                arr[i].specialty = e.target.value;
+                                                set("specialists", arr);
+                                            }}
+                                        >
+                                            <option value="">Specialty</option>
+                                            {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                        <input
+                                            className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs bg-white dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-400"
+                                            placeholder="Experience"
+                                            value={sp.experience}
+                                            onChange={(e) => {
+                                                const arr = [...form.specialists];
+                                                arr[i].experience = e.target.value;
+                                                set("specialists", arr);
+                                            }}
+                                        />
+                                        <input
+                                            className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-xs bg-white dark:bg-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-green-400"
+                                            placeholder="Availability"
+                                            value={sp.availability}
+                                            onChange={(e) => {
+                                                const arr = [...form.specialists];
+                                                arr[i].availability = e.target.value;
+                                                set("specialists", arr);
+                                            }}
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -453,16 +566,15 @@ export default function RegisterForm({ onSubmit, initialData }) {
                         ) : (
                             <button
                                 onClick={() => {
-                                    
                                     const cleanTreatments = form.treatments.map(t => ({ name: t.name, desc: t.desc }));
                                     onSubmit({
                                         ...form,
                                         treatments: cleanTreatments,
                                         profilePic,
-                                        rating: 4.8,
-                                        reviewsCount: 127,
-                                        patientsTreated: "500+",
-                                        successRate: "97%",
+                                        rating: 0,
+                                        reviewsCount: 0,
+                                        patientsTreated: "0",
+                                        successRate: "N/A",
                                         status: "pending",
                                     });
                                 }}

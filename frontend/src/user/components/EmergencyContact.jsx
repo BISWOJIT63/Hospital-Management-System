@@ -1,6 +1,6 @@
 import { Siren, Contact } from "lucide-react";
 
-export default function EmergencyContact({ theme }) {
+export default function EmergencyContact({ theme, user }) {
   return (
     <div className={`border rounded-2xl p-6 relative overflow-hidden transition-colors ${
       theme === 'dark'
@@ -20,7 +20,9 @@ export default function EmergencyContact({ theme }) {
             <label className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
               Name
             </label>
-            <p className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Sarah Wright</p>
+            <p className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+              {user?.name ? `${user.name.split(' ')[0]}'s Contact` : "Emergency Contact"}
+            </p>
           </div>
           <div className="space-y-1">
             <label className={`text-xs font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>

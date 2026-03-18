@@ -1,9 +1,9 @@
-import User from '../models/User.js';
+import Doctor from '../models/Doctor.js';
 
 export const getDoctors = async (req, res) => {
     try {
-        const doctors = await User.find({ role: 'Doctor' }).select('-password');
-        res.json(doctors);
+        const doctors = await Doctor.find({ status: 'active' }).select('-password');
+        res.json({ success: true, data: doctors });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
@@ -11,11 +11,11 @@ export const getDoctors = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
     try {
-        const doctor = await User.findOne({ _id: req.params.id, role: 'Doctor' }).select('-password');
+        const doctor = await Doctor.findById(req.params.id).select('-password');
         if (doctor) {
-            res.json(doctor);
+            res.json({ success: true, data: doctor });
         } else {
-            res.status(404).json({ message: 'Doctor not found' });
+            res.status(404).json({ success: false, message: 'Doctor not found' });
         }
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });

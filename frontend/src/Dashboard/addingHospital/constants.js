@@ -89,7 +89,7 @@ export const emptyServiceEntry = () => ({
     { day: "Saturday", time: "09:00 AM – 01:00 PM", isOpen: true },
     { day: "Sunday", time: "Closed", isOpen: false },
   ],
-  image: "",
+  images: [],
 });
 
 
@@ -99,12 +99,14 @@ export const emptyDept = () => ({
   specialties: "",
   description: "",
 });
+export const emptyAppointmentType = () => ({ name: "", price: "" });
 export const emptyService = () => ({ name: "", price: "" });
 export const emptyDoctor = () => ({
   name: "",
   specialty: "",
   experience: "",
   availability: "",
+  appointmentTypes: [emptyAppointmentType()],
 });
 export const emptyAward = () => ({ title: "", year: "", desc: "" });
 export const emptyHours = () =>
@@ -122,6 +124,8 @@ export const baseTemplate = () => ({
   accreditation: "",
   city: "",
   location: "", // Used as address
+  email: "",
+  phone: "",
   rating: 0,
   reviewsCount: 0,
   established: "",
@@ -140,5 +144,6 @@ export const baseTemplate = () => ({
   accreditationsList: "",
   awards: [emptyAward()],
   businessHours: emptyHours(),
+  appointmentTypes: [emptyAppointmentType()],
   doctors: [], // The actual ObjectId array
 });

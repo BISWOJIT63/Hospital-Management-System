@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Hexagon } from "lucide-react";
 import { useBreakpoint } from "../hooks/useBreakpoint";
 import { T } from "./Helpers";
+import { api } from "../../utils/api";
 
 export const ManageSection = ({ data, refresh }) => {
   const [entities, setEntities] = useState([]);
@@ -13,20 +14,38 @@ export const ManageSection = ({ data, refresh }) => {
     }
   }, [data]);
 
-  const toggle = (id) => {
-    setEntities((e) =>
-      e.map((x) =>
-        x.id === id
-          ? { ...x, status: x.status === "active" ? "on-hold" : "active" }
-          : x,
-      ),
-    );
-    if (refresh) setTimeout(refresh, 1000);
+  const toggle = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      const target = entities.find(e => e.id === id);
+      if (!target) return;
+      const newStatus = target.status === "active" ? "on-hold" : "active";
+      
+      // Optimistic update
+      setEntities((e) =>
+        e.map((x) => (x.id === id ? { ...x, status: newStatus } : x))
+      );
+
+      await api.updateFacilityStatus(id, newStatus, token);
+      if (refresh) setTimeout(refresh, 500);
+    } catch (e) {
+      console.error("Error toggling facility status", e);
+      if (refresh) refresh();
+    }
   };
 
-  const remove = (id) => {
-    setEntities((e) => e.filter((x) => x.id !== id));
-    if (refresh) setTimeout(refresh, 1000);
+  const remove = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      // Optimistic update
+      setEntities((e) => e.filter((x) => x.id !== id));
+
+      await api.deleteFacility(id, token);
+      if (refresh) setTimeout(refresh, 500);
+    } catch (e) {
+      console.error("Error removing facility", e);
+      if (refresh) refresh();
+    }
   };
 
   if (isMobile)
@@ -220,6 +239,15 @@ export const ManageSection = ({ data, refresh }) => {
                     <button className="btn-danger" onClick={() => remove(e.id)}>
                       REMOVE
                     </button>
+                    <a
+                      href={e.type === "Hospital" ? `/Hospital-profile/${e.id}` : `/clinic-profile/${e.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-warn"
+                      style={{ textDecoration: 'none', background: '#00f5d4', color: '#080d1a' }}
+                    >
+                      VIEW
+                    </a>
                   </div>
                 </td>
               </tr>

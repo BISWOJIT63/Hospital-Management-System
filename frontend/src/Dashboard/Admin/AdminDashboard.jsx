@@ -62,7 +62,7 @@ export default function AdminDashboard({ initialFac }) {
       case "awards":
         return <AwardsPanel fac={fac} />;
       case "services":
-        return <ServiceManagerPanel />;
+        return <ServiceManagerPanel fac={fac} />;
       default:
         return (
           <div className="p-8 text-center text-slate-500">Panel not found</div>
@@ -129,13 +129,7 @@ export default function AdminDashboard({ initialFac }) {
               onClick={() => setEditOpen(true)}
               className="hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm text-slate-600 dark:text-slate-300"
             >
-              <Edit2 size={12} /> Edit Facility
-            </button>
-            <button
-              className="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300"
-              title="View Public Profile"
-            >
-              <ExternalLink size={14} />
+              <Edit2 size={12} /> Edit Details
             </button>
           </div>
         </header>

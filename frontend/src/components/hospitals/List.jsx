@@ -26,10 +26,14 @@ const HOSPITAL_TYPES = [
   "General Hospital",
 ];
 
-export default function List() {
+export default function List({ defaultCategory = "Hospital" }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("All");
-  const [activeCategory, setActiveCategory] = useState("Hospital");
+  const [activeCategory, setActiveCategory] = useState(defaultCategory);
+
+  useEffect(() => {
+    setActiveCategory(defaultCategory);
+  }, [defaultCategory]);
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hospitals, setHospitals] = useState([]);
@@ -39,57 +43,32 @@ export default function List() {
   const itemsPerPage = 3;
 
   useEffect(() => {
-    const fetchHospitals = async () => {
+    const fetchFacilities = async () => {
       try {
-        const data = await api.getHospitals();
-        if (data && data.length > 0) {
-          setHospitals(data);
-        } else {
-
-          setHospitals([
-            {
-              id: "h1",
-              name: "CityCare Super Specialty Hospital",
-              type: "Multi-specialty",
-              rating: 4.8,
-              address: "Downtown Medical District, New York, USA",
-              beds: 500,
-              distance: "2.5 km",
-              availability: "24/7 Open",
-              images: ["https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1000&h=600"]
-            },
-            {
-              id: "c1",
-              name: "Evergreen Medical Center",
-              type: "Clinic Hub",
-              rating: 4.8,
-              address: "123 Healthcare Blvd, Medical District, San Francisco",
-              beds: 15,
-              distance: "1.2 miles",
-              availability: "08:00 AM - 08:00 PM",
-              images: ["https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000"]
-            }
-          ]);
+        const res = await api.getFacilities();
+        if (res.success && res.data) {
+          setHospitals(res.data);
+        } else if (Array.isArray(res)) {
+          setHospitals(res);
         }
       } catch (error) {
-        console.error("Failed to fetch hospitals:", error);
+        console.error("Failed to fetch facilities:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchHospitals();
+    fetchFacilities();
   }, []);
 
   const filteredHospitals = useMemo(() => {
     return hospitals.filter((hosp) => {
-      const locationMatch = hosp.address || hosp.location || "";
+      const locationMatch = hosp.address || hosp.city || "";
       const matchesSearch =
         hosp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         locationMatch.toLowerCase().includes(searchTerm.toLowerCase());
+      
       const matchesType = selectedType === "All" || hosp.type === selectedType;
-
-      const isClinic = hosp.type?.toLowerCase().includes("clinic") || hosp.name?.toLowerCase().includes("clinic");
-      const matchesCategory = activeCategory === "Clinic" ? isClinic : !isClinic;
+      const matchesCategory = hosp.type === activeCategory;
 
       return matchesSearch && matchesType && matchesCategory;
     });
@@ -219,21 +198,21 @@ export default function List() {
                   </div>
 
                   { }
-                  <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 dark:border-slate-800">
+                      <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 dark:border-slate-800">
                     <div className="space-y-1">
                       <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
-                        <Bed className="w-3 h-3" /> Beds
+                        <Bed className="w-3 h-3" /> Info
                       </p>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                        {hospital.beds}+ Units
+                        {hospital.beds || hospital.doctorsCount || "10+"} Units
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
-                        <Navigation className="w-3 h-3" /> Distance
+                        <Navigation className="w-3 h-3" /> Location
                       </p>
                       <p className="text-sm font-bold text-primary">
-                        {hospital.distance || "2.5 km"} away
+                        {hospital.city || "Nearby"}
                       </p>
                     </div>
                   </div>
@@ -241,7 +220,7 @@ export default function List() {
                   { }
                   <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
                     <Clock className="w-4 h-4 text-green-500" />
-                    <span>{hospital.availability}</span>
+                    <span>{typeof hospital.businessHours?.[0] === "string" ? hospital.businessHours[0] : (hospital.businessHours?.[0]?.time || "24/7 Available")}</span>
                   </div>
 
                   { }

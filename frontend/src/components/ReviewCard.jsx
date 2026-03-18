@@ -22,15 +22,15 @@ const ReviewCard = ({ className, rev }) => {
 
   return (
     <div
-      className={`w-full max-w-[300px] shrink-0 font-sans bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-emerald-900/10 overflow-hidden border border-emerald-100 dark:border-slate-700 transition-all duration-300 hover:shadow-4xl hover:-translate-y-4 ${className}`}
+      className={`w-full max-w-[260px] md:max-w-[280px] lg:max-w-[320px] h-full flex flex-col shrink-0 font-sans bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-emerald-900/10 overflow-hidden border border-emerald-100 dark:border-slate-700 transition-all duration-300 hover:shadow-4xl hover:-translate-y-4 ${className}`}
     >
-      <div className="relative w-full p-8 pb-0">
-        <div className="absolute top-6 right-2 text-emerald-100 dark:text-emerald-900/30">
+      <div className="relative w-full p-5 md:p-8 pr-12 md:pr-14 pb-0">
+        <div className="absolute top-6 right-4 md:right-8 text-emerald-100 dark:text-emerald-900/30">
           <Quote size={30} fill="currentColor" />
         </div>
 
-        <div className="flex items-center gap-4 relative z-10">
-          <div className="w-14 h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xl font-bold border-4 dark:border-emerald-500/20 border-slate-800 shadow-inner">
+        <div className="flex items-center gap-4 relative z-10 w-full">
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xl font-bold border-4 dark:border-emerald-500/20 border-slate-800 shadow-inner">
             <User />
           </div>
           <div>
@@ -47,7 +47,7 @@ const ReviewCard = ({ className, rev }) => {
         </div>
       </div>
 
-      <div className="p-8 pt-6">
+      <div className="p-5 md:p-8 pt-6">
         <div className="flex gap-1 mb-4">
           {[...Array(rev.star)].map((_, i) => (
             <Star
@@ -66,24 +66,18 @@ const ReviewCard = ({ className, rev }) => {
         <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">{rev.fb}</p>
       </div>
 
-      <div className="px-4 py-5 bg-emerald-50/50 dark:bg-slate-900/50 flex items-center justify-between border-t border-emerald-100 dark:border-slate-700">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-0.5 text-xs font-bold transition-colors ${liked
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400"
-              }`}
-          >
-            <ThumbsUp size={14} className={liked ? "fill-emerald-600 dark:fill-emerald-400" : ""} />
-            <span>Helpful ({likeCount})</span>
-          </button>
-          <button className="flex items-center gap-1.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-            <MessageSquare size={16} />
-            <span>Comment</span>
-          </button>
-        </div>
-        <span className="text-[10px] font-bold text-emerald-400 dark:text-emerald-500 uppercase tracking-widest">
+      <div className="px-5 mt-auto md:px-8 py-5 bg-emerald-50/50 dark:bg-slate-900/50 flex items-center justify-between border-t border-emerald-100 dark:border-slate-700">
+        <button
+          onClick={handleLike}
+          className={`flex items-center gap-0.5 text-xs font-bold transition-colors ${liked
+            ? "text-emerald-600 dark:text-emerald-400"
+            : "text-gray-500 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400"
+            }`}
+        >
+          <ThumbsUp size={14} className={liked ? "fill-emerald-600 dark:fill-emerald-400" : ""} />
+          <span className="mt-0.5">Helpful ({likeCount})</span>
+        </button>
+        <span className="text-xs font-bold text-emerald-400 dark:text-emerald-500 uppercase tracking-widest leading-none">
           {rev.date}
         </span>
       </div>

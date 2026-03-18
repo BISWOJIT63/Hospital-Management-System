@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import Tabs from "./subpages/Tabs";
 import Profile from "./subpages/Profile";
 import Bio from "./subpages/Bio";
-import Review from "./subpages/Review";
 import Time from "./subpages/Time";
 import Availbility from "./subpages/Availbility";
 import Services from "./subpages/Services";
@@ -14,8 +13,8 @@ import Membership from "./subpages/Membership";
 import Location from "./subpages/Location";
 import Awards from "./subpages/Awards";
 import Specilist from "./subpages/Specilist";
-
 import { api } from "../../utils/api";
+import ReviewSection from "../Reviews/ReviewSection";
 
 export default function DoctorProfile() {
   const { id } = useParams();
@@ -33,11 +32,14 @@ export default function DoctorProfile() {
           setDoctor({
             ...fullProfile,
             ...profileData,
-            name: fullProfile.user?.name || fullProfile.name || profileData.name,
+            name:
+              fullProfile.user?.name || fullProfile.name || profileData.name,
             image:
+              fullProfile.avatar ||
+              fullProfile.profilePic ||
               fullProfile.user?.avatar ||
               fullProfile.image ||
-              "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400&h=400",
+              profileData.image,
             experienceList: profileData.experienceList || [],
             insurances: profileData.insurances || [],
             specialties: profileData.specialties || [],
@@ -49,11 +51,20 @@ export default function DoctorProfile() {
             businessHours: profileData.businessHours || [],
             reviews: profileData.reviews || [],
             about:
-              profileData.about ||
               fullProfile.about ||
-              "No biography provided for this doctor.",
-            rating: profileData.ratings?.average || profileData.rating || fullProfile.rating || 0,
+              profileData.about,
+            rating:
+              profileData.ratings?.average ||
+              profileData.rating ||
+              fullProfile.rating ||
+              0,
             reviewsCount: profileData.reviewsCount || 0,
+            appointmentsBooked: fullProfile.appointmentsBooked || profileData.appointmentsBooked || 0,
+            experience: fullProfile.experience || profileData.experience || "0 Years",
+            awardsCount: fullProfile.awardsCount || profileData.awardsCount || 0,
+            priceRange: fullProfile.consultationFee || profileData.priceRange || profileData.consultationFee || "$0",
+            specialty: fullProfile.specialty || profileData.specialty || "General Specialist",
+            title: fullProfile.title || profileData.title || "Doctor",
           });
         }
       } catch (err) {
@@ -74,50 +85,56 @@ export default function DoctorProfile() {
       </div>
     );
 
+  const hasReviews = !!DOCTOR?.reviews?.length;
+
   return (
     <div className="min-h-screen df bg-medical-bg dark:bg-slate-950 text-gray-800 dark:text-gray-200 font-sans pb-24">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        { }
+        {}
         <Profile
           DOCTOR={DOCTOR}
           isFavorite={isFavorite}
           setIsFavorite={setIsFavorite}
         />
-        { }
-        <Tabs />
+        {}
+        <Tabs hasReviews={hasReviews} />
 
-        { }
+        {}
         <div className="space-y-8 pb-12 ">
-          { }
+          {}
           <Bio DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Experience DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Insurance DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Specilist DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Services DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Availbility DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Location DOCTOR={DOCTOR} />
 
-          { }
+          {}
           <Membership DOCTOR={DOCTOR} />
-          { }
+          {}
           <Awards DOCTOR={DOCTOR} />
-          { }
+          {}
           <Time DOCTOR={DOCTOR} />
 
-          { }
-          <Review DOCTOR={DOCTOR} />
+          <ReviewSection 
+            entityId={id} 
+            entityType="Doctor" 
+            initialRating={DOCTOR.rating} 
+            initialCount={DOCTOR.reviewsCount} 
+          />
         </div>
       </main>
     </div>

@@ -35,7 +35,7 @@ export const adminSchema = baseUserSchema.and(
 export const doctorSchema = baseUserSchema.and(
     z.object({
         licenseNumber: z.string().min(1, 'License number is required'),
-        specialization: z.string().min(1, 'Specialization is required'),
+        specialty: z.string().min(1, 'Specialization is required'),
         experience: z.string().min(1, 'Experience is required'),
         department: z.string().min(1, 'Department is required'),
         consultationFee: z.string().min(1, 'Consultation fee is required'),

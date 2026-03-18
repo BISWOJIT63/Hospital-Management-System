@@ -121,16 +121,8 @@ export default function Billing({
                                                         <button
                                                             key={s}
                                                             onClick={() => {
-                                                                setBilling((prev) =>
-                                                                    prev.map((x) =>
-                                                                        x.id === b.id ? { ...x, status: s } : x
-                                                                    )
-                                                                );
+                                                                updatePaymentStatus(b.id, s);
                                                                 setBillStatusOpen(null);
-                                                                showNotif(
-                                                                    `Invoice ${b.id} marked as ${s}`,
-                                                                    s === "overdue" ? "warning" : "success"
-                                                                );
                                                             }}
                                                             className="w-full text-left px-4 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 capitalize transition-colors"
                                                         >

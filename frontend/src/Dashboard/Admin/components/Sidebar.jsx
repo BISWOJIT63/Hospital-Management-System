@@ -134,7 +134,6 @@ export default function Sidebar({
         className={`border-t border-slate-100 dark:border-slate-800 shrink-0 ${collapsed ? "p-2 flex flex-col items-center gap-1" : "p-3"}`}
       >
         {[
-          { icon: Settings, label: "Settings", red: false },
           { icon: LogOut, label: "Log Out", red: true },
         ].map(({ icon: Ico, label, red }) => (
           <button

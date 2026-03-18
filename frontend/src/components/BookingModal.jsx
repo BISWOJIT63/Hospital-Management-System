@@ -9,6 +9,8 @@ const BookingModal = ({ isOpen, onClose, provider, providerType, preselectedServ
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [service, setService] = useState(preselectedService || '');
+    const [appointmentType, setAppointmentType] = useState('');
+    const [amount, setAmount] = useState(500);
     const [notes, setNotes] = useState('');
 
     const [loading, setLoading] = useState(false);
@@ -60,6 +62,8 @@ const BookingModal = ({ isOpen, onClose, provider, providerType, preselectedServ
                 providerId: provider._id || provider.id,
                 providerType: providerType,
                 service,
+                appointmentType,
+                amount,
                 date,
                 time,
                 notes
@@ -122,6 +126,37 @@ const BookingModal = ({ isOpen, onClose, provider, providerType, preselectedServ
                             placeholder="e.g. General Consultation, Dental Checkup..."
                             className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                         />
+                    </div>
+
+                    {(provider.appointmentTypes?.length > 0 || provider.pricing?.length > 0) && (
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-2">
+                                <Activity size={16} className="text-primary" /> Appointment Type
+                            </label>
+                            <select
+                                required
+                                value={appointmentType}
+                                onChange={(e) => {
+                                    setAppointmentType(e.target.value);
+                                    const options = provider.appointmentTypes || provider.pricing || [];
+                                    const selected = options.find(o => (o.name || o.package) === e.target.value);
+                                    if (selected) setAmount(Number(selected.price) || 500);
+                                }}
+                                className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            >
+                                <option value="">Select Type</option>
+                                {(provider.appointmentTypes || provider.pricing || []).map((at, i) => (
+                                    <option key={i} value={at.name || at.package}>
+                                        {at.name || at.package} - ${at.price}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                        <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total Fees</span>
+                        <span className="text-xl font-black text-primary">${amount}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

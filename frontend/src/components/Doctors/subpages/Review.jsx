@@ -1,15 +1,29 @@
 import { ChevronLeft, ChevronRight, Reply, Star, ThumbsUp } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Review = ({DOCTOR}) => {
+const Review = ({ DOCTOR }) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  if (!DOCTOR?.reviews?.length) return null;
+
   return (
     <div>
       <section
         id="reviews"
         className="bg-white dark:bg-slate-950 dark:border-slate-700 p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm scroll-mt-36"
       >
-        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-8">
-          Reviews ({DOCTOR.reviewsCount})
-        </h2>
+        <div className="flex items-start justify-between mb-8">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            Reviews ({DOCTOR.reviewsCount})
+          </h2>
+          <button
+            onClick={() => navigate(`/reviews/doctor/${id}`)}
+            className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+          >
+            View All Reviews
+          </button>
+        </div>
         <div className="space-y-8">
           {DOCTOR.reviews.map((review, idx) => (
             <div
@@ -53,7 +67,6 @@ const Review = ({DOCTOR}) => {
                 <Reply className="w-4 h-4" /> Reply
               </button>
 
-              {}
               {review.reply && (
                 <div className="mt-6 ml-10 p-4 bg-slate-50 dark:bg-slate-800 dark:border-slate-700 border border-slate-100 rounded-xl flex gap-4">
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0 font-bold text-green-700">

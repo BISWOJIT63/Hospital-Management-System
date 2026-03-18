@@ -1,6 +1,6 @@
-import { Baby, Bone, Brain, CreditCard, Eye, Heart, MapPin, ShieldCheck, Stethoscope, Video } from "lucide-react";
+import { Baby, Bone, Brain, CreditCard, Eye, Heart, MapPin, ShieldCheck, Stethoscope, Video, Activity, Building2, User } from "lucide-react";
 import StepHeader from "./StepHeader";
-import { Activity } from "react";
+
 const APPOINTMENT_TYPES = [
   {
     id: "in-person",
@@ -185,8 +185,17 @@ const AVAILABLE_DOCTORS = [
     patients: "2k+",
   },
 ];
-export default function StepPayment({ data, summary, onChange }) {
+export default function StepPayment({ data, summary, providerState, onChange }) {
   const selectedType = APPOINTMENT_TYPES.find((t) => t.id === summary.type);
+
+  // Resolve the real provider from location.state
+  const provider = providerState?.hospital || providerState?.clinic || providerState?.doctor || summary.doctor;
+  const isDoctor = !!(providerState?.doctor || (!providerState?.hospital && !providerState?.clinic && summary.doctor));
+  const providerLabel = providerState?.hospital ? "Hospital" : providerState?.clinic ? "Clinic" : "Doctor";
+  const providerName = provider?.name || summary.doctor?.name || "—";
+  const providerSub = isDoctor
+    ? provider?.specialty || provider?.role || SPECIALTIES.find(s => s.id === summary.specialty)?.name
+    : provider?.type || (providerState?.clinic ? "Clinic" : "Hospital");
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -268,31 +277,42 @@ export default function StepPayment({ data, summary, onChange }) {
           )}
         </div>
 
-        {}
-        <div className="w-full md:w-80  p-6 rounded-xl border border-slate-200 dark:border-slate-700 h-fit">
+        {/* Booking Summary */}
+        <div className="w-full md:w-80 p-6 rounded-xl border border-slate-200 dark:border-slate-700 h-fit">
           <h3 className="font-bold text-slate-900 dark:text-white mb-4">Booking Summary</h3>
           <div className="space-y-3 text-sm border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
+
+            {/* Provider */}
+            {provider && (
+              <div className="flex items-start gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                  {isDoctor ? <User className="w-4 h-4 text-emerald-600" /> : <Building2 className="w-4 h-4 text-emerald-600" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">{providerLabel}</p>
+                  <p className="font-semibold text-slate-900 dark:text-slate-200 truncate">{providerName}</p>
+                  {providerSub && <p className="text-xs text-slate-500 dark:text-slate-400">{providerSub}</p>}
+                </div>
+              </div>
+            )}
+
+            {/* Service/Specialty */}
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400">Service</span>
               <span className="font-medium text-slate-900 dark:text-slate-200">
-                {SPECIALTIES.find((s) => s.id === summary.specialty)?.name ||
-                  "-"}
+                {SPECIALTIES.find((s) => s.id === summary.specialty)?.name || summary.type || "—"}
               </span>
             </div>
-            {summary.doctor && (
-              <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">Doctor</span>
-                <span className="font-medium text-slate-900 dark:text-slate-200 text-right">
-                  {summary.doctor.name}
-                </span>
-              </div>
-            )}
+
+            {/* Appointment type */}
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400">Type</span>
               <span className="font-medium text-slate-900 dark:text-slate-200">
-                {selectedType?.title || "-"}
+                {selectedType?.title || "—"}
               </span>
             </div>
+
+            {/* Date & time */}
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400">Date</span>
               <span className="font-medium text-slate-900 dark:text-slate-200">
@@ -303,7 +323,7 @@ export default function StepPayment({ data, summary, onChange }) {
           <div className="flex justify-between items-center">
             <span className="font-bold text-slate-900 dark:text-white text-lg">Total</span>
             <span className="font-bold text-emerald-600 dark:text-emerald-500 text-xl">
-              {selectedType?.price || "-"}
+              {selectedType?.price || "—"}
             </span>
           </div>
         </div>

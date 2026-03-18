@@ -6,6 +6,7 @@ import {
   doctorSchema,
   patientSchema,
 } from "../../utils/validation";
+import { DEPARTMENTS, SPECIALTIES } from "../../utils/constants";
 import { useAuth } from "../hooks/useAuth";
 import {
   FiUser,
@@ -20,6 +21,7 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import RoleSelector from "./RoleSelector";
+import SocialAuthButtons from "./SocialAuthButtons";
 import { Link, useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
@@ -62,10 +64,16 @@ const RegisterForm = () => {
     if (!result.success) {
       setError(result.error);
     } else {
-      if (selectedRole === "admin") {
-        navigate("/admin");
+      // Use the actual role from the server for redirection
+      const userRole = result.user?.role?.toLowerCase();
+      const uid = result.user?.id || result.user?._id;
+
+      if (userRole === "admin" || userRole === "superadmin") {
+        navigate(uid ? `/admin/dashboard/${uid}` : "/admin");
+      } else if (userRole === "doctor") {
+        navigate(uid ? `/doctor/dashboard/${uid}` : "/doctor");
       } else {
-        navigate("/");
+        navigate(uid ? `/patient/${uid}` : "/patient");
       }
     }
   };
@@ -232,12 +240,23 @@ const RegisterForm = () => {
             {selectedRole === "doctor" && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InputField
-                    label="Specialization"
-                    name="specialization"
-                    icon={FiActivity}
-                    placeholder="Cardiology"
-                  />
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Specialization
+                    </label>
+                    <select
+                      {...register("specialty")}
+                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                    >
+                      <option value="">Select Specialty</option>
+                      {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    {errors.specialty && (
+                      <p className="text-lime-500 text-xs mt-1">
+                        {errors.specialty.message}
+                      </p>
+                    )}
+                  </div>
                   <InputField
                     label="Experience (Years)"
                     name="experience"
@@ -246,12 +265,23 @@ const RegisterForm = () => {
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InputField
-                    label="Department"
-                    name="department"
-                    icon={FiMapPin}
-                    placeholder="Cardiology Dept"
-                  />
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Department
+                    </label>
+                    <select
+                      {...register("department")}
+                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                    >
+                      <option value="">Select Department</option>
+                      {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    {errors.department && (
+                      <p className="text-lime-500 text-xs mt-1">
+                        {errors.department.message}
+                      </p>
+                    )}
+                  </div>
                   <InputField
                     label="Consultation Fee"
                     name="consultationFee"
@@ -269,12 +299,23 @@ const RegisterForm = () => {
             )}
 
             {selectedRole === "admin" && (
-              <InputField
-                label="Department"
-                name="department"
-                icon={FiMapPin}
-                placeholder="IT / HR / Management"
-              />
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Department
+                </label>
+                <select
+                  {...register("department")}
+                  className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                >
+                  <option value="">Select Department</option>
+                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+                {errors.department && (
+                  <p className="text-lime-500 text-xs mt-1">
+                    {errors.department.message}
+                  </p>
+                )}
+              </div>
             )}
           </motion.div>
         </AnimatePresence>
@@ -347,6 +388,21 @@ const RegisterForm = () => {
         <span>Already have an account?</span>
         <span className="hover:underline text-primary">Login</span>
       </Link>
+
+      <div className="mt-8">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white rounded-md dark:bg-dark-card text-gray-500">
+              Or join with
+            </span>
+          </div>
+        </div>
+
+        <SocialAuthButtons role={selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} />
+      </div>
     </motion.div>
   );
 };

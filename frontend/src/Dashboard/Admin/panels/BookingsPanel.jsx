@@ -16,12 +16,42 @@ import {
   Avatar,
   Chip,
 } from "../components/AdminUI";
-import { initBookings } from "../adminData";
+import { api } from "../../../utils/api";
 
 export default function BookingsPanel() {
-  const [bookings, setBookings] = useState(initBookings);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+
+  React.useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const res = await api.getMyAppointments();
+        if (res.success || res.data) {
+          const raw = res.data || res;
+          const formatted = raw.map(b => ({
+            id: `#${(b._id || '').slice(-6).toUpperCase()}`,
+            rawId: b._id,
+            patient: b.patientId?.name || "Unknown Patient",
+            doctor: b.providerType === 'Doctor' ? 'Doctor View' : 'Facility View',
+            dept: b.providerType,
+            date: b.date,
+            time: b.time,
+            type: b.service,
+            amount: "$0.00",
+            status: b.status === "confirmed" ? "accepted" : b.status,
+          }));
+          setBookings(formatted);
+        }
+      } catch (e) {
+        console.error("Failed to load bookings", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBookings();
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -39,8 +69,17 @@ export default function BookingsPanel() {
     [bookings, search, filter],
   );
 
-  const setStatus = (id, s) =>
-    setBookings((bb) => bb.map((b) => (b.id === id ? { ...b, status: s } : b)));
+  const setStatus = async (id, rawId, s) => {
+    try {
+      const realStatus = s === "accepted" ? "confirmed" : s;
+      const res = await api.updateAppointmentStatus(rawId, realStatus);
+      if (res.success || res.status) {
+        setBookings((bb) => bb.map((b) => (b.id === id ? { ...b, status: s } : b)));
+      }
+    } catch (e) {
+      console.error("Failed to update status", e);
+    }
+  };
   const counts = {
     all: bookings.length,
     accepted: bookings.filter((b) => b.status === "accepted").length,
@@ -172,7 +211,7 @@ export default function BookingsPanel() {
                     <div className="flex items-center gap-1">
                       {b.status !== "accepted" && (
                         <button
-                          onClick={() => setStatus(b.id, "accepted")}
+                          onClick={() => setStatus(b.id, b.rawId, "accepted")}
                           title="Accept"
                           className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition"
                         >
@@ -181,7 +220,7 @@ export default function BookingsPanel() {
                       )}
                       {b.status !== "cancelled" && (
                         <button
-                          onClick={() => setStatus(b.id, "cancelled")}
+                          onClick={() => setStatus(b.id, b.rawId, "cancelled")}
                           title="Cancel"
                           className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 flex items-center justify-center text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition"
                         >
@@ -190,7 +229,7 @@ export default function BookingsPanel() {
                       )}
                       {b.status !== "pending" && (
                         <button
-                          onClick={() => setStatus(b.id, "pending")}
+                          onClick={() => setStatus(b.id, b.rawId, "pending")}
                           title="Set Pending"
                           className="w-7 h-7 rounded-lg bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-500/20 transition"
                         >

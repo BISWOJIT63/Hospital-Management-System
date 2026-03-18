@@ -1,46 +1,35 @@
-import { RefreshCw } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 
-const steps = [
-  { number: 1, label: "Requested", completed: true },
-  { number: 2, label: "Doctor Approved", completed: true },
-  { number: 3, label: "Pharmacy Proc.", completed: false, current: true },
-  { number: 4, label: "Ready", completed: false, current: false },
-];
+export default function RefillTracker({ theme, upcoming = [] }) {
+  if (upcoming.length === 0) {
+    return (
+      <div className={`p-6 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+        <h4 className={`font-bold flex items-center gap-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+          <CalendarClock className="w-5 h-5 text-[#50df20]" />
+          Upcoming Appointments
+        </h4>
+        <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>No upcoming appointments.</p>
+      </div>
+    );
+  }
 
-export default function RefillTracker() {
   return (
-    <div className="glass-card p-6 rounded-xl border border-[#50df20]/20">
-      <h4 className="font-bold flex items-center gap-2 mb-6 text-slate-900">
-        <RefreshCw className="w-5 h-5 text-[#50df20]" />
-        {"Refill Progress: Lisinopril"}
+    <div className={`p-6 rounded-xl border ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+      <h4 className={`font-bold flex items-center gap-2 mb-5 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+        <CalendarClock className="w-5 h-5 text-[#50df20]" />
+        Upcoming Appointments
       </h4>
-      <div className="relative flex items-center justify-between">
-        <div className="absolute top-4 left-0 w-full h-1 bg-slate-200 z-0" />
-        <div className="absolute top-4 left-0 w-2/3 h-1 bg-[#50df20] z-0" />
-        {steps.map((step) => (
-          <div key={step.number} className="relative z-10 flex flex-col items-center gap-2">
-            <div
-              className={
-                step.completed
-                  ? "w-8 h-8 rounded-full bg-[#50df20] flex items-center justify-center text-white text-xs font-bold"
-                  : step.current
-                  ? "w-8 h-8 rounded-full bg-[#50df20]/20 border-2 border-[#50df20] flex items-center justify-center text-[#50df20] text-xs font-bold"
-                  : "w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold"
-              }
-            >
-              {step.number}
+      <div className="space-y-3">
+        {upcoming.slice(0, 4).map((apt, i) => (
+          <div key={apt._id || i} className={`flex items-center justify-between p-3 rounded-xl ${theme === 'dark' ? 'bg-slate-700/50' : 'bg-slate-50'}`}>
+            <div>
+              <p className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{apt.service}</p>
+              <p className={`text-xs mt-0.5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{apt.providerName}</p>
             </div>
-            <span
-              className={
-                step.current
-                  ? "text-xs font-bold text-[#50df20]"
-                  : step.completed
-                  ? "text-xs font-bold text-slate-900"
-                  : "text-xs font-medium text-slate-500"
-              }
-            >
-              {step.label}
-            </span>
+            <div className="text-right">
+              <p className={`text-xs font-bold ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>{apt.date}</p>
+              <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{apt.time}</p>
+            </div>
           </div>
         ))}
       </div>

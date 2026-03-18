@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../components/context/AuthContext";
 import { api } from "../utils/api";
 import RegisterForm from "./pages/RegisterForm";
 import PendingScreen from "./pages/PendingScreen";
+import RejectedScreen from "./pages/RejectedScreen";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import Overview from "./components/Overview";
@@ -12,18 +14,44 @@ import Comms from "./components/Comms";
 import Billing from "./components/Billing";
 import Reviews from "./components/Reviews";
 import ProfileSettings from "./components/ProfileSettings";
+import Services from "./components/Services";
 import { Icon, ic } from "./icons";
-import {
-  MOCK_PATIENTS,
-  MOCK_REVIEWS,
-  MOCK_BILLING,
-  MOCK_COMMS,
-  INITIAL_SERVICE,
-} from "./mockData";
+const INITIAL_DOCTOR_DATA = {
+  name: "",
+  category: "",
+  status: "incomplete",
+  specialty: "",
+  licenseNo: "",
+  experience: "",
+  phone: "",
+  email: "",
+  emergencyEmail: "",
+  basePrice: "",
+  about: "",
+  profilePic: null,
+  treatments: [],
+  specialists: [],
+  pricing: [],
+  businessHours: [
+      { day: "Monday", isOpen: true, time: "09:00 AM - 05:00 PM" },
+      { day: "Tuesday", isOpen: true, time: "09:00 AM - 05:00 PM" },
+      { day: "Wednesday", isOpen: true, time: "09:00 AM - 05:00 PM" },
+      { day: "Thursday", isOpen: true, time: "09:00 AM - 05:00 PM" },
+      { day: "Friday", isOpen: true, time: "09:00 AM - 05:00 PM" },
+      { day: "Saturday", isOpen: true, time: "10:00 AM - 02:00 PM" },
+      { day: "Sunday", isOpen: false, time: "" },
+  ],
+  rating: "-",
+  reviewsCount: "-",
+  patientsTreated: "-",
+  successRate: "-",
+};
 
 export default function DoctorPortal() {
   const { user } = useContext(AuthContext);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   
   
@@ -31,7 +59,7 @@ export default function DoctorPortal() {
   const [notif, setNotif] = useState(null);
 
   
-  const [doctorData, setDoctorData] = useState(INITIAL_SERVICE);
+  const [doctorData, setDoctorData] = useState(INITIAL_DOCTOR_DATA);
 
   
   const [activeTab, setActiveTab] = useState("overview");
@@ -39,13 +67,56 @@ export default function DoctorPortal() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   // Sub-tabs Data
-  const [patients, setPatients] = useState(MOCK_PATIENTS);
+  const [patients, setPatients] = useState([]);
   const [ptFilter, setPtFilter] = useState("all");
+
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const res = await api.getMyAppointments();
+        if (res.success || res.data) {
+          const raw = res.data || res;
+          const mapped = raw.map(a => ({
+            id: a._id,
+            name: a.patientId?.name || "Patient",
+            avatar: a.patientId?.avatar || null,
+            age: 30, // Mock
+            gender: "Unknown", // Mock
+            blood: "O+", // Mock
+            condition: a.service, // Use service as condition
+            date: a.date,
+            time: a.time,
+            type: a.service.includes("Online") ? "Online" : "In-Person",
+            status: a.status === "confirmed" ? "approved" : (a.status === "cancelled" ? "rejected" : a.status),
+            history: [] // Mock
+          }));
+          setPatients(mapped);
+
+          const billingMapped = raw.map(a => ({
+             id: a._id.substring(0, 8).toUpperCase(),
+             fullId: a._id,
+             patient: a.patientId?.name || "Patient",
+             date: new Date(a.date).toISOString().split('T')[0],
+             service: a.service,
+             amount: a.amount || 500,
+             status: a.paymentStatus || "pending",
+             pkg: a.package || "Basic"
+          }));
+          setBilling(billingMapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch doctor appointments", err);
+      }
+    };
+    if (token) {
+      fetchPatients();
+    }
+  }, [token]);
 
   const [checkupPt, setCheckupPt] = useState(null);
   const [checkupForm, setCheckupForm] = useState({});
 
-  const [comms, setComms] = useState(MOCK_COMMS);
+  const [comms, setComms] = useState({});
   const [activePtId, setActivePtId] = useState(null);
 
   
@@ -55,24 +126,51 @@ export default function DoctorPortal() {
   const [callActive, setCallActive] = useState(false);
   const chatEndRef = useRef(null);
 
-  const [billing, setBilling] = useState(MOCK_BILLING);
+  const [billing, setBilling] = useState([]);
   const [billFilter, setBillFilter] = useState("all");
   const [billStatusOpen, setBillStatusOpen] = useState(null);
 
-  const [reviews, setReviews] = useState(MOCK_REVIEWS);
+  const [reviews, setReviews] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [sentReplies, setSentReplies] = useState({});
+  const [services, setServices] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
-  const [editData, setEditData] = useState(INITIAL_SERVICE);
+  const [editData, setEditData] = useState(INITIAL_DOCTOR_DATA);
+
+  const [analyticsData, setAnalyticsData] = useState({
+     weeklyApt: [],
+     revenueData: [],
+     conditionData: [],
+     patientTrend: [],
+     radialData: [],
+     totalRevenue: 0,
+     uniquePatients: 0
+  });
+
+  useEffect(() => {
+    const fetchAnalytics = () => {
+      api.getDoctorAnalytics().then(res => {
+          if (res.success) {
+              setAnalyticsData(res.data);
+          }
+      }).catch(err => console.error("Failed to fetch analytics", err));
+    };
+
+    if (token) {
+        fetchAnalytics();
+        const interval = setInterval(fetchAnalytics, 10000);
+        return () => clearInterval(interval);
+    }
+  }, [token]);
 
   // Computed
   const pendingCount = patients.filter((p) => p.status === "pending").length;
-  const avgRating = (
+  const avgRating = reviews.length > 0 ? (
     reviews.reduce((a, b) => a + b.rating, 0) / reviews.length
-  ).toFixed(1);
-  const totalRevenue = billing
+  ).toFixed(1) : 0;
+  const totalRevenue = analyticsData.totalRevenue || billing
     .filter((b) => b.status === "paid")
     .reduce((SUM, b) => SUM + b.amount, 0);
 
@@ -102,7 +200,13 @@ export default function DoctorPortal() {
       r.sub.toLowerCase().includes(gSearch.toLowerCase()),
   );
 
-  
+  const screenRef = React.useRef(screen);
+  useEffect(() => {
+    screenRef.current = screen;
+  }, [screen]);
+
+  const fetchProfileRef = React.useRef(null);
+
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) return;
@@ -111,23 +215,76 @@ export default function DoctorPortal() {
         if (response.success && response.data) {
           const profile = response.data;
           setDoctorData(profile);
+
+          const currentScreen = screenRef.current;
+
           if (profile.status === 'incomplete') {
-            setScreen('register');
+            // Only navigate to register if not already intentionally there
+            if (currentScreen !== 'register') setScreen('register');
           } else if (profile.status === 'pending') {
             setScreen('pending');
-          } else if (profile.status === 'approved') {
+          } else if (profile.status === 'rejected') {
+            // Don't override if the user is actively filling the resubmit form
+            if (currentScreen !== 'register') setScreen('rejected');
+          } else if (profile.status === 'approved' || profile.status === 'active') {
             setScreen('dashboard');
+            if (!id && profile._id) {
+               navigate(`/doctor/dashboard/${profile._id}`, { replace: true });
+            }
+            
+            // Also fetch reviews when profile is loaded
+            try {
+              const reviewDocs = await api.getDoctorReviews(profile.userId || profile._id);
+              if (Array.isArray(reviewDocs)) {
+                // Map the backend Review schema to the shape the UI expects
+                const mappedReviews = reviewDocs.map(r => ({
+                  id: r._id,
+                  patient: r.authorId?.name || "Patient",
+                  rating: r.rating || 5,
+                  text: r.text || "",
+                  date: new Date(r.createdAt).toISOString().split('T')[0],
+                  avatar: r.authorId?.avatar || null,
+                  reply: r.reply // pass reply through
+                }));
+                setReviews(mappedReviews);
+              }
+            } catch (rErr) {
+              console.error("Failed to fetch reviews", rErr);
+            }
+
+            // Also fetch services
+            try {
+              const sRes = await api.getServices({ doctorId: profile._id });
+              if (sRes.success) {
+                setServices(sRes.data);
+              }
+            } catch (sErr) {
+              console.error("Failed to fetch services", sErr);
+            }
+
           } else {
-            setScreen('register'); 
+            if (currentScreen !== 'register') setScreen('register');
           }
         }
       } catch (err) {
         console.error("Error fetching doctor profile", err);
-        setScreen("register");
       }
     };
+
+    // Store in ref so the interval always calls the freshest version
+    fetchProfileRef.current = fetchProfile;
+
+    // Run immediately on mount / token change
     fetchProfile();
+
+    // Always-on 2s polling — updates screen state whenever status changes in DB
+    const interval = setInterval(() => {
+      fetchProfileRef.current?.();
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [token]);
+
 
   useEffect(() => {
     
@@ -137,9 +294,12 @@ export default function DoctorPortal() {
   }, [comms, activeTab, commMode, activePtId]);
 
   useEffect(() => {
-    
-    if (editMode) setEditData(doctorData);
-  }, [editMode, doctorData]);
+    if (editMode && !editData?._id) { 
+      // Only set initial edit data when entering edit mode if it hasn't been set yet
+      // or if you want it to always sync ONCE when toggled.
+      setEditData(doctorData);
+    }
+  }, [editMode]);
 
   
   const showNotif = (msg, type = "success") => {
@@ -164,13 +324,39 @@ export default function DoctorPortal() {
   };
 
   
-  const approvePatient = (id) => {
-    setPatients((p) => p.map((x) => (x.id === id ? { ...x, status: "approved" } : x)));
-    showNotif("Patient approved");
+  const approvePatient = async (id) => {
+    try {
+      await api.updateAppointmentStatus(id, "confirmed");
+      setPatients((p) => p.map((x) => (x.id === id ? { ...x, status: "approved" } : x)));
+      showNotif("Patient approved");
+    } catch (e) {
+      showNotif("Failed to approve", "warning");
+    }
   };
-  const rejectPatient = (id) => {
-    setPatients((p) => p.map((x) => (x.id === id ? { ...x, status: "rejected" } : x)));
-    showNotif("Patient rejected", "warning");
+  const rejectPatient = async (id) => {
+    try {
+      await api.updateAppointmentStatus(id, "cancelled");
+      setPatients((p) => p.map((x) => (x.id === id ? { ...x, status: "rejected" } : x)));
+      showNotif("Patient rejected", "warning");
+    } catch (e) {
+      showNotif("Failed to reject", "warning");
+    }
+  };
+
+  const updatePaymentStatus = async (id, status) => {
+    try {
+      const bill = billing.find(b => b.id === id);
+      if (!bill) return;
+      await api.updateAppointmentPaymentStatus(bill.fullId, status);
+      setBilling((prev) =>
+        prev.map((x) =>
+          x.id === id ? { ...x, status: status } : x
+        )
+      );
+      showNotif(`Invoice ${id} marked as ${status}`, status === "overdue" ? "warning" : "success");
+    } catch (e) {
+      showNotif("Failed to update payment status", "warning");
+    }
   };
 
   
@@ -224,11 +410,47 @@ export default function DoctorPortal() {
   }
 
   if (screen === "register") {
-    return <RegisterForm onSubmit={submitRegistration} initialData={doctorData} />;
+    // Merge the nested profile sub-object into a flat object so RegisterForm can pre-fill fields
+    const prefillData = {
+      name: doctorData?.profile?.name || doctorData?.name || "",
+      specialty: doctorData?.profile?.specialty || "",
+      licenseNo: doctorData?.profile?.licenseNo || "",
+      experience: doctorData?.profile?.experience || "",
+      phone: doctorData?.profile?.phone || "",
+      email: doctorData?.profile?.email || doctorData?.email || "",
+      emergencyEmail: doctorData?.profile?.emergencyEmail || "",
+      category: doctorData?.profile?.category || "",
+      basePrice: doctorData?.profile?.basePrice || "",
+      about: doctorData?.profile?.about || "",
+      city: doctorData?.profile?.city || doctorData?.city || "",
+      location: doctorData?.profile?.location || doctorData?.location || "",
+      availability: doctorData?.profile?.availability || "",
+      treatments: doctorData?.profile?.treatments || [],
+      pricing: doctorData?.profile?.pricing || [],
+      specialists: doctorData?.profile?.specialists || [],
+      businessHours: doctorData?.profile?.businessHours || [],
+    };
+    return <RegisterForm onSubmit={submitRegistration} initialData={prefillData} />;
   }
 
   if (screen === "pending") {
-    return <PendingScreen doctorData={doctorData} onApproved={() => setScreen("dashboard")} />;
+    return <PendingScreen doctorData={doctorData} />;
+  }
+
+  if (screen === "rejected") {
+    return <RejectedScreen doctorData={doctorData} onRetry={() => setScreen("register")} />;
+  }
+
+  // If status is not approved/active and we are at /doctor/dashboard/:id, we should probably redirect back or show pending
+  if (screen !== 'dashboard' && id) {
+     // Wait for fetchProfile to handle it
+  }
+
+  if (screen !== 'dashboard') {
+    // Other states like register, pending are handled above or show nothing here (which shouldn't happen)
+    // Actually, if screen is 'loading', we return loading above.
+    // If screen is 'pending', we return PendingScreen above.
+    // So by now, if it's not 'dashboard', it's already returned.
   }
 
   const navItems = [
@@ -237,6 +459,7 @@ export default function DoctorPortal() {
     { key: "comms", icon: ic.comms, label: "Communications" },
     { key: "billing", icon: ic.billing, label: "Billing & Invoices" },
     { key: "reviews", icon: ic.star, label: "Reviews & Rating" },
+    { key: "services", icon: ic.upload, label: "Manage Services" },
     { key: "profile", icon: ic.settings, label: "Service Profile" },
   ];
 
@@ -293,9 +516,15 @@ export default function DoctorPortal() {
               patients={patients}
               pendingCount={pendingCount}
               avgRating={avgRating}
-              totalRevenue={totalRevenue}
+              totalRevenue={analyticsData.totalRevenue || totalRevenue}
               reviews={reviews}
               setActiveTab={setActiveTab}
+              patientTrend={analyticsData.patientTrend}
+              conditionData={analyticsData.conditionData}
+              weeklyApt={analyticsData.weeklyApt}
+              radialData={analyticsData.radialData}
+              revenueData={analyticsData.revenueData}
+              ratingTrend={[]}
             />
           )}
 
@@ -349,7 +578,7 @@ export default function DoctorPortal() {
               setBillFilter={setBillFilter}
               billStatusOpen={billStatusOpen}
               setBillStatusOpen={setBillStatusOpen}
-              setBilling={setBilling}
+              updatePaymentStatus={updatePaymentStatus}
               showNotif={showNotif}
             />
           )}
@@ -368,6 +597,19 @@ export default function DoctorPortal() {
             />
           )}
 
+          {activeTab === "services" && (
+            <Services
+              doctorId={doctorData?._id}
+              showNotif={showNotif}
+              onUpdate={() => {
+                // Refresh services in parent when child updates
+                api.getServices({ doctorId: doctorData?._id }).then(res => {
+                  if (res.success) setServices(res.data);
+                });
+              }}
+            />
+          )}
+
           {activeTab === "profile" && (
             <ProfileSettings
               doctorData={doctorData}
@@ -377,6 +619,8 @@ export default function DoctorPortal() {
               setEditData={setEditData}
               setDoctorData={setDoctorData}
               showNotif={showNotif}
+              services={services}
+              setActiveTab={setActiveTab}
             />
           )}
         </div>

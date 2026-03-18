@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from "react";
-import {
-  Hexagon,
-  Building2,
-  PlusSquare,
-  UserRound,
-  Check,
-  X,
-} from "lucide-react";
+import { Hexagon, Building2, PlusSquare, UserRound, Check, X } from "lucide-react";
 import { useBreakpoint } from "../hooks/useBreakpoint";
 import { T } from "./Helpers";
+import { api } from "../../utils/api";
+import { useEffect,useState } from "react";
 
 export const ApprovalsSection = ({ data, refresh }) => {
   const [regs, setRegs] = useState([]);
   const [filter, setFilter] = useState("All");
   const { isMobile } = useBreakpoint();
 
+  
   useEffect(() => {
     if (data && data.pendingRegs) {
       setRegs(data.pendingRegs);
@@ -22,12 +17,21 @@ export const ApprovalsSection = ({ data, refresh }) => {
   }, [data]);
 
   const handle = async (id, act) => {
-    // In a full implementation, this would call:
-    // await fetch(`/api/facilities/status/${id}`, { method: 'PUT', body: JSON.stringify({ status: act }) })
-    // For now, optimistic UI update:
-    setRegs((r) => r.map((x) => (x.id === id ? { ...x, status: act } : x)));
-    if (refresh) setTimeout(refresh, 1000); // Simulate refresh after backend updates
+    try {
+      const token = localStorage.getItem('token');
+      // Optimistic update: instantly remove the row for snappy UX
+      setRegs((r) => r.filter((x) => String(x.id) !== String(id)));
+
+      await api.updateFacilityStatus(id, act, token);
+      
+      // Refresh from DB immediately so the list reflects the true DB state
+      if (refresh) setTimeout(refresh, 300);
+    } catch (e) {
+       console.error("Error updating approval status", e);
+       if (refresh) refresh();
+    }
   };
+
 
   const filtered = filter === "All" ? regs : regs.filter((r) => r.type === filter);
 
@@ -61,7 +65,7 @@ export const ApprovalsSection = ({ data, refresh }) => {
                 fontSize: 12,
               }}
             >
-              {f}
+              {f === "Hospital" || f === "Clinic" ? f.toUpperCase() : f}
             </button>
           ))}
         </div>
@@ -146,12 +150,23 @@ export const ApprovalsSection = ({ data, refresh }) => {
                     {r.specialty && (
                       <span className="tag tag-green">{r.specialty}</span>
                     )}
+                    {r.category && r.category !== 'N/A' && (
+                      <span className="tag tag-cyan">{r.category}</span>
+                    )}
                   </div>
                   <div
                     className="mono"
-                    style={{ fontSize: 9, color: "#5a8a84" }}
+                    style={{ fontSize: 9, color: "#5a8a84", display: 'flex', alignItems: 'center', gap: 8 }}
                   >
-                    {r.id.substring(0, 8)}... · {r.city} · {r.date} · {r.docs} docs
+                    <span>{r.id.substring(0, 8)}... · {r.city} · {r.date} · {r.docs} docs</span>
+                    <a
+                      href={r.type === "Hospital" ? `/Hospital-profile/${r.id}` : r.type === "Clinic" ? `/clinic-profile/${r.id}` : `/doctors-profile/${r.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: '#00f5d4', textDecoration: 'underline' }}
+                    >
+                      (PREVIEW)
+                    </a>
                   </div>
                 </div>
               </div>

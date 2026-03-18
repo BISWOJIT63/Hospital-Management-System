@@ -22,7 +22,7 @@ export default function Doctors({ HOSPITAL }) {
             className="flex gap-4 p-4 border border-slate-100 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-800/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-md transition"
           >
             <img
-              src={doc.image}
+              src={doc.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(doc.name) + "&background=random"}
               alt={doc.name}
               className="w-16 h-16 rounded-full object-cover border-2 border-slate-100 dark:border-slate-700 shrink-0"
             />

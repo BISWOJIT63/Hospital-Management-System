@@ -1,15 +1,30 @@
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Star } from "lucide-react";
 
 export default function Reviews({ HOSPITAL }) {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  if (!HOSPITAL?.reviews?.length) return null;
+
   return (
     <section
       id="reviews"
       className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm scroll-mt-36 text-slate-800 dark:text-slate-200"
     >
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-2">
-        Reviews ({HOSPITAL.reviewsCount})
-      </h2>
+      <div className="flex items-start justify-between gap-4">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-8 flex items-center gap-2">
+          Reviews ({HOSPITAL.reviewsCount})
+        </h2>
+        <button
+          onClick={() => navigate(`/reviews/hospital/${id}`)}
+          className="py-2 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+        >
+          View All Reviews
+        </button>
+      </div>
+
       <div className="space-y-6">
         {HOSPITAL.reviews.map((review, idx) => (
           <div
@@ -46,9 +61,6 @@ export default function Reviews({ HOSPITAL }) {
           </div>
         ))}
       </div>
-      <button className="w-full mt-6 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-        View All Reviews
-      </button>
     </section>
   );
 }

@@ -17,7 +17,7 @@ export default function DeptsPanel({ fac }) {
           icon={Stethoscope}
           label="Specialties"
           value={fac.departments.reduce(
-            (a, b) => a + b.specialties.split(",").length,
+            (a, b) => a + (b.specialties || "").split(",").filter(Boolean).length,
             0,
           )}
           sub="Across all depts"
@@ -47,7 +47,7 @@ export default function DeptsPanel({ fac }) {
               {d.description}
             </p>
             <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-              {d.specialties.split(",").map((s) => (
+              {(d.specialties || "").split(",").filter(Boolean).map((s) => (
                 <span
                   key={s}
                   className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md"

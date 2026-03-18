@@ -90,6 +90,7 @@ export default function SpecialistCard({ DOCTORS }) {
                         src={doctor.image}
                         alt={doctor.name}
                         className="w-full h-full object-cover rounded-full"
+                        onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${doctor.name}`; }}
                       />
                     </div>
                     {}

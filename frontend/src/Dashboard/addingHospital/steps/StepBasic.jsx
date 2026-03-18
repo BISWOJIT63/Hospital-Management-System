@@ -56,6 +56,24 @@ export default function StepBasic({
             className={inpClass(errors.location)}
           />
         </Field>
+        <Field label="Facility Email *" error={errors.email}>
+          <input
+            type="email"
+            value={fd.email}
+            onChange={(e) => update("email", e.target.value)}
+            placeholder="contact@facility.com"
+            className={inpClass(errors.email)}
+          />
+        </Field>
+        <Field label="Facility Phone *" error={errors.phone}>
+          <input
+            type="tel"
+            value={fd.phone}
+            onChange={(e) => update("phone", e.target.value)}
+            placeholder="+1 234 567 890"
+            className={inpClass(errors.phone)}
+          />
+        </Field>
 
         <Field label="Established Year">
           <input
@@ -164,7 +182,65 @@ export default function StepBasic({
         />
       </Field>
 
-      { }
+      <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800">
+        <ST
+          icon={Hospital}
+          title="Appointment Types & Pricing"
+          sub="Define standard appointment types for your facility"
+        />
+        <div className="space-y-3 mb-4">
+          {fd.appointmentTypes?.map((at, i) => (
+            <div key={i} className="flex gap-3 items-center">
+              <div className="flex-1">
+                <input
+                  value={at.name}
+                  onChange={(e) => {
+                    const next = [...fd.appointmentTypes];
+                    next[i].name = e.target.value;
+                    update("appointmentTypes", next);
+                  }}
+                  placeholder="e.g. In-person Consultation"
+                  className={inpClass()}
+                />
+              </div>
+              <div className="w-32">
+                <input
+                  type="number"
+                  value={at.price}
+                  onChange={(e) => {
+                    const next = [...fd.appointmentTypes];
+                    next[i].price = e.target.value;
+                    update("appointmentTypes", next);
+                  }}
+                  placeholder="Price"
+                  className={inpClass()}
+                />
+              </div>
+              {fd.appointmentTypes.length > 1 && (
+                <button
+                  onClick={() => {
+                    const next = fd.appointmentTypes.filter((_, idx) => idx !== i);
+                    update("appointmentTypes", next);
+                  }}
+                  className="p-2.5 bg-rose-50 dark:bg-rose-500/10 text-rose-500 rounded-xl hover:bg-rose-100 transition-colors"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/></svg>
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => {
+            const next = [...(fd.appointmentTypes || []), { name: "", price: "" }];
+            update("appointmentTypes", next);
+          }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl text-sm font-bold hover:bg-green-100 transition-colors"
+        >
+          + Add Appointment Type
+        </button>
+      </div>
+
       <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center justify-between mb-2">
           <label className="flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400">

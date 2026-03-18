@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Download } from "lucide-react";
+import { Calendar, Download } from "lucide-react";
 
 
 import Header from "../components/Header";
@@ -26,15 +26,24 @@ import ChatWindow, { doctorsInfo } from "../components/chat/ChatWindow";
 import CallScreen from "../components/chat/CallScreen";
 import VideoCallScreen from "../components/chat/VideoCallScreen";
 
+import MedicalRecords from "../components/MedicalRecords";
+import Prescriptions from "../components/Prescriptions";
+import Billing from "../components/Billing";
+
+
+import { AuthContext } from "../../components/context/AuthContext";
+import { useContext } from "react";
+import { ThemeContext } from "../../components/context/ThemeContext";
 
 function SettingsPage({ theme }) {
+  const { user } = useContext(AuthContext);
   return (
     <div className="space-y-8">
-      <ProfileHero theme={theme} />
+      <ProfileHero theme={theme} user={user} />
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <PersonalInfo theme={theme} />
-          <EmergencyContact theme={theme} />
+          <PersonalInfo theme={theme} user={user} />
+          <EmergencyContact theme={theme} user={user} />
         </div>
         <div className="space-y-8">
           <Preferences theme={theme} />
@@ -47,16 +56,16 @@ function SettingsPage({ theme }) {
 }
 
 
-function PrescriptionsPage({ theme }) {
+function DashboardPage({ theme, patientData, user }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h3 className={`text-3xl font-black tracking-tight text-balance ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-            Prescription Dashboard
+            {user?.name ? `${user.name}'s Dashboard` : 'Patient Dashboard'}
           </h3>
           <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-            Real-time medication monitoring and AI-powered adherence tracking.
+            Real-time appointment monitoring and health tracking.
           </p>
         </div>
         <div className="flex gap-3">
@@ -65,17 +74,17 @@ function PrescriptionsPage({ theme }) {
               : 'border-slate-200 text-slate-900 hover:bg-slate-50'
             }`}>
             <Download className="w-4 h-4" />
-            Download PDF Report
+            Download Health Report
           </button>
         </div>
       </div>
-      <MetricsGrid theme={theme} />
+      <MetricsGrid theme={theme} patientData={patientData} />
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-2 space-y-6">
-          <MedicationsTable theme={theme} />
-          <RefillTracker theme={theme} />
+          <MedicationsTable theme={theme} appointments={patientData?.recentAppointments || []} />
+          <RefillTracker theme={theme} upcoming={patientData?.recentAppointments?.filter(a => a.status !== 'cancelled' && a.status !== 'completed') || []} />
         </div>
-        <RightSidebar theme={theme} />
+        <RightSidebar theme={theme} patientData={patientData} />
       </div>
     </div>
   );
@@ -155,6 +164,92 @@ function MessagesPage({ theme }) {
   );
 }
 
+function AppointmentsPage({ theme }) {
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApts = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API}/appointments/my-appointments`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const json = await res.json();
+        if (json.success || json.data) {
+          setAppointments(json.data || []);
+        }
+      } catch (e) {
+        console.error("Failed to load user appointments", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApts();
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h3 className={`text-3xl font-black tracking-tight ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+          My Appointments
+        </h3>
+        <p className={`mt-1 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+          Manage your upcoming and past medical appointments.
+        </p>
+      </div>
+
+      <div className={`rounded-3xl border p-6 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'} shadow-sm`}>
+        {loading ? (
+          <div className="py-12 flex justify-center">
+            <div className="w-8 h-8 rounded-full border-4 border-green-500 border-t-transparent animate-spin"></div>
+          </div>
+        ) : appointments.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}>
+              <span className="text-2xl text-slate-400"><Calendar/></span>
+            </div>
+            <h4 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>No appointments found</h4>
+            <p className={theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}>You haven't booked any appointments yet.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {appointments.map((apt, i) => (
+              <div key={apt._id || i} className={`p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors ${theme === 'dark' ? 'border-slate-700 hover:border-slate-600 bg-slate-800/50' : 'border-slate-100 hover:border-slate-200 bg-slate-50'}`}>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider ${
+                      apt.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                      apt.status === 'cancelled' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' :
+                      'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+                    }`}>
+                      {apt.status}
+                    </span>
+                    <span className={`text-sm font-semibold ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                      {apt.date} • {apt.time}
+                    </span>
+                  </div>
+                  <h4 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                    {apt.service}
+                  </h4>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Provider ID: {apt.providerId} • Type: {apt.providerType}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button className={`px-4 py-2 rounded-xl text-sm font-bold border transition-colors ${theme === 'dark' ? 'border-slate-600 text-white hover:bg-slate-700' : 'border-slate-200 text-slate-900 hover:bg-slate-100'}`}>
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Placeholder page for unbuilt sections ─── */
 function PlaceholderPage({ title, theme }) {
   return (
@@ -174,24 +269,51 @@ const pageTitles = {
   dashboard: "Dashboard",
   appointments: "Appointments",
   records: "Medical Records",
+  prescriptions: "Prescriptions",
   billing: "Billing",
 };
 
-
-import { useContext } from "react";
-import { ThemeContext } from "../../components/context/ThemeContext";
+const API = 'http://localhost:5000/api';
 
 export default function Page() {
-  const [activePage, setActivePage] = useState("settings");
+  const [activePage, setActivePage] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [patientData, setPatientData] = useState(null);
+  const [loadingDashboard, setLoadingDashboard] = useState(false);
 
-  
   const { theme } = useContext(ThemeContext) || { theme: "light" };
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchPatientDashboard = async () => {
+      setLoadingDashboard(true);
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch(`${API}/appointments/patient-dashboard`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const json = await res.json();
+          setPatientData(json.data);
+        }
+      } catch (e) {
+        console.error('Failed to fetch patient dashboard', e);
+      } finally {
+        setLoadingDashboard(false);
+      }
+    };
+    fetchPatientDashboard();
+  }, []);
 
   function renderContent() {
+    if (activePage === "dashboard") return <DashboardPage theme={theme} patientData={patientData} user={user} />;
     if (activePage === "settings") return <SettingsPage theme={theme} />;
-    if (activePage === "prescriptions") return <PrescriptionsPage theme={theme} />;
     if (activePage === "messages") return <MessagesPage theme={theme} />;
+    if (activePage === "appointments") return <AppointmentsPage theme={theme} />;
+    if (activePage === "records") return <MedicalRecords theme={theme} />;
+    if (activePage === "prescriptions") return <Prescriptions theme={theme} />;
+    if (activePage === "billing") return <Billing theme={theme} />;
     return <PlaceholderPage title={pageTitles[activePage] || activePage} theme={theme} />;
   }
 

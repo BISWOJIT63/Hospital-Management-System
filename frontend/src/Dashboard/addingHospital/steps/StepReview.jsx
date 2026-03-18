@@ -13,6 +13,8 @@ export default function StepReview({ fd, entityType, previews }) {
   const rows = [
     ["Facility Name", fd.name],
     ["Type", entityType],
+    ["Email", fd.email],
+    ["Phone", fd.phone],
     ["Location", fd.location],
     ["Established", fd.established],
     ["Beds", fd.beds],
@@ -41,6 +43,13 @@ export default function StepReview({ fd, entityType, previews }) {
     ["Insurance Plans", fd.insurances.join(", ") || "—"],
     ["Facilities", fd.facilities.join(", ") || "—"],
     ["Certifications", acl.join(", ") || "—"],
+    [
+      "Appt Types",
+      fd.appointmentTypes
+        ?.filter((a) => a.name)
+        .map((a) => `${a.name} ($${a.price})`)
+        .join(", ") || "—",
+    ],
     ["Images", previews.length + " uploaded"],
   ].filter((r) => (r[1] && r[1] !== "—") || r[1] === "—");
 

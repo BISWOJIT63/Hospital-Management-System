@@ -40,32 +40,7 @@ export default function FormScreen({
 
   return (
     <div className="min-h-screen df bg-slate-50 dark:bg-[#080d1a] font-sans pb-24">
-      { }
-      <div className="h-[68px] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 lg:px-8 flex items-center justify-between sticky top-0 z-50 shadow-sm transition-colors">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center font-black shadow-md">
-            M
-          </div>
-          <span className="font-black text-slate-800 dark:text-white text-lg tracking-tight hidden sm:block">
-            MediAdmin
-          </span>
-          <span
-            className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-md hidden sm:block
-            ${entityType === "hospital" ? "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/20" : "bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-500/20"}`}
-          >
-            {entityType}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center font-bold">
-            {user?.name?.[0]?.toUpperCase()}
-          </div>
-          <span className="hidden sm:block">{user?.name}</span>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-10 pb-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-5 pb-16">
         <div className="mb-10 text-center sm:text-left animate-in slide-in-from-top-4 fade-in duration-500">
           <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">
             Register Your {entityType === "hospital" ? "Hospital" : "Clinic"}
@@ -165,8 +140,7 @@ export default function FormScreen({
           </div>
         </div>
 
-        { }
-        <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 p-4 z-40 transform translate-y-0 transition-transform shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+
           <div className="max-w-4xl mx-auto flex justify-between items-center">
             <button
               onClick={prevStep}
@@ -202,7 +176,6 @@ export default function FormScreen({
               </button>
             )}
           </div>
-        </div>
       </div>
       <Toast toast={toast} />
     </div>

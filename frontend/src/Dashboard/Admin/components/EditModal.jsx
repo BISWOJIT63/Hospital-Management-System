@@ -18,6 +18,7 @@ import {
   Trash2,
   ChevronDown,
   Wrench,
+  Activity,
 } from "lucide-react";
 
 
@@ -223,6 +224,7 @@ export default function EditModal({ fac, onSave, onClose }) {
     { id: "insurance", label: "Insurance", icon: CreditCard },
     { id: "facilities", label: "Facilities", icon: Wrench },
     { id: "awards", label: "Awards", icon: Award },
+    { id: "apptTypes", label: "Appt Types", icon: Activity },
     { id: "photos", label: "Photos", icon: Camera },
   ];
 
@@ -816,8 +818,71 @@ export default function EditModal({ fac, onSave, onClose }) {
                 ))}
               </div>
             )}
+            {tab === "apptTypes" && (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-black text-slate-800 dark:text-white text-sm">
+                    Appointment Types & Pricing
+                  </h3>
+                  <button
+                    onClick={() =>
+                      setD((x) => ({
+                        ...x,
+                        appointmentTypes: [
+                          ...(x.appointmentTypes || []),
+                          { name: "", price: "" },
+                        ],
+                      }))
+                    }
+                    className="flex items-center gap-1.5 text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg px-3 py-1.5 hover:bg-green-100 dark:hover:bg-green-500/20 transition"
+                  >
+                    <Plus size={12} />
+                    Add Type
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {(d.appointmentTypes || []).map((at, i) => (
+                    <div key={i} className="flex gap-3 items-end">
+                      <div className="flex-1">
+                        <EInput
+                          label="Type Name"
+                          value={at.name}
+                          onChange={(v) =>
+                            setListItem("appointmentTypes", i, { name: v })
+                          }
+                          placeholder="e.g. In-person Consultation"
+                        />
+                      </div>
+                      <div className="w-32">
+                        <EInput
+                          label="Price"
+                          type="number"
+                          value={at.price}
+                          onChange={(v) =>
+                            setListItem("appointmentTypes", i, { price: v })
+                          }
+                          placeholder="Price"
+                        />
+                      </div>
+                      <button
+                        onClick={() => delListItem("appointmentTypes", i)}
+                        className="mb-0.5 w-9 h-10 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-500 rounded-xl flex items-center justify-center hover:bg-rose-100 dark:hover:bg-rose-500/30 transition shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  {(!d.appointmentTypes || d.appointmentTypes.length === 0) && (
+                    <div className="text-center py-10 bg-slate-50 dark:bg-slate-800/20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        No appointment types defined. Add one to get started.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
-            {}
             {tab === "photos" && (
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
