@@ -77,6 +77,20 @@ app.use("/api/patient-data", patientDataRoutes);
 app.use("/api", apiRoutes);
 app.use("/api/hospitals", hospitalRoutes);
 
+app.get("/api/db-test", async (req, res) => {
+  try {
+    const status = mongoose.connection.readyState;
+    const states = ["disconnected", "connected", "connecting", "disconnecting"];
+    res.json({ 
+      status: states[status], 
+      connected: status === 1,
+      dbName: mongoose.connection.name 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/", (req, res) => {
   res.send("Hospital Management System Backend API is running");
 });

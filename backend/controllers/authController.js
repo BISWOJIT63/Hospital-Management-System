@@ -65,7 +65,17 @@ export const registerUser = async (req, res) => {
         department,
       });
     } else if (assignedRole === "Doctor") {
-      const uploadedImage = req.file ? `/uploads/${req.file.filename}` : null;
+      let uploadedImage = null;
+      if (req.file) {
+        if (process.env.VERCEL === '1') {
+          // Convert buffer to Base64 for Vercel (no persistent disk)
+          const b64 = Buffer.from(req.file.buffer).toString('base64');
+          uploadedImage = `data:${req.file.mimetype};base64,${b64}`;
+        } else {
+          uploadedImage = `/uploads/${req.file.filename}`;
+        }
+      }
+
       user = await Doctor.create({
         name,
         email,
