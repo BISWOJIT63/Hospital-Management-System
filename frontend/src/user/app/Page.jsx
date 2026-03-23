@@ -273,7 +273,7 @@ const pageTitles = {
   billing: "Billing",
 };
 
-const API = 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export default function Page() {
   const [activePage, setActivePage] = useState("dashboard");

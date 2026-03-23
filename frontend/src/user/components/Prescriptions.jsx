@@ -9,7 +9,8 @@ export default function Prescriptions({ theme }) {
     const fetchPrescriptions = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/patient-data/prescriptions/my-prescriptions', {
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        const res = await fetch(`${API_URL}/patient-data/prescriptions/my-prescriptions`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const json = await res.json();

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Star, MessageCircle, Calendar, X, Loader2 } from "lucide-react";
 import { AuthContext } from "../components/context/AuthContext";
 
-const API = "http://localhost:5000/api";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const formatDate = (dateString) => {
   const options = { year: "numeric", month: "long", day: "numeric" };

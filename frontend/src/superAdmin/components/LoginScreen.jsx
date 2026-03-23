@@ -11,7 +11,8 @@ export const LoginScreen = ({ onLogin }) => {
     setLoading(true);
     setErr("");
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: id, password: pass }),

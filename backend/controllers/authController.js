@@ -196,7 +196,8 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetUrl = `${frontendURL}/reset-password/${resetToken}`;
     console.log(`[Email Simulator] Send to: ${user.email}`);
     console.log(`[Email Simulator] Reset password URL: ${resetUrl}`);
 

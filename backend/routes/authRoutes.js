@@ -39,8 +39,9 @@ router.get(
   async (req, res) => {
     const token = generateToken(req.user._id, req.user.role);
     const userRole = req.user.role;
+    const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
     res.redirect(
-      `http://localhost:5173/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`,
+      `${frontendURL}/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`,
     );
   },
 );
@@ -62,8 +63,9 @@ router.get(
   async (req, res) => {
     const token = generateToken(req.user._id, req.user.role);
     const userRole = req.user.role;
+    const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
     res.redirect(
-      `http://localhost:5173/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`,
+      `${frontendURL}/login?token=${token}&role=${userRole}&name=${encodeURIComponent(req.user.name)}`,
     );
   },
 );

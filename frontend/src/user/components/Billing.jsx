@@ -9,7 +9,8 @@ export default function Billing({ theme }) {
     const fetchInvoices = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://localhost:5000/api/patient-data/billing/my-invoices', {
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+        const res = await fetch(`${API_URL}/patient-data/billing/my-invoices`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const json = await res.json();

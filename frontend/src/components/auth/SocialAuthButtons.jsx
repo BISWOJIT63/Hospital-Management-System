@@ -4,12 +4,14 @@ import { FaFacebook } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const SocialAuthButtons = ({ role = 'Patient' }) => {
+    const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+
     const handleGoogle = () => {
-        window.location.href = `http://localhost:5000/api/auth/google?role=${role}`;
+        window.location.href = `${API_BASE}/api/auth/google?role=${role}`;
     };
 
     const handleFacebook = () => {
-        window.location.href = `http://localhost:5000/api/auth/facebook?role=${role}`;
+        window.location.href = `${API_BASE}/api/auth/facebook?role=${role}`;
     };
 
     return (
