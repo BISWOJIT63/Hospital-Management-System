@@ -54,19 +54,36 @@ const ServiceCard = ({ service }) => {
   );
 };
 
+const ServiceSectionSkeleton = () => (
+  <div className="w-full h-[600px] md:h-[400px] flex flex-col md:flex-row gap-3 md:gap-4 px-0 md:px-6 animate-pulse">
+    {[1, 2, 3, 4, 5].map((i) => (
+      <div 
+        key={i} 
+        className="flex-1 bg-gray-100 dark:bg-slate-800 rounded-2xl relative overflow-hidden shimmer"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="absolute bottom-10 left-6 right-6 space-y-3">
+           <div className="h-2 w-1/3 bg-gray-200 dark:bg-slate-700/50 rounded"></div>
+           <div className="h-6 w-3/4 bg-gray-200 dark:bg-slate-700/50 rounded"></div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export default function Services({ useMock = false }) {
   const [servicesData, setServicesData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchServices = async () => {
-      try {
+       try {
         let data = [];
         if (useMock) {
           data = MOCK_SERVICES;
         } else {
           const res = await api.getServices();
-          data = Array.isArray(res) ? res : res.data || [];
+          data = res.data || (Array.isArray(res) ? res : []);
         }
 
         const fallbackIcons = [Stethoscope, UserRound, Activity, HeartPulse, Apple];
@@ -87,7 +104,6 @@ export default function Services({ useMock = false }) {
           providerName: s.doctorId?.name ? `Dr. ${s.doctorId.name}` : s.facilityId?.name || null,
         }));
 
-        // Limit to 5 for UI consistency, or handle dynamically
         setServicesData(mappedServices.slice(0, 5));
       } catch (err) {
         console.error("Failed to fetch services:", err);
@@ -97,14 +113,14 @@ export default function Services({ useMock = false }) {
     };
 
     fetchServices();
-  }, []);
+  }, [useMock]);
 
   return (
     <section
       className="px-6 py-24 md:py-32 lg:px-20 bg-white dark:bg-[#020617]"
       id="hospitals"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl relative">
         <div className="mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="max-w-2xl">
             <h3 className="text-4xl md:text-5xl lg:text-7xl font-black text-medical-dark dark:text-white mb-6 md:mb-8 tracking-tighter uppercase">
@@ -119,17 +135,45 @@ export default function Services({ useMock = false }) {
             VIEW ALL
           </NavLink>
         </div>
-        <div className="w-full max-w-7xl h-[600px] md:h-[400px] flex flex-col md:flex-row gap-3 md:gap-4 px-0 md:px-6 z-10">
-          {!loading && servicesData.map((service) => (
-            <ServiceCard key={service.id} service={service} />
-          ))}
-          {loading && (
-            <div className="w-full h-full flex items-center justify-center">
-               <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-full max-w-7xl relative z-10">
+          {loading ? (
+             <ServiceSectionSkeleton />
+          ) : (
+            <div className="w-full h-[600px] md:h-[400px] flex flex-col md:flex-row gap-3 md:gap-4 px-0 md:px-6">
+               {servicesData.map((service) => (
+                <ServiceCard key={service.id} service={service} />
+              ))}
             </div>
           )}
         </div>
       </div>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+
+        .shimmer {
+          background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.1) 50%, 
+            rgba(255,255,255,0) 100%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite linear;
+        }
+
+        .dark .shimmer {
+          background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.05) 50%, 
+            rgba(255,255,255,0) 100%);
+        }
+      `,
+        }}
+      />
     </section>
   );
 }
+

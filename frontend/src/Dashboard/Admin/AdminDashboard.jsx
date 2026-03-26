@@ -103,34 +103,17 @@ export default function AdminDashboard({ initialFac }) {
       { }
       <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         { }
-        <header className="h-16 shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
-            >
-              <Menu size={20} />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-50 dark:bg-green-500/10 rounded-lg flex items-center justify-center border border-green-100 dark:border-green-500/20">
-                <LayoutDashboard
-                  size={14}
-                  className="text-green-600 dark:text-green-400"
-                />
-              </div>
-              <h1 className="text-sm font-black text-slate-800 dark:text-white capitalize tracking-wide">
-                {active}
-              </h1>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setEditOpen(true)}
-              className="hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-sm text-slate-600 dark:text-slate-300"
-            >
-              <Edit2 size={12} /> Edit Details
-            </button>
+        <header className="lg:hidden h-14 shrink-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 flex items-center px-4 sticky top-0 z-30">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+          >
+            <Menu size={20} />
+          </button>
+          <div className="flex items-center gap-2 ml-2">
+            <h1 className="text-sm font-black text-slate-800 dark:text-white capitalize tracking-wide">
+              {active}
+            </h1>
           </div>
         </header>
 

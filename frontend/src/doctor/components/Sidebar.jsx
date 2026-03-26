@@ -55,8 +55,8 @@ export default function Sidebar({
             </button>
           </div>
           {pendingCount > 0 && (
-            <div className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 text-xs rounded-lg px-2 py-1.5 font-medium border border-amber-100 dark:border-amber-800/30">
-              {pendingCount} pending approval{pendingCount > 1 ? "s" : ""}
+            <div className="bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] uppercase tracking-wider font-bold rounded-xl px-3 py-2 text-center border border-amber-200 dark:border-amber-500/20 shadow-sm animate-pulse">
+              {pendingCount} Pending Approval{pendingCount > 1 ? "s" : ""}
             </div>
           )}
         </div>
@@ -68,18 +68,20 @@ export default function Sidebar({
                 setActiveTab(key);
                 setIsMobileMenuOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === key
-                ? "bg-green-600 text-white shadow-md shadow-green-600/20"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200"
+              className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[13px] font-bold transition-all duration-300 active:scale-95 hover:translate-x-1 ${
+                activeTab === key
+                  ? "bg-[#50df20]/10 text-[#50df20]"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-[#50df20]/5 dark:hover:bg-slate-800 hover:text-[#50df20] dark:hover:text-white"
                 }`}
             >
-              <Icon path={icon} size={16} />
+              <Icon path={icon} size={20} />
               <span className="flex-1 text-left">{label}</span>
               {badge > 0 && (
                 <span
-                  className={`text-xs rounded-full px-1.5 py-0.5 font-bold ${activeTab === key
-                    ? "bg-white text-green-700"
-                    : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                  className={`text-[10px] rounded-full px-2 py-0.5 font-bold shadow-sm ${
+                    activeTab === key
+                      ? "bg-white text-[#50df20]"
+                      : "bg-red-50 text-red-600 dark:bg-red-500/20 dark:text-red-400"
                     }`}
                 >
                   {badge}

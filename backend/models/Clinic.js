@@ -47,5 +47,9 @@ const clinicSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
+clinicSchema.index({ status: 1, approvedDate: -1 });
+clinicSchema.index({ createdAt: -1 });
+
 const Clinic = mongoose.model('Clinic', clinicSchema);
+
 export default Clinic;

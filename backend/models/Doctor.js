@@ -65,7 +65,10 @@ const doctorSchema = new mongoose.Schema({
     approvedDate: { type: Date }
 }, { timestamps: true });
 
+doctorSchema.index({ status: 1, createdAt: -1 });
+
 // Password hashing middleware
+
 doctorSchema.pre('save', async function (next) {
     if (!this.password || !this.isModified('password')) {
         return next();

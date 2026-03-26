@@ -31,7 +31,7 @@ export default function Hero({ isDark }) {
                 className="group max-sm:py-1 max-sm:px-2 px-6 py-3 md:px-8 md:py-5 max-sm:gap-1 bg-gradient-to-r from-primary to-secondary text-white font-black rounded-2xl hover:scale-105 shadow-[0_20px_40px_-15px_rgba(16,185,129,0.4)] transition-all flex items-center justify-center gap-2 text-sm max-sm:font-medium md:text-lg"
               >
                 <span className="text-sm font-semibold">Book</span>
-                <span className="text-sm font-semibold">Appointment</span>
+                <span className="text-sm hidden md:block font-semibold">Appointment</span>
                 <span className="material-symbols-outlined  group-hover:translate-x-1 transition-transform">
                   <CalendarDays size={16} />
                 </span>

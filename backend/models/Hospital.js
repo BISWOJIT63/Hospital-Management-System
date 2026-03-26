@@ -54,5 +54,9 @@ const hospitalSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
+hospitalSchema.index({ status: 1, approvedDate: -1 });
+hospitalSchema.index({ createdAt: -1 });
+
 const Hospital = mongoose.model('Hospital', hospitalSchema);
+
 export default Hospital;

@@ -4,9 +4,12 @@ import Service from '../models/Service.js';
 export const getServices = async (req, res) => {
     try {
         const { category, facilityId, doctorId, all } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
         let filter = { status: 'active' };
         
-        // If facilityId or doctorId is provided, we might want all statuses (for admin view)
         if (facilityId || doctorId || all === 'true') {
             filter = {};
         }
@@ -15,15 +18,32 @@ export const getServices = async (req, res) => {
         if (facilityId) filter.facilityId = facilityId;
         if (doctorId) filter.doctorId = doctorId;
 
-        const services = await Service.find(filter)
-            .populate('facilityId', 'name images type address city')
-            .populate('doctorId', 'name profilePic avatar specialty')
-            .sort({ createdAt: -1 });
-        res.json({ success: true, data: services });
+        const [services, total] = await Promise.all([
+            Service.find(filter)
+                .populate('facilityId', 'name images type address city')
+                .populate('doctorId', 'name profilePic avatar specialty')
+                .skip(skip)
+                .limit(limit)
+                .sort({ createdAt: -1 })
+                .lean(),
+            Service.countDocuments(filter)
+        ]);
+
+        res.json({ 
+            success: true, 
+            data: services,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 // @desc  Get single service by ID (public)
 export const getServiceById = async (req, res) => {

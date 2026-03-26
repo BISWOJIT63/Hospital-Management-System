@@ -48,29 +48,29 @@ export default function Specialists({ useMock = false }) {
 
   return (
     <section
-      className=" pt-24 md:pt-40 pb-10 md:pb-16 relative bg-white dark:bg-slate-950"
+      className=" pt-20 md:pt-40 pb-10 md:pb-16 relative bg-white dark:bg-slate-950"
       id="doctors"
     >
       <div className="mx-auto relative z-10 px-6 lg:px-20">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-10 md:mb-20 gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 md:mb-20 gap-4 md:gap-8">
           <div className="max-w-2xl">
-            <h3 className="text-4xl md:text-5xl lg:text-7xl font-black text-medical-dark dark:text-white mb-6 md:mb-8 tracking-tighter uppercase">
+            <h3 className="text-4xl md:text-5xl lg:text-7xl font-black text-medical-dark dark:text-white mb-4 md:mb-8 tracking-tighter uppercase">
               TOP <span className="text-primary">SPECIALISTS</span>
             </h3>
-            <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-medium leading-relaxed">
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-xl font-medium leading-relaxed">
               Meet the pioneers redefining healthcare through emerald-standard
               innovation and clinical mastery.
             </p>
           </div>
           <NavLink
             to="/doctors"
-            className="w-full md:w-auto px-8 md:px-10 py-4 rounded-2xl border-2 border-primary/30 hover:bg-primary hover:text-white text-primary font-black uppercase tracking-widest transition-all text-sm"
+            className="w-full md:w-auto px-8 md:px-10 py-3.5 md:py-4 rounded-2xl border-2 border-primary/30 hover:bg-primary hover:text-white text-primary font-black uppercase tracking-widest transition-all lg:text-sm text-center"
           >
             VIEW ALL
           </NavLink>
         </div>
       </div>
-      <div className="relative py-5 md:py-10 ">
+      <div className="relative pt-0 pb-5 md:py-10 ">
         <SpecialistCard DOCTORS={doctors} />
       </div>
     </section>

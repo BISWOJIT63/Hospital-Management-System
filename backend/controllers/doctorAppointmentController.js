@@ -2,12 +2,30 @@ import Doctor from '../models/Doctor.js';
 
 export const getDoctors = async (req, res) => {
     try {
-        const doctors = await Doctor.find({ status: 'active' }).select('-password');
-        res.json({ success: true, data: doctors });
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
+        const [doctors, total] = await Promise.all([
+            Doctor.find({ status: 'active' }).select('-password').skip(skip).limit(limit).lean(),
+            Doctor.countDocuments({ status: 'active' })
+        ]);
+
+        res.json({ 
+            success: true, 
+            data: doctors,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
+
 
 export const getDoctorById = async (req, res) => {
     try {

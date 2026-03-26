@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Download } from "lucide-react";
+import { Calendar, Download, Menu } from "lucide-react";
 
 
 import Header from "../components/Header";
@@ -319,7 +319,13 @@ export default function Page() {
 
   return (
     <div className={`min-h-screen transition-colors ${theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-[#f6f8f6] text-slate-900'}`}>
-      <Header onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} theme={theme} />
+      {/* Mobile-only Header for Sidebar Toggle */}
+      <div className="lg:hidden h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 sticky top-0 z-30">
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+          <Menu size={20} />
+        </button>
+        <span className="ml-2 font-bold capitalize text-slate-800 dark:text-white">{pageTitles[activePage] || activePage}</span>
+      </div>
       <div className="flex max-w-480 mx-auto min-h-[calc(100vh-60px)]">
         <Sidebar
           activePage={activePage}

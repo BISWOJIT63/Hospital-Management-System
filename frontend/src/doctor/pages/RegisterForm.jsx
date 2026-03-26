@@ -34,6 +34,16 @@ export default function RegisterForm({ onSubmit, initialData }) {
         ],
     });
     const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+    const [availFromDay, setAvailFromDay] = useState("Monday");
+    const [availToDay, setAvailToDay] = useState("Friday");
+    const [availFromTime, setAvailFromTime] = useState("09:00");
+    const [availToTime, setAvailToTime] = useState("17:00");
+
+    React.useEffect(() => {
+        set("availability", `${availFromDay} to ${availToDay}, ${availFromTime} to ${availToTime}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [availFromDay, availToDay, availFromTime, availToTime]);
+
     const fileRef = useRef();
     const steps = [
         "Personal Info",
@@ -181,12 +191,17 @@ export default function RegisterForm({ onSubmit, initialData }) {
                                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
                                         Experience (years)
                                     </label>
-                                    <input
+                                    <select
                                         className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
-                                        placeholder="10"
                                         value={form.experience}
                                         onChange={(e) => set("experience", e.target.value)}
-                                    />
+                                    >
+                                        <option value="" disabled>Select</option>
+                                        {[...Array(11)].map((_, i) => (
+                                            <option key={i} value={i.toString()}>{i}</option>
+                                        ))}
+                                        <option value="10+">10+</option>
+                                    </select>
                                 </div>
                                 <div key="phone">
                                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
@@ -283,12 +298,38 @@ export default function RegisterForm({ onSubmit, initialData }) {
                                 <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">
                                     Availability
                                 </label>
-                                <input
-                                    className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
-                                    placeholder="Mon-Sat, 9AM-6PM"
-                                    value={form.availability}
-                                    onChange={(e) => set("availability", e.target.value)}
-                                />
+                                <div className="space-y-3">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <select
+                                            value={availFromDay}
+                                            onChange={e => setAvailFromDay(e.target.value)}
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        >
+                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(d => <option key={d} value={d}>{d}</option>)}
+                                        </select>
+                                        <select
+                                            value={availToDay}
+                                            onChange={e => setAvailToDay(e.target.value)}
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        >
+                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(d => <option key={d} value={d}>{d}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <input
+                                            type="time"
+                                            value={availFromTime}
+                                            onChange={e => setAvailFromTime(e.target.value)}
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        />
+                                        <input
+                                            type="time"
+                                            value={availToTime}
+                                            onChange={e => setAvailToTime(e.target.value)}
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">

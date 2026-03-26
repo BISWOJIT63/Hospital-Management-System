@@ -243,16 +243,35 @@ export default function ProfileSettings({
                                     </code>
                                 </label>
                                 {editMode ? (
-                                    <input
-                                        className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white transition-colors"
-                                        value={editData?.[k] || ""}
-                                        onChange={(e) =>
-                                            setEditData((d) => ({
-                                                ...d,
-                                                [k]: e.target.value,
-                                            }))
-                                        }
-                                    />
+                                    k === "experience" ? (
+                                        <select
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white transition-colors"
+                                            value={editData?.[k] || ""}
+                                            onChange={(e) =>
+                                                setEditData((d) => ({
+                                                    ...d,
+                                                    [k]: e.target.value,
+                                                }))
+                                            }
+                                        >
+                                            <option value="" disabled>Select</option>
+                                            {[...Array(11)].map((_, idx) => (
+                                                <option key={idx} value={idx.toString()}>{idx}</option>
+                                            ))}
+                                            <option value="10+">10+</option>
+                                        </select>
+                                    ) : (
+                                        <input
+                                            className="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-50 dark:bg-slate-800 dark:text-white transition-colors"
+                                            value={editData?.[k] || ""}
+                                            onChange={(e) =>
+                                                setEditData((d) => ({
+                                                    ...d,
+                                                    [k]: e.target.value,
+                                                }))
+                                            }
+                                        />
+                                    )
                                 ) : (
                                     <p className="text-sm text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-transparent dark:border-slate-800/50 rounded-xl px-3.5 py-2.5 transition-colors">
                                         {doctorData?.[k] || "—"}

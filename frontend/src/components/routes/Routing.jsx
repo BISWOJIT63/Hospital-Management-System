@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useContext } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "../../pages/Home";
 import Authentication from "../../pages/Authentication";
 import Profile from "../../pages/Profile";
@@ -18,6 +18,19 @@ import SuperAdmin from "../../superAdmin/SuperAdmin";
 import About from "../About";
 import AddReview from "../../pages/AddReview";
 import ReviewList from "../../pages/ReviewList";
+import { AuthContext } from "../context/AuthContext";
+
+/** Redirects bare dashboard routes to the ID-based URL using the logged-in user */
+function DashboardRedirect() {
+  const { user } = useContext(AuthContext);
+  const id = user?.id || user?._id;
+  const role = user?.role?.toLowerCase?.() || "";
+
+  if (!id) return <Navigate to="/login" replace />;
+  if (role === "admin") return <Navigate to={`/admin/dashboard/${id}`} replace />;
+  if (role === "doctor") return <Navigate to={`/doctor/dashboard/${id}`} replace />;
+  return <Navigate to={`/patient/${id}`} replace />;
+}
 
 const Routing = () => {
   return (
@@ -41,12 +54,15 @@ const Routing = () => {
         <Route path="/clinic-profile/:id" element={<Clinic />} />
 
         <Route path="/service-profile/:id" element={<ServiceDeatils />} />
-        <Route path="/admin" element={<Admin />} />
+
+        {/* Dashboard routes — bare paths redirect to ID-based URLs */}
+        <Route path="/admin" element={<DashboardRedirect />} />
         <Route path="/admin/dashboard/:id" element={<Admin />} />
-        <Route path="/patient" element={<User />} />
+        <Route path="/patient" element={<DashboardRedirect />} />
         <Route path="/patient/:id" element={<User />} />
-        <Route path="/doctor" element={<DoctorPortal />} />
+        <Route path="/doctor" element={<DashboardRedirect />} />
         <Route path="/doctor/dashboard/:id" element={<DoctorPortal />} />
+
         <Route path="/superadmin" element={<SuperAdmin />} />
         <Route path="/about" element={<About />} />
 

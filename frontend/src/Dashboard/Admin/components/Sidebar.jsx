@@ -108,15 +108,15 @@ export default function Sidebar({
             key={id}
             onClick={() => setActive(id)}
             title={collapsed ? label : undefined}
-            className={`w-full flex items-center rounded-xl transition-all mb-0.5
-              ${collapsed ? "justify-center p-0 w-11 h-11 mx-auto" : "gap-2.5 px-3 py-2.5 text-sm font-semibold"}
+            className={`w-full flex items-center rounded-2xl transition-all duration-300 mb-1 group
+              ${collapsed ? "justify-center p-0 w-12 h-12 mx-auto" : "gap-3 px-4 py-3 text-sm font-bold active:scale-95 hover:translate-x-1"}
               ${
                 active === id
-                  ? "bg-green-600 text-white shadow-lg shadow-green-600/20 dark:shadow-green-500/10"
-                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200"
+                  ? "bg-[#50df20]/10 text-[#50df20]"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-[#50df20]/5 dark:hover:bg-slate-800 hover:text-[#50df20] dark:hover:text-white"
               }`}
           >
-            <Ico size={15} className="shrink-0" />
+            <Ico size={20} className="shrink-0" />
             {!collapsed && (
               <>
                 {label}
@@ -139,8 +139,8 @@ export default function Sidebar({
           <button
             key={label}
             title={collapsed ? label : undefined}
-            className={`transition-all rounded-xl
-              ${collapsed ? "w-11 h-11 flex items-center justify-center" : "w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold"}
+            className={`transition-all duration-300 rounded-2xl active:scale-95 group hover:translate-x-1
+              ${collapsed ? "w-12 h-12 flex items-center justify-center mx-auto" : "w-full flex items-center gap-3 px-4 py-3 text-sm font-bold"}
               ${
                 red
                   ? "text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10"

@@ -16,6 +16,29 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/api";
+
+const ListSkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <div key={i} className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm animate-pulse">
+        <div className="h-36 bg-gray-200 dark:bg-slate-800 shimmer"></div>
+        <div className="p-5 space-y-3">
+          <div className="h-5 w-3/4 bg-gray-200 dark:bg-slate-800 rounded shimmer"></div>
+          <div className="h-4 w-1/2 bg-gray-200 dark:bg-slate-800 rounded shimmer"></div>
+          <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 dark:border-slate-800">
+            <div className="h-8 bg-gray-100 dark:bg-slate-800/50 rounded shimmer"></div>
+            <div className="h-8 bg-gray-100 dark:bg-slate-800/50 rounded shimmer"></div>
+          </div>
+          <div className="flex gap-3 pt-1">
+            <div className="flex-[2] h-10 bg-gray-200 dark:bg-slate-800 rounded-xl shimmer"></div>
+            <div className="flex-1 h-10 bg-gray-100 dark:bg-slate-800 rounded-xl shimmer"></div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 const HOSPITAL_TYPES = [
   "All",
   "Multi-specialty",
@@ -40,25 +63,41 @@ export default function List({ defaultCategory = "Hospital" }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
+
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const fetchFacilities = async () => {
+    let active = true;
+    
+    const fetchFacilities = async (page = 1) => {
+      setLoading(true);
       try {
-        const res = await api.getFacilities();
+        const res = await api.getFacilities(page, itemsPerPage, activeCategory);
+        if (!active) return;
+        
         if (res.success && res.data) {
           setHospitals(res.data);
+          if (res.pagination) {
+            setTotalPages(res.pagination.totalPages);
+          }
         } else if (Array.isArray(res)) {
           setHospitals(res);
         }
       } catch (error) {
+        if (!active) return;
         console.error("Failed to fetch facilities:", error);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
-    fetchFacilities();
-  }, []);
+
+    fetchFacilities(currentPage);
+    
+    return () => {
+      active = false;
+    };
+  }, [currentPage, activeCategory]);
 
   const filteredHospitals = useMemo(() => {
     return hospitals.filter((hosp) => {
@@ -68,18 +107,13 @@ export default function List({ defaultCategory = "Hospital" }) {
         locationMatch.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesType = selectedType === "All" || hosp.type === selectedType;
-      const matchesCategory = hosp.type === activeCategory;
 
-      return matchesSearch && matchesType && matchesCategory;
+      return matchesSearch && matchesType;
     });
-  }, [searchTerm, selectedType, hospitals, activeCategory]);
+  }, [searchTerm, selectedType, hospitals]);
 
-  const totalPages = Math.ceil(filteredHospitals.length / itemsPerPage);
+  const paginatedHospitals = filteredHospitals;
 
-  const paginatedHospitals = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredHospitals.slice(start, start + itemsPerPage);
-  }, [filteredHospitals, currentPage]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -157,74 +191,78 @@ export default function List({ defaultCategory = "Hospital" }) {
 
         { }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {paginatedHospitals.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full">
+              <ListSkeleton />
+            </div>
+          ) : paginatedHospitals.length > 0 ? (
             paginatedHospitals.map((hospital) => (
               <div
                 key={hospital.id}
-                className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
+                className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
               >
-                { }
-                <div className="h-48 relative overflow-hidden">
+                {/* Hospital Image Header */}
+                <div className="h-36 relative overflow-hidden">
                   <img
                     src={hospital.images && hospital.images.length > 0 ? hospital.images[0] : hospital.image}
                     alt={hospital.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="text-[10px] font-extrabold text-white bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full uppercase tracking-widest border border-white/20">
+                    <span className="text-[10px] font-extrabold text-white bg-black/50 backdrop-blur-md px-2.5 py-1.5 rounded-full uppercase tracking-widest border border-white/20">
                       {hospital.type}
                     </span>
                   </div>
                   <div className="absolute bottom-4 right-4">
                     <div className="flex items-center text-white gap-1 bg-green-500/90 backdrop-blur-sm px-2 py-0.5 rounded-full border border-green-400">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span className="text-xs font-bold">
+                      <Star className="w-2.5 h-2.5 fill-current" />
+                      <span className="text-[10px] font-bold">
                         {hospital.rating}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                { }
-                <div className="p-7 space-y-4">
+                {/* Content Details */}
+                <div className="p-5 space-y-3">
                   <div>
-                    <h3 className="text-xl font-bold group-hover:text-primary transition tracking-tight leading-tight">
+                    <h3 className="text-lg font-bold group-hover:text-primary transition tracking-tight leading-tight">
                       {hospital.name}
                     </h3>
-                    <div className="flex items-center text-slate-400 text-sm mt-1 gap-1 font-medium">
-                      <MapPin className="w-3.5 h-3.5" />
+                    <div className="flex items-center text-slate-400 text-[11px] mt-0.5 gap-1 font-medium">
+                      <MapPin className="w-3 h-3" />
                       <span className="truncate">{hospital.address || hospital.location}</span>
                     </div>
                   </div>
 
-                  { }
-                      <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50 dark:border-slate-800">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
-                        <Bed className="w-3 h-3" /> Info
+                  {/* Bed & Location Info */}
+                      <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 dark:border-slate-800">
+                    <div className="space-y-0.5">
+                      <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
+                        <Bed className="w-2.5 h-2.5" /> Info
                       </p>
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
                         {hospital.beds || hospital.doctorsCount || "10+"} Units
                       </p>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
-                        <Navigation className="w-3 h-3" /> Location
+                    <div className="space-y-0.5">
+                      <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest flex items-center gap-1">
+                        <Navigation className="w-2.5 h-2.5" /> Location
                       </p>
-                      <p className="text-sm font-bold text-primary">
+                      <p className="text-xs font-bold text-primary">
                         {hospital.city || "Nearby"}
                       </p>
                     </div>
                   </div>
 
-                  { }
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <Clock className="w-4 h-4 text-green-500" />
+                  {/* Opening Hours */}
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+                    <Clock className="w-3.5 h-3.5 text-green-500" />
                     <span>{typeof hospital.businessHours?.[0] === "string" ? hospital.businessHours[0] : (hospital.businessHours?.[0]?.time || "24/7 Available")}</span>
                   </div>
 
-                  { }
-                  <div className="flex gap-3 pt-2">
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-1">
                     <button
                       onClick={() => {
                         setSelectedHospital(hospital);
@@ -235,19 +273,20 @@ export default function List({ defaultCategory = "Hospital" }) {
                           navigate(`/Hospital-profile/${id}`);
                         }
                       }}
-                      className="flex-[2] text-white py-3.5 rounded-2xl font-bold text-sm bg-primary transition-all active:scale-95 shadow-lg shadow-green-100 dark:shadow-none hover:opacity-90"
+                      className="flex-[2] text-white py-3 rounded-xl font-bold text-xs bg-primary transition-all active:scale-95 shadow-lg shadow-green-100 dark:shadow-none hover:opacity-90"
                     >
                       View Details
                     </button>
                     <a
                       href={`tel:+123456789`}
-                      className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3.5 rounded-2xl font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95 flex items-center justify-center"
+                      className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95 flex items-center justify-center"
                     >
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-3.5 h-3.5" />
                     </a>
                   </div>
                 </div>
               </div>
+
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
@@ -317,6 +356,37 @@ export default function List({ defaultCategory = "Hospital" }) {
           </div>
         )}
       </main>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+
+        .shimmer {
+          background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.2) 50%, 
+            rgba(255,255,255,0) 100%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite linear;
+        }
+
+        .dark .shimmer {
+          background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.05) 50%, 
+            rgba(255,255,255,0) 100%);
+        }
+
+        .custom-font {
+          font-family: 'Inter', sans-serif;
+        }
+      `,
+        }}
+      />
     </div>
   );
 }
+

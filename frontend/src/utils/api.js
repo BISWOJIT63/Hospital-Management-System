@@ -191,11 +191,12 @@ export const api = {
     if (!response.ok) throw new Error("Failed to fetch clinic");
     return response.json();
   },
-  getDoctors: async () => {
-    const response = await fetch(`${BASE_URL}/doctors`);
+  getDoctors: async (page = 1, limit = 6) => {
+    const response = await fetch(`${BASE_URL}/doctors?page=${page}&limit=${limit}`);
     if (!response.ok) throw new Error("Failed to fetch doctors");
     return response.json();
   },
+
   getDoctorById: async (id) => {
     const response = await fetch(`${BASE_URL}/doctors/${id}`);
     if (!response.ok) throw new Error("Failed to fetch doctor");
@@ -242,11 +243,12 @@ export const api = {
     if (!response.ok) throw new Error("Failed to fetch departments");
     return response.json();
   },
-  getFacilities: async () => {
-    const response = await fetch(`${BASE_URL}/hospitals/all/facilities`);
+  getFacilities: async (page = 1, limit = 12, type = 'All') => {
+    const response = await fetch(`${BASE_URL}/hospitals/all/facilities?page=${page}&limit=${limit}&type=${type}`);
     if (!response.ok) throw new Error("Failed to fetch facilities");
     return response.json();
   },
+
   getReviews: async () => {
     const response = await fetch(`${BASE_URL}/hospitals/all/reviews`);
     if (!response.ok) throw new Error("Failed to fetch reviews");
@@ -595,11 +597,11 @@ export const api = {
   },
 
   // Service Endpoints
-  getServices: async (params = {}) => {
+  getServices: async (page = 1, limit = 6, params = {}) => {
     try {
-      const query = new URLSearchParams(params).toString();
+      const queryParams = new URLSearchParams({ ...params, page, limit }).toString();
       const response = await fetch(
-        `${BASE_URL}/services${query ? "?" + query : ""}`,
+        `${BASE_URL}/services${queryParams ? "?" + queryParams : ""}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -608,11 +610,12 @@ export const api = {
       const resData = await response.json();
       if (!response.ok)
         throw new Error(resData.message || "Failed to fetch services");
-      return resData.data || resData;
+      return resData;
     } catch (error) {
       throw error;
     }
   },
+
 
   getServiceById: async (id) => {
     try {

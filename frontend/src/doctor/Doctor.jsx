@@ -495,19 +495,17 @@ export default function DoctorPortal() {
 
       <main className="flex-1 flex flex-col min-w-0">
         {}
-        <Topbar
-          activeTab={activeTab}
-          navItems={navItems}
-          gSearch={gSearch}
-          setGSearch={setGSearch}
-          searchOpen={searchOpen}
-          setSearchOpen={setSearchOpen}
-          searchResults={searchResults}
-          setActiveTab={setActiveTab}
-          pendingCount={pendingCount}
-          doctorData={doctorData}
-          setIsMobileMenuOpen={setIsMobileMenuOpen}
-        />
+        <div className="lg:hidden h-14 shrink-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex items-center px-4 sticky top-0 z-30">
+          <button
+             onClick={() => setIsMobileMenuOpen(true)}
+             className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-center"
+          >
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          </button>
+          <h1 className="ml-2 text-sm font-black capitalize text-slate-800 dark:text-white">
+            {activeTab}
+          </h1>
+        </div>
 
         {}
         <div className="p-6 flex-1 overflow-auto">

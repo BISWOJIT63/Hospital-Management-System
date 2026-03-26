@@ -1,4 +1,13 @@
-import { Menu, Activity, PieChart, ClipboardCheck, Building2, Star, Settings, RefreshCcw } from "lucide-react";
+import {
+  Menu,
+  Activity,
+  PieChart,
+  ClipboardCheck,
+  Building2,
+  Star,
+  Settings,
+  RefreshCcw,
+} from "lucide-react";
 import { useBreakpoint } from "./hooks/useBreakpoint";
 import { FontLoader } from "./components/FontLoader";
 import { LoginScreen } from "./components/LoginScreen";
@@ -19,7 +28,7 @@ const navSections = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 import { api } from "../utils/api";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Dashboard = ({ onLogout }) => {
   const [active, setActive] = useState("analytics");
@@ -30,7 +39,9 @@ const Dashboard = ({ onLogout }) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
+  const [lastUpdated, setLastUpdated] = useState(
+    new Date().toLocaleTimeString(),
+  );
 
   const fetchDashboardData = async () => {
     try {
@@ -65,7 +76,7 @@ const Dashboard = ({ onLogout }) => {
     if (loading)
       return (
         <div style={{ color: "#00f5d4", padding: 20 }}>
-          Loading Nexus Command Center Data...
+          Loading Aether Care Data...
         </div>
       );
     if (!dashboardData)
@@ -234,26 +245,49 @@ const Dashboard = ({ onLogout }) => {
           >
             {!isMobile && (
               <div style={{ display: "flex", gap: 6 }}>
-                <span className="tag tag-green" style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00e676" }} /> ONLINE
+                <span
+                  className="tag tag-green"
+                  style={{ display: "flex", alignItems: "center", gap: 4 }}
+                >
+                  <div
+                    style={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      background: "#00e676",
+                    }}
+                  />{" "}
+                  ONLINE
                 </span>
                 <span className="tag tag-cyan">LIVE API</span>
-                <button 
-                  onClick={refreshData} 
-                  className="tag" 
-                  style={{ 
-                    cursor: 'pointer', 
-                    background: 'rgba(0,245,212,0.1)', 
-                    color: '#00f5d4', 
-                    border: '1px solid rgba(0,245,212,0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4
+                <button
+                  onClick={refreshData}
+                  className="tag"
+                  style={{
+                    cursor: "pointer",
+                    background: "rgba(0,245,212,0.1)",
+                    color: "#00f5d4",
+                    border: "1px solid rgba(0,245,212,0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
                   }}
                 >
-                  <RefreshCcw size={10} className={loading ? "animate-spin" : ""} /> REFRESH
+                  <RefreshCcw
+                    size={10}
+                    className={loading ? "animate-spin" : ""}
+                  />{" "}
+                  REFRESH
                 </button>
-                <span className="mono" style={{ fontSize: 9, color: "#5a8a84", display: 'flex', alignItems: 'center' }}>
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 9,
+                    color: "#5a8a84",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
                   UPDATED: {lastUpdated}
                 </span>
               </div>

@@ -28,6 +28,10 @@ const RegisterForm = () => {
   const [selectedRole, setSelectedRole] = useState("patient");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [fromDay, setFromDay] = useState("Monday");
+  const [toDay, setToDay] = useState("Friday");
+  const [fromTime, setFromTime] = useState("09:00");
+  const [toTime, setToTime] = useState("17:00");
   const navigate = useNavigate();
 
   const { register: registerAuth } = useAuth();
@@ -48,6 +52,7 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
@@ -57,6 +62,12 @@ const RegisterForm = () => {
   React.useEffect(() => {
     reset();
   }, [selectedRole, reset]);
+
+  React.useEffect(() => {
+    if (selectedRole === "doctor" && setValue) {
+      setValue("availableDays", `${fromDay} to ${toDay}, ${fromTime} to ${toTime}`, { shouldValidate: true });
+    }
+  }, [fromDay, toDay, fromTime, toTime, selectedRole, setValue]);
 
   const onSubmit = async (data) => {
     setError("");
@@ -257,12 +268,26 @@ const RegisterForm = () => {
                       </p>
                     )}
                   </div>
-                  <InputField
-                    label="Experience (Years)"
-                    name="experience"
-                    icon={FiActivity}
-                    placeholder="5"
-                  />
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Experience (Years)
+                    </label>
+                    <select
+                      {...register("experience")}
+                      className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                    >
+                      <option value="">Select Experience</option>
+                      {[...Array(11)].map((_, i) => (
+                        <option key={i} value={i.toString()}>{i}</option>
+                      ))}
+                      <option value="10+">10+</option>
+                    </select>
+                    {errors.experience && (
+                      <p className="text-lime-500 text-xs mt-1">
+                        {errors.experience.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
@@ -289,12 +314,51 @@ const RegisterForm = () => {
                     placeholder="$50"
                   />
                 </div>
-                <InputField
-                  label="Available Days"
-                  name="availableDays"
-                  icon={FiCalendar}
-                  placeholder="Mon-Fri, 9am-5pm"
-                />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From Day</label>
+                      <select
+                        value={fromDay}
+                        onChange={(e) => setFromDay(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                      >
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To Day</label>
+                      <select
+                        value={toDay}
+                        onChange={(e) => setToDay(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                      >
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Start Time</label>
+                      <input
+                        type="time"
+                        value={fromTime}
+                        onChange={(e) => setFromTime(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">End Time</label>
+                      <input
+                        type="time"
+                        value={toTime}
+                        onChange={(e) => setToTime(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white"
+                      />
+                    </div>
+                  </div>
+                  <input type="hidden" {...register("availableDays")} />
+                </div>
               </>
             )}
 

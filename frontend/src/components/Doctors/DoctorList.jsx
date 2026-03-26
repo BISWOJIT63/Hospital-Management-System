@@ -13,6 +13,32 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 
+const DoctorSkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <div key={i} className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 overflow-hidden shadow-sm animate-pulse">
+        <div className="p-5 space-y-4">
+          <div className="flex gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-slate-700 shimmer shrink-0"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-1/2 bg-gray-200 dark:bg-slate-700 rounded shimmer"></div>
+              <div className="h-6 w-3/4 bg-gray-200 dark:bg-slate-700 rounded shimmer"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 dark:border-slate-700">
+            <div className="h-8 bg-gray-100 dark:bg-slate-700/50 rounded shimmer"></div>
+            <div className="h-8 bg-gray-100 dark:bg-slate-700/50 rounded shimmer"></div>
+          </div>
+          <div className="flex gap-3 pt-1">
+            <div className="flex-[2] h-10 bg-gray-200 dark:bg-slate-700 rounded-xl shimmer"></div>
+            <div className="flex-1 h-10 bg-gray-100 dark:bg-slate-700 rounded-xl shimmer"></div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 const SPECIALIZATIONS = [
   "All",
   "Cardiologist",
@@ -43,7 +69,8 @@ export default function DoctorList() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const itemsPerPage = 2;
+  const itemsPerPage = 6;
+  const [totalPages, setTotalPages] = useState(1);
 
   const formatAvailability = (avail) => {
     if (!avail) return "Check Availability";
@@ -59,23 +86,28 @@ export default function DoctorList() {
     return String(first) || "Check Availability";
   };
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const res = await api.getDoctors();
-        if (res.success && res.data) {
-          setDoctors(res.data);
-        } else if (Array.isArray(res)) {
-          setDoctors(res);
+  const fetchDoctors = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await api.getDoctors(page, itemsPerPage);
+      if (res.success && res.data) {
+        setDoctors(res.data);
+        if (res.pagination) {
+          setTotalPages(res.pagination.totalPages);
         }
-      } catch (error) {
-        console.error("Failed to fetch doctors:", error);
-      } finally {
-        setLoading(false);
+      } else if (Array.isArray(res)) {
+        setDoctors(res);
       }
-    };
-    fetchDoctors();
-  }, []);
+    } catch (error) {
+      console.error("Failed to fetch doctors:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDoctors(currentPage);
+  }, [currentPage]);
 
   const filteredDoctors = useMemo(() => {
     return doctors.filter((doc) => {
@@ -88,11 +120,8 @@ export default function DoctorList() {
       return matchesSearch && matchesSpec;
     });
   }, [searchTerm, selectedSpec, doctors]);
-  const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage);
-  const paginatedDoctors = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredDoctors.slice(start, start + itemsPerPage);
-  }, [filteredDoctors, currentPage]);
+
+  const paginatedDoctors = filteredDoctors;
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -141,7 +170,11 @@ export default function DoctorList() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {paginatedDoctors.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full">
+              <DoctorSkeleton />
+            </div>
+          ) : paginatedDoctors.length > 0 ? (
             paginatedDoctors.map((doctor) => (
               <div
                 key={
@@ -150,44 +183,39 @@ export default function DoctorList() {
                   (doctor.user && doctor.user._id) ||
                   doctor.name
                 }
-                className="bg-white dark:bg-slate-800 rounded-[2.5rem] border border-slate-100 dark:border-slate-600  overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
+                className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-600  overflow-hidden hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 group"
               >
-                <div className="p-7 space-y-5">
+                <div className="p-5 space-y-4">
                   <div className="flex gap-4">
                     <div className="relative shrink-0">
                       <img
                         src={doctor.image || doctor.avatar || doctor.profilePic || `https://images.unsplash.com/photo-1559839734-2b71ca197ec2?w=400&q=80`}
                         alt={doctor.name}
-                        className="w-20 h-20 rounded-3xl object-cover ring-4 ring-slate-50 dark:ring-slate-800 shadow-sm group-hover:scale-105 transition-transform duration-500"
+                        className="w-16 h-16 rounded-2xl object-cover ring-4 ring-slate-50 dark:ring-slate-800 shadow-sm group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => { e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${doctor.name}`; }}
                       />
-                      <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-slate-100 dark:border-slate-600"></div>
+                      <div className="absolute -bottom-1 -right-1 bg-green-500 w-3 h-3 rounded-full border-2 border-slate-100 dark:border-slate-600"></div>
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1 flex-wrap">
                         <div className="flex gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-extrabold text-primary bg-green-50 px-2 py-1 rounded-lg uppercase tracking-widest">
+                          <span className="text-[9px] font-extrabold text-primary bg-green-50 px-2 py-0.5 rounded-lg uppercase tracking-widest">
                             {cleanValue(doctor.specialty, "General")}
                           </span>
-                          {doctor.category && cleanValue(doctor.category, "N/A") !== "N/A" && (
-                            <span className="text-[10px] font-extrabold text-teal-600 bg-teal-50 px-2 py-1 rounded-lg uppercase tracking-widest">
-                              {doctor.category}
-                            </span>
-                          )}
                         </div>
-                        <div className="flex items-center text-green-500 gap-1 bg-green-50 px-2 py-0.5 rounded-full">
-                          <Star className="w-3 h-3 fill-current" />
-                          <span className="text-xs font-bold">
+                        <div className="flex items-center text-green-500 gap-1 bg-green-50 px-1.5 py-0.5 rounded-full">
+                          <Star className="w-2.5 h-2.5 fill-current" />
+                          <span className="text-[10px] font-bold">
                             {doctor.rating || '5.0'}
                           </span>
                         </div>
                       </div>
-                      <h3 className="text-lg font-bold mt-1 group-hover:text-primary transition tracking-tight">
+                      <h3 className="text-base font-bold mt-1 group-hover:text-primary transition tracking-tight truncate">
                         {doctor.name}
                       </h3>
-                      <div className="flex items-center text-slate-400 text-sm mt-1 gap-1 font-medium">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="truncate max-w-[150px]">
+                      <div className="flex items-center text-slate-400 text-xs mt-0.5 gap-1 font-medium">
+                        <MapPin className="w-3 h-3" />
+                        <span className="truncate">
                           {cleanValue(doctor.location) !== "Location N/A" 
                             ? doctor.location 
                             : cleanValue(doctor.city) !== "Location N/A" 
@@ -200,27 +228,27 @@ export default function DoctorList() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                  <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 dark:border-slate-700">
+                    <div className="space-y-0.5">
+                      <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">
                         Experience
                       </p>
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
                         {String(doctor.experience).toLowerCase().includes('years') ? doctor.experience : `${doctor.experience || 0} Years`}
                       </p>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                    <div className="space-y-0.5">
+                      <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">
                         Available
                       </p>
-                      <p className="text-sm font-bold text-primary flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />{" "}
+                      <p className="text-xs font-bold text-primary flex items-center gap-1">
+                        <Clock className="w-3 h-3" />{" "}
                         {formatAvailability(doctor.availability)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex gap-2 pt-1">
                     <button
                       onClick={() => {
                         const normalizedDoctor = {
@@ -234,7 +262,7 @@ export default function DoctorList() {
                           state: { doctor: normalizedDoctor },
                         });
                       }}
-                      className="flex-[2] text-white py-3.5 rounded-2xl font-bold text-sm bg-primary transition-all active:scale-95 shadow-lg shadow-slate-200 dark:shadow-slate-800 hover:shadow-green-200"
+                      className="flex-[2] text-white py-2.5 rounded-xl font-bold text-xs bg-primary transition-all active:scale-95 shadow-lg shadow-slate-100 dark:shadow-none hover:opacity-90"
                     >
                       Book Now
                     </button>
@@ -244,7 +272,7 @@ export default function DoctorList() {
                         const id = doctor.user?._id || doctor._id || doctor.id;
                         navigate(`/doctors-profile/${id}`);
                       }}
-                      className="flex-1 bg-slate-50 text-slate-600 py-3.5 rounded-2xl font-bold text-sm hover:bg-slate-100 transition active:scale-95"
+                      className="flex-1 bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-600 transition active:scale-95"
                     >
                       Details
                     </button>
@@ -254,7 +282,7 @@ export default function DoctorList() {
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
-              <div className="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-slate-100 dark:bg-slate-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="text-slate-400" />
               </div>
               <p className="text-slate-500 font-bold text-lg">

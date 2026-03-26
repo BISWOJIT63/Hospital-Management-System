@@ -150,16 +150,16 @@ export const getSuperAdminDashboard = async (req, res) => {
             Hospital.countDocuments({}),
             Clinic.countDocuments({}),
             Promise.all([
-                Hospital.find({ status: 'pending' }).sort({ createdAt: -1 }).lean(),
-                Clinic.find({ status: 'pending' }).sort({ createdAt: -1 }).lean()
-            ]).then(([h, c]) => [...h, ...c].sort((a,b) => b.createdAt - a.createdAt)),
-            Doctor.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(10).lean(), 
+                Hospital.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean(),
+                Clinic.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean()
+            ]).then(([h, c]) => [...h, ...c].sort((a,b) => (new Date(b.createdAt) - new Date(a.createdAt)))),
+            Doctor.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean(), 
             Promise.all([
-                Hospital.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).lean(),
-                Clinic.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).lean()
-            ]).then(([h, c]) => [...h, ...c].sort((a,b) => b.approvedDate - a.approvedDate)),
-            Review.find().populate('authorId', 'name').sort({ createdAt: -1 }).lean(),
-            ActivityLog.find().sort({ createdAt: -1 }).limit(15).lean()
+                Hospital.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).limit(50).lean(),
+                Clinic.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).limit(50).lean()
+            ]).then(([h, c]) => [...h, ...c].sort((a,b) => (new Date(b.approvedDate || 0) - new Date(a.approvedDate || 0)))),
+            Review.find().populate('authorId', 'name').sort({ createdAt: -1 }).limit(20).lean(),
+            ActivityLog.find().sort({ createdAt: -1 }).limit(20).lean()
         ]);
 
         const [
@@ -175,15 +175,16 @@ export const getSuperAdminDashboard = async (req, res) => {
                 { $group: { _id: "$service", count: { $sum: 1 } } },
                 { $sort: { count: -1 } },
                 { $limit: 3 }
-            ])
+            ]).allowDiskUse(true)
         ]);
+
 
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const monthlyData = monthNames.map((month, i) => ({
             month,
-            patients: patientMonths[i],
-            hospitals: hospitalMonths[i],
-            clinics: clinicMonths[i]
+            patients: patientMonths[i] || 0,
+            hospitals: hospitalMonths[i] || 0,
+            clinics: clinicMonths[i] || 0
         }));
 
         const pieData = [
@@ -201,13 +202,31 @@ export const getSuperAdminDashboard = async (req, res) => {
             { name: "No Services Booked", count: 1, color: "#5a8a84" }
         ];
 
+        // Safe Date Formatting Helpers
+        const safeISODate = (date) => {
+            if (!date) return 'N/A';
+            const d = new Date(date);
+            return isNaN(d.getTime()) ? 'N/A' : d.toISOString().split('T')[0];
+        };
+
+        const safeTimeFormat = (date) => {
+            if (!date) return 'N/A';
+            const d = new Date(date);
+            if (isNaN(d.getTime())) return 'N/A';
+            try {
+                return new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: 'numeric' }).format(d);
+            } catch (err) {
+                return 'N/A';
+            }
+        };
+
         const mappedPendingRegs = [
             ...pendingFacilities.map(f => ({
                 id: f._id,
                 name: f.name,
                 type: f.type,
                 city: f.city,
-                date: new Date(f.createdAt).toISOString().split('T')[0],
+                date: safeISODate(f.createdAt),
                 docs: f.documents?.length || 0,
                 status: f.status
             })),
@@ -216,7 +235,7 @@ export const getSuperAdminDashboard = async (req, res) => {
                 name: d.name,
                 type: 'Doctor',
                 city: d.city || 'N/A', 
-                date: new Date(d.createdAt).toISOString().split('T')[0],
+                date: safeISODate(d.createdAt),
                 docs: d.documents?.length || 0,
                 status: d.status,
                 specialty: d.specialty || 'Medical Specialist',
@@ -229,9 +248,9 @@ export const getSuperAdminDashboard = async (req, res) => {
             name: f.name,
             type: f.type,
             city: f.city,
-            approvedDate: f.approvedDate ? new Date(f.approvedDate).toISOString().split('T')[0] : 'N/A',
+            approvedDate: safeISODate(f.approvedDate),
             status: f.status,
-            patients: f.patientsCount
+            patients: f.patientsCount || 0
         }));
 
         res.json({
@@ -246,24 +265,25 @@ export const getSuperAdminDashboard = async (req, res) => {
                 entity: r.entityType,
                 rating: r.rating,
                 text: r.text,
-                date: new Date(r.createdAt).toISOString().split('T')[0],
+                date: safeISODate(r.createdAt),
                 status: r.status || 'published'
             })),
             logs: recentLogs.map(l => ({
                 id: l._id,
-                time: l.createdAt ? new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: 'numeric' }).format(new Date(l.createdAt)) : "N/A",
+                time: safeTimeFormat(l.createdAt),
                 action: l.action,
                 entity: l.entityName,
                 color: l.color || "#00f5d4"
             })),
-            adminName: req.user.name,
-            adminEmail: req.user.email
+            adminName: req.user?.name || "SuperAdmin",
+            adminEmail: req.user?.email || ""
         });
     } catch (error) {
-        console.error('SuperAdmin Dashboard Error:', error);
+        console.error('SuperAdmin Dashboard Critical Error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
 
 export const getDoctorAnalytics = async (req, res) => {
     try {

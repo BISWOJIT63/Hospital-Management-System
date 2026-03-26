@@ -10,5 +10,8 @@ const activityLogSchema = new mongoose.Schema({
     color: { type: String } // Optional: For frontend badge coloring, but usually better handled in frontend logic. Putting here as backup.
 }, { timestamps: true });
 
+activityLogSchema.index({ createdAt: -1 });
+
 const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+
 export default ActivityLog;

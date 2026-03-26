@@ -102,7 +102,7 @@ const ReviewSection = ({
       <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <MessageSquare className="text-blue-600" size={24} />
+            <MessageSquare className="text-green-600" size={24} />
             Patient Reviews
           </h2>
           <div className="flex items-center gap-3 mt-1">
@@ -115,13 +115,15 @@ const ReviewSection = ({
         {isPatient ? (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-100 flex items-center gap-2 text-sm"
+            className="px-5 py-2.5 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all shadow-md shadow-green-100 flex items-center gap-2 text-sm"
           >
             {showForm ? "Cancel" : "Write a Review"}
           </button>
         ) : (
           <div className="text-xs text-gray-400 font-medium bg-gray-50 px-3 py-2 rounded-lg border border-gray-100 italic">
-            {user ? "Only patients can write reviews" : "Login as a patient to review"}
+            {user
+              ? "Only patients can write reviews"
+              : "Login as a patient to review"}
           </div>
         )}
       </div>
@@ -129,7 +131,7 @@ const ReviewSection = ({
       {showForm && isPatient && (
         <form
           onSubmit={handleSubmit}
-          className="mb-10 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 animate-in fade-in slide-in-from-top-4 duration-300"
+          className="mb-10 bg-green-50/50 p-6 rounded-2xl border border-green-100 animate-in fade-in slide-in-from-top-4 duration-300"
         >
           <h3 className="font-bold text-gray-900 mb-4">
             How was your experience?
@@ -148,14 +150,14 @@ const ReviewSection = ({
               required
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none min-h-[120px]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none min-h-[120px]"
               placeholder="Tell us about your experience..."
             />
           </div>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               "Submitting..."
@@ -171,7 +173,7 @@ const ReviewSection = ({
       <div className="space-y-6">
         {loading ? (
           <div className="flex justify-center py-10">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : reviews.length > 0 ? (
           <>
@@ -212,11 +214,9 @@ const ReviewSection = ({
             {reviews.length > 3 && (
               <button
                 onClick={() =>
-                  navigate(
-                    `/reviews/${entityType.toLowerCase()}/${entityId}`,
-                  )
+                  navigate(`/reviews/${entityType.toLowerCase()}/${entityId}`)
                 }
-                className="w-full py-3 text-blue-600 font-bold text-sm hover:bg-blue-50 rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
+                className="w-full py-3 text-green-600 font-bold text-sm hover:bg-green-50 rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
               >
                 See all {reviews.length} reviews <ChevronRight size={18} />
               </button>
