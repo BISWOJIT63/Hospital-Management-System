@@ -63,6 +63,10 @@ const appointmentSchema = new mongoose.Schema({
     timestamps: true
 });
 
+appointmentSchema.index({ status: 1 });
+appointmentSchema.index({ providerId: 1 });
+appointmentSchema.index({ createdAt: -1 });
+
 const Appointment = mongoose.model('Appointment', appointmentSchema);
 
 export default Appointment;

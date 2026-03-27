@@ -8,6 +8,7 @@ import StepBasic from "../steps/StepBasic";
 import StepDepts from "../steps/StepDepts";
 import StepSvcDocs from "../steps/StepSvcDocs";
 import StepFacilities from "../steps/StepFacilities";
+import StepAwards from "../steps/StepAwards";
 import StepServices from "../steps/StepServices";
 import StepReview from "../steps/StepReview";
 
@@ -125,12 +126,20 @@ export default function FormScreen({
               />
             )}
             {step === 4 && (
+              <StepAwards
+                fd={formData}
+                updateArr={updateArr}
+                addItem={addItem}
+                removeItem={removeItem}
+              />
+            )}
+            {step === 5 && (
               <StepServices
                 servicesList={servicesList}
                 setServicesList={setServicesList}
               />
             )}
-            {step === 5 && (
+            {step === 6 && (
               <StepReview
                 fd={formData}
                 entityType={entityType}

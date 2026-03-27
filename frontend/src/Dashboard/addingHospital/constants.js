@@ -1,5 +1,3 @@
-
-
 export const DAYS = [
   "Monday",
   "Tuesday",
@@ -10,18 +8,9 @@ export const DAYS = [
   "Sunday",
 ];
 
-export const INSURANCES_LIST = [
-  "Aetna",
-  "green Cross",
-  "Cigna",
-  "United Health",
-  "Humana",
-  "Medicare",
-  "Medicaid",
-  "Tricare",
-  "Kaiser",
-  "Molina",
-];
+import { INSURANCES_LIST } from "../../utils/constants";
+
+export { INSURANCES_LIST };
 
 export const FACILITIES_LIST = [
   "ICU",
@@ -61,6 +50,7 @@ export const STEPS = [
   "Departments",
   "Services & Doctors",
   "Facilities & Hours",
+  "Awards",
   "Add Services",
   "Review & Submit",
 ];
@@ -92,7 +82,6 @@ export const emptyServiceEntry = () => ({
   images: [],
 });
 
-
 export const emptyDept = () => ({
   name: "",
   head: "",
@@ -117,7 +106,6 @@ export const emptyHours = () =>
     highlight: false,
   }));
 
-
 export const baseTemplate = () => ({
   name: "",
   type: "",
@@ -130,7 +118,7 @@ export const baseTemplate = () => ({
   reviewsCount: 0,
   established: "",
   beds: "",
-  doctorsCount: "", // Renamed from doctors to avoid confusion with the ObjectId array
+  doctorsCount: "", 
   surgeries: "",
   priceRange: "",
   acceptingPatients: null,
@@ -145,5 +133,5 @@ export const baseTemplate = () => ({
   awards: [emptyAward()],
   businessHours: emptyHours(),
   appointmentTypes: [emptyAppointmentType()],
-  doctors: [], // The actual ObjectId array
+  doctors: [], 
 });

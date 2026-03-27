@@ -132,7 +132,7 @@ export const LoginScreen = ({ onLogin }) => {
               color: "#00f5d4",
             }}
           >
-            HMS NEXUS
+            AETHER CARE NEXUS
           </div>
           <div
             className="mono"

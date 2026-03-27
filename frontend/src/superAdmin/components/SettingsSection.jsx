@@ -3,7 +3,7 @@ import { Hexagon, Activity, Check, User, Lock, Bell, Settings, Palette } from 'l
 import { T, Sub } from './Helpers';
 
 export const SettingsSection = () => {
-    const [profile, setProfile] = useState({ name: "", email: "", phone: "", role: "SuperAdmin", org: "HMS Nexus", timezone: "IST" });
+    const [profile, setProfile] = useState({ name: "", email: "", phone: "", role: "SuperAdmin", org: "A Nexus", timezone: "IST" });
     const [saved, setSaved] = useState(false);
     const [tab, setTab] = useState("profile");
     const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });

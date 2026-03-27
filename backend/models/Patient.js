@@ -30,6 +30,8 @@ const patientSchema = new mongoose.Schema({
     resetPasswordExpire: Date,
 }, { timestamps: true });
 
+patientSchema.index({ createdAt: -1 });
+
 // Password hashing middleware
 patientSchema.pre('save', async function (next) {
     if (!this.password || !this.isModified('password')) {

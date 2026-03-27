@@ -156,7 +156,7 @@ const RegisterForm = () => {
             label="Phone Number"
             name="phone"
             icon={FiPhone}
-            placeholder="+1 234 567 8900"
+            placeholder="+91  23456 78900"
           />
           {selectedRole === "patient" && (
             <InputField

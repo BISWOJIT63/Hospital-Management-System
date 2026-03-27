@@ -125,10 +125,19 @@ export default function StepDepts({
         <div className="flex flex-wrap gap-2.5">
           {INSURANCES_LIST.map((ins) => (
             <PillBtn
-              key={ins}
-              active={fd.insurances.includes(ins)}
-              label={ins}
-              onClick={() => toggleArr("insurances", ins)}
+              key={ins.name}
+              active={fd.insurances.includes(ins.name)}
+              label={
+                <div className="flex items-center gap-2">
+                  <img
+                    src={ins.logo}
+                    alt={ins.name}
+                    className="w-6 h-6 rounded-full"
+                  />
+                  <span>{ins.name}</span>
+                </div>
+              }
+              onClick={() => toggleArr("insurances", ins.name)}
             />
           ))}
         </div>

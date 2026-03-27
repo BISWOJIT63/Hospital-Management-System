@@ -62,7 +62,7 @@ export default function Footer() {
         </div>
         <div className="pt-10 border-t border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
           <p className="text-[8px] md:text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] text-center md:text-left">
-            © 2024 AETHERCARE HMS. PROFESSIONAL EXCELLENCE.
+            © 2024 AETHERCARE . PROFESSIONAL EXCELLENCE.
           </p>
           <div className="flex gap-6 md:gap-8">
             <span className="text-[8px] md:text-[10px] font-black tracking-widest text-primary uppercase">

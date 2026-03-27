@@ -15,7 +15,7 @@ export const getClinics = async (req, res) => {
 
 export const getClinicById = async (req, res) => {
     try {
-        const clinic = await Clinic.findById(req.params.id);
+        const clinic = await Clinic.findById(req.params.id).populate('doctors');
         if (clinic) {
             res.json({ success: true, data: clinic });
         } else {

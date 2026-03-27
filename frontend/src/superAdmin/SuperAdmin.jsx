@@ -63,8 +63,6 @@ const Dashboard = ({ onLogout }) => {
 
   useEffect(() => {
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 15000);
-    return () => clearInterval(interval);
   }, []);
 
   const refreshData = () => {

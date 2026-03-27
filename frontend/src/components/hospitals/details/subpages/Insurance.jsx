@@ -1,6 +1,8 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-const Insurance = ({HOSPITAL}) => {
+import { INSURANCES_LIST } from "../../../../utils/constants";
+
+const Insurance = ({ HOSPITAL }) => {
   return (
     <div>
       <section
@@ -20,15 +22,28 @@ const Insurance = ({HOSPITAL}) => {
             </button>
           </div>
         </div>
-        <div className="flex overflow-x-auto gap-4 pb-2 no-scrollbar">
-          {HOSPITAL.insurances.map((ins, idx) => (
-            <div
-              key={idx}
-              className="w-32 h-16 overflow-hidden shrink-0 border border-slate-200 rounded-lg flex items-center justify-center bg-white shadow-sm"
-            >
-              <img src={ins} alt="" className="w-full h-full object-contain" />
-            </div>
-          ))}
+        <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
+          {HOSPITAL.insurances.map((insName, idx) => {
+            const insData = INSURANCES_LIST.find((i) => i.name === insName);
+            return (
+              <div
+                key={idx}
+                className="w-40 h-20 p-2 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 rounded-xl flex flex-col items-center justify-center bg-white dark:bg-slate-900 shadow-sm transition-transform hover:scale-105"
+              >
+                {insData?.logo ? (
+                  <img
+                    src={insData.logo}
+                    alt={insName}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <span className="text-[10px] font-bold text-slate-500 text-center px-1">
+                    {insName}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>

@@ -1,11 +1,50 @@
 import React from "react";
-import { Shield, Clock } from "lucide-react";
+import { Shield, Clock, HeartPulse } from "lucide-react";
 import { ST, inpClass, PillBtn } from "../components/UI";
-import { FACILITIES_LIST } from "../constants";
+import { FACILITIES_LIST, INSURANCES_LIST } from "../constants";
 
 export default function StepFacilities({ fd, updateArr, toggleArr }) {
   return (
     <div className="animate-in slide-in-from-right-4 fade-in duration-300 space-y-10">
+      {}
+      <section>
+        <ST
+          icon={HeartPulse}
+          title="Insurance Plans"
+          sub="Select all insurance providers accepted at your facility"
+        />
+        <div className="flex flex-wrap gap-2.5">
+          {INSURANCES_LIST.map((ins) => (
+            <button
+              key={ins.name}
+              onClick={() => toggleArr("insurances", ins.name)}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border-2 transition-all
+                ${
+                  fd.insurances.includes(ins.name)
+                    ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-md shadow-emerald-500/10"
+                    : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 hover:border-slate-300 dark:hover:border-slate-700"
+                }
+              `}
+            >
+              {ins.logo ? (
+                <img
+                  src={ins.logo}
+                  alt=""
+                  className={`w-6 h-6 object-contain ${fd.insurances.includes(ins.name) ? "" : "grayscale opacity-70"}`}
+                />
+              ) : (
+                <HeartPulse size={16} />
+              )}
+              <span className="text-xs font-bold uppercase tracking-wider">
+                {ins.name}
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <hr className="border-slate-100 dark:border-slate-800" />
+
       {}
       <section>
         <ST

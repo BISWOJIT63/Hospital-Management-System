@@ -134,6 +134,9 @@ export const getMyAnalytics = async (req, res) => {
 
 export const getSuperAdminDashboard = async (req, res) => {
     try {
+        const currentYearStart = new Date(`${new Date().getFullYear()}-01-01`);
+        const currentYearEnd = new Date(`${new Date().getFullYear()}-12-31T23:59:59.999Z`);
+
         const [
             patientsCount,
             doctorsCount,
@@ -143,35 +146,32 @@ export const getSuperAdminDashboard = async (req, res) => {
             pendingDoctors,
             approvedFacilities,
             recentReviews,
-            recentLogs
+            recentLogs,
+            patientMonths,
+            hospitalMonths,
+            clinicMonths,
+            topServices
         ] = await Promise.all([
             Patient.countDocuments({}),
             Doctor.countDocuments({}),
             Hospital.countDocuments({}),
             Clinic.countDocuments({}),
             Promise.all([
-                Hospital.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean(),
-                Clinic.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean()
+                Hospital.find({ status: 'pending' }, 'name type city createdAt documents status').sort({ createdAt: -1 }).limit(20).lean(),
+                Clinic.find({ status: 'pending' }, 'name type city createdAt documents status').sort({ createdAt: -1 }).limit(20).lean()
             ]).then(([h, c]) => [...h, ...c].sort((a,b) => (new Date(b.createdAt) - new Date(a.createdAt)))),
-            Doctor.find({ status: 'pending' }).sort({ createdAt: -1 }).limit(20).lean(), 
+            Doctor.find({ status: 'pending' }, 'name city createdAt documents status specialty category').sort({ createdAt: -1 }).limit(20).lean(), 
             Promise.all([
-                Hospital.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).limit(50).lean(),
-                Clinic.find({ status: { $in: ['active', 'approved'] } }).sort({ approvedDate: -1 }).limit(50).lean()
+                Hospital.find({ status: { $in: ['active', 'approved'] } }, 'name type city approvedDate status patientsCount').sort({ approvedDate: -1 }).limit(50).lean(),
+                Clinic.find({ status: { $in: ['active', 'approved'] } }, 'name type city approvedDate status patientsCount').sort({ approvedDate: -1 }).limit(50).lean()
             ]).then(([h, c]) => [...h, ...c].sort((a,b) => (new Date(b.approvedDate || 0) - new Date(a.approvedDate || 0)))),
-            Review.find().populate('authorId', 'name').sort({ createdAt: -1 }).limit(20).lean(),
-            ActivityLog.find().sort({ createdAt: -1 }).limit(20).lean()
-        ]);
-
-        const [
-            patientMonths,
-            hospitalMonths,
-            clinicMonths,
-            topServices
-        ] = await Promise.all([
+            Review.find({}, 'authorId entityType rating text createdAt status').populate('authorId', 'name').sort({ createdAt: -1 }).limit(20).lean(),
+            ActivityLog.find({}, 'action entityName color createdAt').sort({ createdAt: -1 }).limit(20).lean(),
             getMonthlyCounts(Patient, {}),
             getMonthlyCounts(Hospital, {}),
             getMonthlyCounts(Clinic, {}),
             Appointment.aggregate([
+                { $match: { createdAt: { $gte: currentYearStart, $lte: currentYearEnd } } },
                 { $group: { _id: "$service", count: { $sum: 1 } } },
                 { $sort: { count: -1 } },
                 { $limit: 3 }

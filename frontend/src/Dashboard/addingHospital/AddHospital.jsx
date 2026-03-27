@@ -125,9 +125,13 @@ export default function AddHospital({ user, onSuccess, initialData = null }) {
         address: formData.location, // Map location to address
         description: formData.about, // Map about to description
         doctors: Array.isArray(formData.doctors) ? formData.doctors : [],
-        keyDoctors: Array.isArray(formData.keyDoctors) ? formData.keyDoctors : [],
+        keyDoctors: (Array.isArray(formData.keyDoctors) ? formData.keyDoctors : []).map(doc => ({
+          ...doc,
+          appointmentTypes: (doc.appointmentTypes || []).filter(at => at.name?.trim() && at.price)
+        })),
         departments: Array.isArray(formData.departments) ? formData.departments : [],
         awards: Array.isArray(formData.awards) ? formData.awards : [],
+        appointmentTypes: (formData.appointmentTypes || []).filter(at => at.name?.trim() && at.price)
       };
 
       const facility = await api.createFacility(submissionData, token);

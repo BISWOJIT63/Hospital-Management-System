@@ -70,7 +70,7 @@ export default function StepBasic({
             type="tel"
             value={fd.phone}
             onChange={(e) => update("phone", e.target.value)}
-            placeholder="+1 234 567 890"
+            placeholder="+91 23456 12390"
             className={inpClass(errors.phone)}
           />
         </Field>

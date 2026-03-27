@@ -17,7 +17,7 @@ export const getHospitals = async (req, res) => {
 
 export const getHospitalById = async (req, res) => {
     try {
-        const hospital = await Hospital.findById(req.params.id);
+        const hospital = await Hospital.findById(req.params.id).populate('doctors');
         if (hospital) {
             res.json({ success: true, data: hospital });
         } else {

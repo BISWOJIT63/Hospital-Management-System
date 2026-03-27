@@ -98,16 +98,16 @@ const ReviewSection = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-8">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 mt-8 transition-colors">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <MessageSquare className="text-green-600" size={24} />
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <MessageSquare className="text-green-600 dark:text-green-400" size={24} />
             Patient Reviews
           </h2>
           <div className="flex items-center gap-3 mt-1">
             {renderStars(Math.round(initialRating))}
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
               {initialRating} ({initialCount} reviews)
             </span>
           </div>
@@ -115,12 +115,12 @@ const ReviewSection = ({
         {isPatient ? (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="px-5 py-2.5 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all shadow-md shadow-green-100 flex items-center gap-2 text-sm"
+            className="px-5 py-2.5 bg-green-600 dark:bg-green-700 text-white rounded-xl font-semibold hover:bg-green-700 dark:hover:bg-green-800 transition-all shadow-md shadow-green-100 dark:shadow-none flex items-center gap-2 text-sm"
           >
             {showForm ? "Cancel" : "Write a Review"}
           </button>
         ) : (
-          <div className="text-xs text-gray-400 font-medium bg-gray-50 px-3 py-2 rounded-lg border border-gray-100 italic">
+          <div className="text-xs text-gray-400 dark:text-slate-500 font-medium bg-gray-50 dark:bg-slate-800/50 px-3 py-2 rounded-lg border border-gray-100 dark:border-slate-800 italic">
             {user
               ? "Only patients can write reviews"
               : "Login as a patient to review"}
@@ -131,26 +131,26 @@ const ReviewSection = ({
       {showForm && isPatient && (
         <form
           onSubmit={handleSubmit}
-          className="mb-10 bg-green-50/50 p-6 rounded-2xl border border-green-100 animate-in fade-in slide-in-from-top-4 duration-300"
+          className="mb-10 bg-green-50/50 dark:bg-emerald-500/5 p-6 rounded-2xl border border-green-100 dark:border-emerald-500/20 animate-in fade-in slide-in-from-top-4 duration-300"
         >
-          <h3 className="font-bold text-gray-900 mb-4">
+          <h3 className="font-bold text-gray-900 dark:text-white mb-4">
             How was your experience?
           </h3>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Rating
             </label>
             {renderStars(rating, 24, true)}
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
               Comment
             </label>
             <textarea
               required
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none min-h-[120px]"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none min-h-[120px]"
               placeholder="Tell us about your experience..."
             />
           </div>
@@ -180,11 +180,11 @@ const ReviewSection = ({
             {reviews.slice(0, 3).map((review) => (
               <div
                 key={review._id}
-                className="pb-6 border-b border-gray-100 last:border-0"
+                className="pb-6 border-b border-gray-100 dark:border-slate-800 last:border-0"
               >
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-500 dark:text-slate-400">
                       {review.authorId?.avatar ? (
                         <img
                           src={review.authorId.avatar}
@@ -196,17 +196,17 @@ const ReviewSection = ({
                       )}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 text-sm">
+                      <h4 className="font-bold text-gray-900 dark:text-white text-sm">
                         {review.authorId?.name || "Anonymous Patient"}
                       </h4>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-slate-400">
                         {new Date(review.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                   {renderStars(review.rating, 14)}
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed italic">
+                <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed italic">
                   "{review.text}"
                 </p>
               </div>
@@ -216,16 +216,16 @@ const ReviewSection = ({
                 onClick={() =>
                   navigate(`/reviews/${entityType.toLowerCase()}/${entityId}`)
                 }
-                className="w-full py-3 text-green-600 font-bold text-sm hover:bg-green-50 rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
+                className="w-full py-3 text-green-600 dark:text-green-400 font-bold text-sm hover:bg-green-50 dark:hover:bg-emerald-500/5 rounded-xl transition-all flex items-center justify-center gap-2 mt-4"
               >
                 See all {reviews.length} reviews <ChevronRight size={18} />
               </button>
             )}
           </>
         ) : (
-          <div className="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-            <MessageSquare className="mx-auto text-gray-300 mb-2" size={32} />
-            <p className="text-gray-500 font-medium">
+          <div className="text-center py-10 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700">
+            <MessageSquare className="mx-auto text-gray-300 dark:text-slate-600 mb-2" size={32} />
+            <p className="text-gray-500 dark:text-slate-400 font-medium">
               No reviews yet. Be the first to share your experience!
             </p>
           </div>

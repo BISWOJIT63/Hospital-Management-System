@@ -41,6 +41,7 @@ export default function StepReview({ fd, entityType, previews }) {
     ["Services", fd.services.filter((s) => s.name).length + " listed"],
     ["Key Doctors", fd.keyDoctors.filter((d) => d.name).length + " listed"],
     ["Insurance Plans", fd.insurances.join(", ") || "—"],
+    ["Awards", fd.awards.filter((a) => a.title).length + " listed"],
     ["Facilities", fd.facilities.join(", ") || "—"],
     ["Certifications", acl.join(", ") || "—"],
     [

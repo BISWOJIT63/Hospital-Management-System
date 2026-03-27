@@ -34,7 +34,11 @@ const hospitalSchema = new mongoose.Schema({
         experience: String,
         availability: String,
         image: { type: String },
-        patients: { type: String, default: "0" }
+        patients: { type: String, default: "0" },
+        appointmentTypes: [{
+            name: String,
+            price: Number
+        }]
     }],
     awards: [{
         title: String,

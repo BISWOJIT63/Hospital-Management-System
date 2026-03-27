@@ -73,7 +73,7 @@ export default function Details() {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-slate-500 font-bold">
+      <div className="p-12 df text-center text-slate-500 font-bold">
         Loading Facility Details...
       </div>
     );
