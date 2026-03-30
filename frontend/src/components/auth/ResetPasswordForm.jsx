@@ -97,12 +97,12 @@ const ResetPasswordForm = () => {
                         <input
                             {...register("password")}
                             type="password"
-                            className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.password ? "border-lime-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
                             placeholder="Enter new password"
                         />
                     </div>
                     {errors.password && (
-                        <p className="text-lime-500 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                             {errors.password.message}
                         </p>
                     )}
@@ -117,19 +117,19 @@ const ResetPasswordForm = () => {
                         <input
                             {...register("confirmPassword")}
                             type="password"
-                            className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.confirmPassword ? "border-lime-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
+                            className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.confirmPassword ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
                             placeholder="Confirm new password"
                         />
                     </div>
                     {errors.confirmPassword && (
-                        <p className="text-lime-500 text-xs mt-1">
+                        <p className="text-red-500 text-xs mt-1">
                             {errors.confirmPassword.message}
                         </p>
                     )}
                 </div>
 
                 {error && (
-                    <div className="p-3 bg-lime-50 dark:bg-lime-900/30 text-lime-600 dark:text-lime-300 text-sm rounded-lg">
+                    <div className="p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 text-sm rounded-lg">
                         {error}
                     </div>
                 )}

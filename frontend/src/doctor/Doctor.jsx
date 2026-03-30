@@ -365,10 +365,16 @@ export default function DoctorPortal() {
     setCheckupForm({});
     setActiveTab("checkup");
   };
-  const endCheckup = () => {
-    showNotif(`Checkup completed for ${checkupPt.name}`);
-    setCheckupPt(null);
-    setActiveTab("patients");
+  const endCheckup = async () => {
+    try {
+      await api.completeCheckup(checkupPt.id, checkupForm);
+      setPatients((p) => p.map((x) => (x.id === checkupPt.id ? { ...x, status: "completed" } : x)));
+      showNotif(`Checkup completed for ${checkupPt.name}`);
+      setCheckupPt(null);
+      setActiveTab("patients");
+    } catch (e) {
+      showNotif("Failed to complete checkup", "warning");
+    }
   };
 
   

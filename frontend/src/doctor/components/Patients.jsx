@@ -25,7 +25,9 @@ export default function Patients({
                     ? "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800"
                     : status === "rejected"
                         ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700"
+                        : status === "completed"
+                            ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700"
                 }`}
         >
             {status}
@@ -35,7 +37,7 @@ export default function Patients({
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 flex-wrap">
-                {["all", "pending", "approved", "rejected"].map((f) => (
+                {["all", "pending", "approved", "completed", "rejected"].map((f) => (
                     <button
                         key={f}
                         onClick={() => setPtFilter(f)}
@@ -106,6 +108,25 @@ export default function Patients({
                                             <Icon path={ic.activity} size={12} />
                                             Checkup
                                         </button>
+                                        <button
+                                            onClick={() => {
+                                                setActivePtId(p.id);
+                                                setCommMode("chat");
+                                                setActiveTab("comms");
+                                            }}
+                                            className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700 transition-all"
+                                        >
+                                            <Icon path={ic.chat} size={12} />
+                                            Message
+                                        </button>
+                                    </>
+                                )}
+                                {p.status === "completed" && (
+                                    <>
+                                        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-semibold px-3 py-2 rounded-xl transition-all border border-slate-200 dark:border-slate-700 cursor-not-allowed">
+                                            <Icon path={ic.check} size={12} />
+                                            Done
+                                        </div>
                                         <button
                                             onClick={() => {
                                                 setActivePtId(p.id);

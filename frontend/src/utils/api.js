@@ -690,4 +690,100 @@ export const api = {
       throw error;
     }
   },
+
+  completeCheckup: async (appointmentId, checkupData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${BASE_URL}/appointments/${appointmentId}/checkup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify(checkupData),
+      });
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.message || "Failed to complete checkup");
+      return resData;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getMyMedicalRecords: async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${BASE_URL}/patient-data/medical-records/my-records`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.message || "Failed to fetch medical records");
+      return resData;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getMyPrescriptions: async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${BASE_URL}/patient-data/prescriptions/my-prescriptions`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.message || "Failed to fetch prescriptions");
+      return resData;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getMyInvoices: async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${BASE_URL}/patient-data/billing/my-invoices`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.message || "Failed to fetch invoices");
+      return resData;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateDoctorStatus: async (id, status, token) => {
+    try {
+      const response = await fetch(`${BASE_URL}/doctors/${id}/status?t=${Date.now()}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+      const resData = await response.json();
+      if (!response.ok)
+        throw new Error(resData.message || "Failed to update doctor status");
+      return resData;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

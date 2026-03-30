@@ -105,12 +105,12 @@ const RegisterForm = () => {
         <input
           {...register(name)}
           type={type}
-          className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors[name] ? "border-lime-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
+          className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors[name] ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
           placeholder={placeholder}
         />
       </div>
       {errors[name] && (
-        <p className="text-lime-500 text-xs mt-1">{errors[name].message}</p>
+        <p className="text-red-500 text-xs mt-1">{errors[name].message}</p>
       )}
     </div>
   );
@@ -210,7 +210,7 @@ const RegisterForm = () => {
                       <option value="other">Other</option>
                     </select>
                     {errors.gender && (
-                      <p className="text-lime-500 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.gender.message}
                       </p>
                     )}
@@ -263,7 +263,7 @@ const RegisterForm = () => {
                       {SPECIALTIES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                     {errors.specialty && (
-                      <p className="text-lime-500 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.specialty.message}
                       </p>
                     )}
@@ -283,7 +283,7 @@ const RegisterForm = () => {
                       <option value="10+">10+</option>
                     </select>
                     {errors.experience && (
-                      <p className="text-lime-500 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.experience.message}
                       </p>
                     )}
@@ -302,7 +302,7 @@ const RegisterForm = () => {
                       {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                     {errors.department && (
-                      <p className="text-lime-500 text-xs mt-1">
+                      <p className="text-red-500 text-xs mt-1">
                         {errors.department.message}
                       </p>
                     )}
@@ -375,7 +375,7 @@ const RegisterForm = () => {
                   {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
                 {errors.department && (
-                  <p className="text-lime-500 text-xs mt-1">
+                  <p className="text-red-500 text-xs mt-1">
                     {errors.department.message}
                   </p>
                 )}
@@ -394,7 +394,7 @@ const RegisterForm = () => {
               <input
                 {...register("password")}
                 type={showPassword ? "text" : "password"}
-                className={`w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.password ? "border-lime-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
+                className={`w-full pl-10 pr-10 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white`}
               />
               <button
                 type="button"
@@ -405,7 +405,7 @@ const RegisterForm = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="text-lime-500 text-xs mt-1">
+              <p className="text-red-500 text-xs mt-1">
                 {errors.password.message}
               </p>
             )}
@@ -420,11 +420,11 @@ const RegisterForm = () => {
               <input
                 {...register("confirmPassword")}
                 type={showPassword ? "text" : "password"}
-                className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.confirmPassword ? "border-lime-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white`}
+                className={`w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border ${errors.confirmPassword ? "border-red-500" : "border-gray-300 dark:border-gray-600"} rounded-lg focus:ring-2 focus:ring-primary outline-none dark:text-white`}
               />
             </div>
             {errors.confirmPassword && (
-              <p className="text-lime-500 text-xs mt-1">
+              <p className="text-red-500 text-xs mt-1">
                 {errors.confirmPassword.message}
               </p>
             )}
@@ -432,7 +432,7 @@ const RegisterForm = () => {
         </div>
 
         {error && (
-          <div className="p-3 bg-lime-50 dark:bg-lime-900/30 text-lime-600 dark:text-lime-300 text-sm rounded-lg">
+          <div className="p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300 text-sm rounded-lg">
             {error}
           </div>
         )}

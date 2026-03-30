@@ -38,10 +38,14 @@ export const ManageSection = ({ data, refresh }) => {
         e.map((x) => (x.id === id ? { ...x, status: newStatus } : x))
       );
 
-      await api.updateFacilityStatus(id, newStatus, token);
+      if (target.type === 'Doctor') {
+        await api.updateDoctorStatus(id, newStatus, token);
+      } else {
+        await api.updateFacilityStatus(id, newStatus, token);
+      }
       if (refresh) setTimeout(refresh, 500);
     } catch (e) {
-      console.error("Error toggling facility status", e);
+      console.error("Error toggling entity status", e);
       if (refresh) refresh();
     }
   };
@@ -49,13 +53,18 @@ export const ManageSection = ({ data, refresh }) => {
   const remove = async (id) => {
     try {
       const token = localStorage.getItem('token');
+      const target = entities.find(e => e.id === id);
       // Optimistic update
       setEntities((e) => e.filter((x) => x.id !== id));
 
-      await api.deleteFacility(id, token);
+      if (target && target.type === 'Doctor') {
+        await api.updateDoctorStatus(id, 'rejected', token);
+      } else {
+        await api.deleteFacility(id, token);
+      }
       if (refresh) setTimeout(refresh, 500);
     } catch (e) {
-      console.error("Error removing facility", e);
+      console.error("Error removing entity", e);
       if (refresh) refresh();
     }
   };
@@ -118,6 +127,7 @@ export const ManageSection = ({ data, refresh }) => {
         <option value="All">ALL TYPES</option>
         <option value="Hospital">HOSPITALS</option>
         <option value="Clinic">CLINICS</option>
+        <option value="Doctor">DOCTORS</option>
       </select>
 
       <select
@@ -346,7 +356,9 @@ export const ManageSection = ({ data, refresh }) => {
                     </button>
                     <a
                       href={
-                        e.type === "Hospital"
+                        e.type === "Doctor" 
+                          ? `/doctor-profile/${e.id}`
+                          : e.type === "Hospital"
                           ? `/Hospital-profile/${e.id}`
                           : `/clinic-profile/${e.id}`
                       }
