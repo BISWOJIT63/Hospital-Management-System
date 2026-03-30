@@ -4,7 +4,8 @@ import {
     getMyAppointments,
     updateAppointmentStatus,
     updatePaymentStatus,
-    getPatientDashboard
+    getPatientDashboard,
+    completeCheckup
 } from '../controllers/appointmentController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -25,5 +26,8 @@ router.route('/:id/status')
 
 router.route('/:id/payment')
     .put(updatePaymentStatus);
+
+router.route('/:id/checkup')
+    .post(completeCheckup);
 
 export default router;

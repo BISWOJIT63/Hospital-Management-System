@@ -163,8 +163,9 @@ export const getSuperAdminDashboard = async (req, res) => {
             Doctor.find({ status: 'pending' }, 'name city createdAt documents status specialty category').sort({ createdAt: -1 }).limit(20).lean(), 
             Promise.all([
                 Hospital.find({ status: { $in: ['active', 'approved'] } }, 'name type city approvedDate status patientsCount').sort({ approvedDate: -1 }).limit(50).lean(),
-                Clinic.find({ status: { $in: ['active', 'approved'] } }, 'name type city approvedDate status patientsCount').sort({ approvedDate: -1 }).limit(50).lean()
-            ]).then(([h, c]) => [...h, ...c].sort((a,b) => (new Date(b.approvedDate || 0) - new Date(a.approvedDate || 0)))),
+                Clinic.find({ status: { $in: ['active', 'approved'] } }, 'name type city approvedDate status patientsCount').sort({ approvedDate: -1 }).limit(50).lean(),
+                Doctor.find({ status: { $in: ['active', 'approved'] } }, 'name city approvedDate status patientsTreated').sort({ approvedDate: -1 }).limit(50).lean()
+            ]).then(([h, c, d]) => [...h, ...c, ...d.map(doc => ({...doc, type: 'Doctor', patientsCount: doc.patientsTreated}))].sort((a,b) => (new Date(b.approvedDate || 0) - new Date(a.approvedDate || 0)))),
             Review.find({}, 'authorId entityType rating text createdAt status').populate('authorId', 'name').sort({ createdAt: -1 }).limit(20).lean(),
             ActivityLog.find({}, 'action entityName color createdAt').sort({ createdAt: -1 }).limit(20).lean(),
             getMonthlyCounts(Patient, {}),

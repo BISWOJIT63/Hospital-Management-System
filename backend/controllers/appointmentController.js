@@ -4,6 +4,9 @@ import Patient from '../models/Patient.js';
 import Hospital from '../models/Hospital.js';
 import Clinic from '../models/Clinic.js';
 import Admin from '../models/Admin.js';
+import MedicalRecord from '../models/MedicalRecord.js';
+import Prescription from '../models/Prescription.js';
+import Billing from '../models/Billing.js';
 
 // @desc    Create a new appointment
 // @route   POST /api/appointments
@@ -232,6 +235,70 @@ export const getPatientDashboard = async (req, res) => {
         });
     } catch (error) {
         console.error('Patient dashboard error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
+
+// @desc    Complete checkup and generate records
+// @route   POST /api/appointments/:id/checkup
+// @access  Private (Doctor)
+export const completeCheckup = async (req, res) => {
+    try {
+        const appointmentId = req.params.id;
+        const appointment = await Appointment.findById(appointmentId);
+
+        if (!appointment) {
+            return res.status(404).json({ success: false, message: 'Appointment not found' });
+        }
+
+        if (req.user.role !== 'Doctor' || appointment.providerType !== 'Doctor' || appointment.providerId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: 'Not authorized to complete this checkup' });
+        }
+
+        const { bp, pulse, temp, weight, diagnosis, prescription, notes, followUp } = req.body;
+
+        // 1. Update Appointment Status
+        appointment.status = 'completed';
+        await appointment.save();
+
+        // 2. Create Medical Record
+        await MedicalRecord.create({
+            patientId: appointment.patientId,
+            doctorId: req.user._id,
+            vitals: { bp, pulse, temp, weight },
+            diagnosis: diagnosis || 'General checkup',
+            notes: notes || ''
+        });
+
+        // 3. Create Prescription if provided
+        if (prescription) {
+            await Prescription.create({
+                patientId: appointment.patientId,
+                doctorId: req.user._id,
+                instructions: prescription,
+                medications: [{ name: prescription, dosage: "As prescribed", frequency: "As prescribed", duration: "As prescribed" }] 
+            });
+        }
+
+        // 4. Create Billing record (duplicate/independent from appointment depending on structure, usually good to ensure it exists)
+        // Check if billing already exists for this appointment
+        const existingBill = await Billing.findOne({ appointmentId: appointment._id });
+        if (!existingBill) {
+            const invoiceNumber = 'INV-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            await Billing.create({
+                patientId: appointment.patientId,
+                appointmentId: appointment._id,
+                invoiceNumber,
+                items: [{ description: diagnosis || 'General Checkup', amount: appointment.amount || 500 }],
+                totalAmount: appointment.amount || 500,
+                paymentStatus: appointment.paymentStatus || 'pending',
+                date: new Date()
+            });
+        }
+
+        res.status(200).json({ success: true, message: 'Checkup completed successfully', data: appointment });
+    } catch (error) {
+        console.error('Error completing checkup:', error);
         res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
 };
